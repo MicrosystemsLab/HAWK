@@ -1,0 +1,29 @@
+﻿Build started 10/22/2014 9:13:00 AM.
+     1>Project "C:\Users\HAWK\Documents\Visual Studio 2010\Projects\BehaviorRig2.0\BehaviorRig2.0\BehaviorRig2.0.vcxproj" on node 2 (build target(s)).
+     1>InitializeBuildStatus:
+         Creating "Release\BehaviorRig2.0.unsuccessfulbuild" because "AlwaysCreate" was specified.
+       GenerateTargetFrameworkMonikerAttribute:
+       Skipping target "GenerateTargetFrameworkMonikerAttribute" because all output files are up-to-date with respect to the input files.
+       ClCompile:
+         All outputs are up-to-date.
+         All outputs are up-to-date.
+         All outputs are up-to-date.
+       CoreResGen:
+         No resources are out of date with respect to their source files. Skipping resource generation.
+       ResourceCompile:
+         All outputs are up-to-date.
+       Link:
+         All outputs are up-to-date.
+         BehaviorRig2.0.vcxproj -> C:\Users\HAWK\Documents\Visual Studio 2010\Projects\BehaviorRig2.0\Release\BehaviorRig2.0.exe
+       MetaGen:
+       Skipping target "MetaGen" because all output files are up-to-date with respect to the input files.
+       Manifest:
+         All outputs are up-to-date.
+       FinalizeBuildStatus:
+         Deleting file "Release\BehaviorRig2.0.unsuccessfulbuild".
+         Touching "Release\BehaviorRig2.0.lastbuildstate".
+     1>Done Building Project "C:\Users\HAWK\Documents\Visual Studio 2010\Projects\BehaviorRig2.0\BehaviorRig2.0\BehaviorRig2.0.vcxproj" (build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:00.15

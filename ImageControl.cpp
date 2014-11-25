@@ -7,7 +7,7 @@ using namespace _DSHOWLIB_NAMESPACE;
 using namespace cv;
 using namespace std;
 
-#define SCREEN_RESIZE 0.75
+#define DEVICE_SERIAL 0x30210107
 
 void showImage(cv::Mat image)
 {
@@ -41,12 +41,11 @@ int ImageController::startCamera(void)
 
 	grabber.setSinkType(sink);
 	// Show the device selection dialog
-	if (grabber.showDevicePage()) {
-		long val = grabber.getProperty(CameraControl_Exposure);
-		tsPropertyRange ExposureRange = grabber.getPropertyRange(CameraControl_Exposure);
-		grabber.setProperty(CameraControl_Exposure, false);
-		long ExposureValue = -8;
-		grabber.setProperty(CameraControl_Exposure,ExposureValue);
+	if (grabber.openDev(DEVICE_SERIAL)) {
+		autoExposeOff();
+		grabber.getOverlay()->setEnable(true);
+		grabber.getOverlay()->setColorMode(OverlayBitmap::eCOLOR);
+		grabber.getOverlay()->setDropOutColor(RGB(0,255,255));
 	} else return CAMERA_DEVICE_SELECTION_ERROR;
 
 	return 0;
@@ -57,7 +56,7 @@ void ImageController::startLive(HWND hwnd)
 	 if (grabber.isDevValid()) {
 		grabber.setHWND(hwnd);
 		grabber.setDefaultWindowPosition(false);
-        grabber.setWindowSize((int)(IMAGE_X_PIXELS * SCREEN_RESIZE), (int)(IMAGE_Y_PIXELS * SCREEN_RESIZE));
+        grabber.setWindowSize((int)(IMAGE_X_PIXELS * SCREEN_RESIZE_SCALE), (int)(IMAGE_Y_PIXELS * SCREEN_RESIZE_SCALE));
 		
 		grabber.startLive(true);
 		FrameTypeInfo info;
@@ -84,6 +83,23 @@ Mat ImageController::getImage(void)
 	return image;
 }
 
+void ImageController::overlayCircle(Point center, int radius)
+{
+	center.x = (int)(center.x/IMAGE_RESIZE_SCALE);
+	center.y = (int)(center.y/IMAGE_RESIZE_SCALE);
+	RECT bound;
+	bound.left = center.x - radius;
+	bound.right = center.x + radius;
+	bound.top = center.y - radius;
+	bound.bottom = center.y + radius;
+	grabber.getOverlay()->drawFrameEllipse(RGB(0,255,0), bound);
+}
+
+void ImageController::clearOverlay(void)
+{
+	grabber.getOverlay()->fill(grabber.getOverlay()->getDropOutColor());
+}
+
 void ImageController::stopLive(void)
 {
 	// Stop the live video
@@ -91,4 +107,18 @@ void ImageController::stopLive(void)
 		grabber.stopLive();
 		ExitLibrary(); // Tidy up memory.
 	}
+}
+
+void ImageController::autoExposeOn(void)
+{
+	grabber.setProperty(CameraControl_Exposure, true);
+}
+
+void ImageController::autoExposeOff(void)
+{
+	long val = grabber.getProperty(CameraControl_Exposure);
+	tsPropertyRange ExposureRange = grabber.getPropertyRange(CameraControl_Exposure);
+	grabber.setProperty(CameraControl_Exposure, false);
+	long ExposureValue = -8;
+	grabber.setProperty(CameraControl_Exposure,ExposureValue);
 }

@@ -95,7 +95,7 @@
 #define COMPOUNDFILE CompoundFile::
 
 #ifdef _DEBUG
-#define _ITERATOR_DEBUG_LEVEL 0	// speedup iterator operations while debugging
+//#define _ITERATOR_DEBUG_LEVEL 0	// speedup iterator operations while debugging
 #endif
 #endif
 
@@ -165,8 +165,8 @@ enum DECOLOR {
 
 
 #if _MSC_VER>=1400	// VS 2005
-#define _CRT_SECURE_NO_WARNINGS //MF
-#define _SCL_SECURE_NO_WARNINGS //MF
+//#define _CRT_SECURE_NO_WARNINGS //MF
+//#define _SCL_SECURE_NO_WARNINGS //MF
 #endif
 
 #include <algorithm>

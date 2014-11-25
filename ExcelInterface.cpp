@@ -49,14 +49,29 @@ vector<double> lookUpDevice(const char* waferID, const char* deviceID)
 			cell = sheet->Cell(r,deviceColumn);
 			double stiffness = cell->GetDouble();
 			//get sensitivity
-			r = 41;
+			r = 42;
 			cell = sheet->Cell(r,deviceColumn);
 			double sensitivity = cell->GetDouble();
+			//get p parameter
+			r = 43;
+			cell = sheet->Cell(r,deviceColumn);
+			double pParameter = cell->GetDouble();
+			//get i parameter
+			r = 44;
+			cell = sheet->Cell(r,deviceColumn);
+			double iParameter = cell->GetDouble();
+			// get d parameter
+			r = 45;
+			cell = sheet->Cell(r,deviceColumn);
+			double dParameter = cell->GetDouble();
 
 			//return specs
 			specifications.push_back(frequency);
 			specifications.push_back(stiffness);
 			specifications.push_back(sensitivity);
+			specifications.push_back(pParameter);
+			specifications.push_back(iParameter);
+			specifications.push_back(dParameter);
 		}
 		
 	} else { // if can't load the sheet, return vector with first entry = -1.

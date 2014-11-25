@@ -27,7 +27,7 @@ int Worm::boundCheck(int currentIndex, int maxIndex)
 {
 	if (currentIndex < 0) {
         return maxIndex - abs(currentIndex);
-	} else if (currentIndex > maxIndex - 1) {
+	} else if (currentIndex > maxIndex) {
         return currentIndex - maxIndex;
 	} else {
         return currentIndex;
@@ -49,23 +49,17 @@ Mat imageWithOutputOverlay(WormOutputData* data)
 	Scalar red(0,0,225);
 	Scalar blue(225,0,0);
 
-	//PRINT CONTOURS
-	vector<Vec4i> hierarchy;
-	drawContours(result, data->contours, data->wormContourIndex, green, 2, 0, hierarchy, 0, Point(0,0));
-
 	//Print CANTILEVER
-	circle(result, Point((int)(CANTILEVER_X_PIXEL*IMAGE_RESIZE_SCALE), (int)(CANTILEVER_Y_PIXEL*IMAGE_RESIZE_SCALE)), 15, green, 2, 8, 0);
-
-	//PRINT TAIL
-	circle(result, data->tail, 7, red, 2, 8, 0);
-
-	//PRINT HEAD
-	circle(result, data->head, 10, red, 2, 8, 0);
+	circle(result, data->cantilever, 15, green, 2, 8, 0);
 
 	//PRINT SEGMENTS:
 	for (unsigned int i = 0; i < data->segments.size(); i++) {
 		line(result, data->wormContour[data->segments[i].first], data->wormContour[data->segments[i].second], red, 1, 8, 0);
 	}
+
+	//PRINT CONTOURS
+	vector<Vec4i> hierarchy;
+	drawContours(result, data->contours, data->wormContourIndex, blue, 1, 0, hierarchy, 0, Point(0,0));
 
 	//PRINT SKELETON
 	for (unsigned int i = 0; i < data->skeleton.size() - 1; i++) {
@@ -75,18 +69,28 @@ Mat imageWithOutputOverlay(WormOutputData* data)
 	//PRINT TARGET
 	drawCross(&result, data->target, red);
 
+	//PRINT TAIL
+	circle(result, data->tail, 5, red, 2, 8, 0);
+
+	//PRINT HEAD
+	circle(result, data->head, 10, red, 2, 8, 0);
+
 	//PRINT FRAME NUMBER
+
 	char* frameText = new char[50];
-	sprintf(frameText, "Frame #%d", data->frameNumber);
+	if (data->stimulusActive == true)
+		sprintf(frameText, "Frame #%d, Stim #%d, ON", data->frameNumber,  data->stimulusNumber);
+	else 
+		sprintf(frameText, "Frame #%d, Stim #%d, OFF", data->frameNumber,  data->stimulusNumber);
 	putText(result, frameText, Point(50, 50), FONT_HERSHEY_SIMPLEX, 0.75, red, 2, 8, false);  
 	delete[] frameText;
 
 	return result;
 }
 
-Worm::Worm(Mat image, double targetLengthPercentage, Point prevTail, int frame)
+Worm::Worm(Mat image, double targetLengthPercentage, Point prevTail, int frame, SYSTEMTIME time)
 {
-	GetLocalTime(&frameTime);
+	frameTime = time;
 	frameNumber = frame;
 
 	images.original = image;
@@ -119,36 +123,73 @@ void Worm::findWorm(Point prevTail)
 
 void Worm::segmentWorm(void)
 {
-	int jump = 5; //test larger values
+	int segmentNumber = 0;
+	int jump = 5;
 	int numPoints = wormContour.size();
 
 	int currentIndex = headIndex;
 	int endIndex = tailIndex;
-	int matchingIndex;
+	int matchingIndex = headIndex;
 
 	int direction = (endIndex - currentIndex)/abs(endIndex - currentIndex);
 
-	int thisSideLength = abs(endIndex - currentIndex);
-	int otherSideLength = numPoints - thisSideLength;
-
-	double lengthPercentage;
+	int adjustedMatchingIndex;
+	double valueToMinimize;
+	double minValue;
+	int minValueIndex;
 
 	if (direction > 0) {
-			while (currentIndex < endIndex - jump) {
+		while (currentIndex < endIndex - jump) {
 			currentIndex += jump;
 
-			lengthPercentage = (double)(endIndex - currentIndex)/(double)thisSideLength;
-			matchingIndex = boundCheck((int)((lengthPercentage * otherSideLength) + endIndex), numPoints - 1);
+			segmentNumber++;
+			if (segmentNumber <= 2) {
+				matchingIndex = boundCheck(matchingIndex - jump, numPoints - 1);
+			} else {
+				for (int i = 1; i <= 10; i++) {
+					adjustedMatchingIndex = boundCheck(matchingIndex - i, numPoints - 1);
+					if (adjustedMatchingIndex > tailIndex || adjustedMatchingIndex < headIndex) {
+						valueToMinimize = pow((double)(wormContour[adjustedMatchingIndex].x - wormContour[currentIndex].x), 2) +
+										  pow((double)(wormContour[adjustedMatchingIndex].y - wormContour[currentIndex].y), 2);
 
+						if (i == 1) {
+							minValue = valueToMinimize;
+							minValueIndex = adjustedMatchingIndex;
+						} else if (valueToMinimize < minValue) {
+							minValue = valueToMinimize;
+							minValueIndex = adjustedMatchingIndex;
+						}
+					}
+				}
+				matchingIndex = minValueIndex;
+			}
 			segments.push_back(pair<int, int>(currentIndex, matchingIndex));
 		}
 	} else if (direction < 0) {
 		while (currentIndex > endIndex + jump) {
 			currentIndex -= jump;
 
-			lengthPercentage = (double)(currentIndex - endIndex)/(double)thisSideLength;
-			matchingIndex = boundCheck((int)(-(lengthPercentage * otherSideLength) + endIndex), numPoints - 1);
+			segmentNumber++;
+			if (segmentNumber <= 2) {
+				matchingIndex = boundCheck(matchingIndex + jump, numPoints - 1);
+			} else {
+				for (int i = 1; i <= 10; i++) {
+					adjustedMatchingIndex = boundCheck(matchingIndex + i, numPoints - 1);
+					if (adjustedMatchingIndex > tailIndex || adjustedMatchingIndex < headIndex) {
+						valueToMinimize = pow((double)(wormContour[adjustedMatchingIndex].x - wormContour[currentIndex].x), 2) +
+										  pow((double)(wormContour[adjustedMatchingIndex].y - wormContour[currentIndex].y), 2);
 
+						if (i == 1) {
+							minValue = valueToMinimize;
+							minValueIndex = adjustedMatchingIndex;
+						} else if (valueToMinimize < minValue) {
+							minValue = valueToMinimize;
+							minValueIndex = adjustedMatchingIndex;
+						}
+					}
+				}
+				matchingIndex = minValueIndex;
+			}
 			segments.push_back(pair<int, int>(currentIndex, matchingIndex));
 		}
 	}
@@ -156,7 +197,7 @@ void Worm::segmentWorm(void)
 
 void Worm::findWormTail(Point prevTail)
 {
-	int jump = 10; //test larger values
+	int jump = 7;
 	int numPoints = wormContour.size();
 
 	double maxSharpness = 0;
@@ -171,6 +212,7 @@ void Worm::findWormTail(Point prevTail)
 	double prevNextDist;
 	double currPrevDist;
 	double currNextDist;
+	double sharpness;
 
 	for (int i = 0; i < numPoints - jump; i += jump) {
 		currPointIndex = boundCheck(i, numPoints - 1);
@@ -186,7 +228,7 @@ void Worm::findWormTail(Point prevTail)
 			currPrevDist = pointDistance(currPoint, prevPoint);
 			currNextDist = pointDistance(currPoint, nextPoint);
 
-			double sharpness = 1 - (prevNextDist/(currPrevDist + currNextDist));
+			sharpness = 1 - (prevNextDist/(currPrevDist + currNextDist));
 
 			if (sharpness > maxSharpness) {
 				maxSharpness = sharpness;
@@ -201,10 +243,10 @@ void Worm::findWormTail(Point prevTail)
 
 void Worm::findWormHead(void)
 {
-	int jump = 10; //test larger values
+	int jump = 7;
 	int numPoints = wormContour.size();
 
-	int predictedHeadIndex = boundCheck(tailIndex - (int)numPoints/2, numPoints -1);
+	int predictedHeadIndex = boundCheck(tailIndex - (int)numPoints/2, numPoints - 1);
 	int minSearch = predictedHeadIndex - (numPoints/8);
 	int maxSearch = predictedHeadIndex + (numPoints/8);
 
@@ -221,6 +263,7 @@ void Worm::findWormHead(void)
 	double prevNextDist;
 	double currPrevDist;
 	double currNextDist;
+	double sharpness;
 
 	for (int i = minSearch; i < maxSearch - jump; i += jump) {
 		currPointIndex = boundCheck(i, numPoints - 1);
@@ -235,7 +278,7 @@ void Worm::findWormHead(void)
 		currPrevDist = pointDistance(currPoint, prevPoint);
 		currNextDist = pointDistance(currPoint, nextPoint);
 
-		double sharpness = 1 - (prevNextDist/(currPrevDist + currNextDist));
+		sharpness = 1 - (prevNextDist/(currPrevDist + currNextDist));
 
 		if (sharpness > maxSharpness) {
 			maxSharpness = sharpness;
@@ -292,7 +335,7 @@ Point Worm::findTarget(double percentLength)
     //find target
     double extraLength = lengthAlongSkeleton - targetLength;
     
-    double lastSegmentLength = skeletonDistances[indexAlongSkeleton];
+    double lastSegmentLength = skeletonDistances[indexAlongSkeleton - 1];
     Point nextPoint = skeleton[indexAlongSkeleton];
     Point prevPoint = skeleton[indexAlongSkeleton - 1];
     
@@ -331,13 +374,16 @@ void Worm::findSkeleton(void)
     skeleton.push_back(tail);
 }
 
-WormOutputData Worm::extractWormOutputData(Movement stageMovement, Point2d stagePosition)
+WormOutputData Worm::extractWormOutputData(Movement stageMovement, Point2d stagePosition, Point cantilever, bool toggled, bool stimulusActive, int stimulusNumber)
 {
 	WormOutputData result;
 
+	result.cantilever = cantilever;
 	result.image = images.resized;
 	result.frameNumber = frameNumber;
 	result.frameTime = frameTime;
+	result.stimulusActive = stimulusActive;
+	result.stimulusNumber = stimulusNumber;
 
 	result.stagePosition = stagePosition;
 	result.stageMovement = stageMovement;
@@ -345,6 +391,7 @@ WormOutputData Worm::extractWormOutputData(Movement stageMovement, Point2d stage
 	result.target = target;
 	result.head = head;
 	result.tail = tail;
+	result.headTailToggled = toggled;
 
 	result.contours = contours;
 	result.wormContourIndex = wormContourIndex;

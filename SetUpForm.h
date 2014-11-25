@@ -1,3 +1,13 @@
+/* SetUpForm.h
+ * ----------
+ * Component and event code for the experiemnt set up
+ * Windows form. Contains controls for all user processes.
+ * Requires an Experiemnt and STM_Communicator object to be
+ * initialized.
+ *
+ * Created by John Whitworth on 8/26/14.
+ */
+
 #pragma once
 
 #pragma managed(push,off)
@@ -8,8 +18,10 @@
 #include <msclr/marshal_cppstd.h>
 #include "Experiment.h"
 #include "ExcelInterface.h"
+#include "Stimulus.h"
+#include "STM_Communicator.h"
 
-namespace BehaviorRig {
+namespace BehaviorRig20 {
 
 	using namespace System;
 	using namespace System::ComponentModel;
@@ -24,11 +36,12 @@ namespace BehaviorRig {
 	public ref class SetUpForm : public System::Windows::Forms::Form
 	{
 	public:
-		SetUpForm(Experiment* exp)
+		SetUpForm(Experiment* exp, STM_Communicator* comm)
 		{
 			InitializeComponent();
-
 			this->experiment = exp;
+			this->comm = comm;
+			this->stimulusSubmitted = false;
 		}
 
 	protected:
@@ -44,6 +57,8 @@ namespace BehaviorRig {
 		}
 
 	private: Experiment* experiment;
+	private: STM_Communicator* comm;
+	private: bool stimulusSubmitted;
 
 #pragma region Components
 	private: System::Windows::Forms::GroupBox^  clampModeGroupBox;
@@ -75,12 +90,6 @@ namespace BehaviorRig {
 	private: System::Windows::Forms::Label^  magnitudeStimUnitLabel;
 	private: System::Windows::Forms::Label^  noCyclesStimUnitLabel;
 	private: System::Windows::Forms::Label^  periodStimUnitLabel;
-	private: System::Windows::Forms::ComboBox^  scaleTypeStimComboBox;
-	private: System::Windows::Forms::TextBox^  contactTimeStimTextBox;
-	private: System::Windows::Forms::TextBox^  noCyclesStimTextBox;
-	private: System::Windows::Forms::TextBox^  magnitudeStimTextBox;
-	private: System::Windows::Forms::TextBox^  scaleStimTextBox;
-	private: System::Windows::Forms::TextBox^  periodStimTextBox;
 	private: System::Windows::Forms::GroupBox^  stimulusTypeGroupBox;
 	private: System::Windows::Forms::RadioButton^  customTypeRadioButton;
 	private: System::Windows::Forms::RadioButton^  sineTypeRadioButton;
@@ -122,15 +131,13 @@ namespace BehaviorRig {
 	private: System::Windows::Forms::Label^  sineBiasStimLabel;
 	private: System::Windows::Forms::Label^  sineFreqStimLabel;
 	private: System::Windows::Forms::Label^  sineFreqStimUnitLabel;
-	private: System::Windows::Forms::TextBox^  sineBiasStimTextBox;
-	private: System::Windows::Forms::TextBox^  sineFreqStimTextBox;
 	private: System::Windows::Forms::Button^  customStimBrowseButton;
 	private: System::Windows::Forms::TextBox^  customStimFileTextBox;
 	private: System::Windows::Forms::Label^  customStimFileLabel;
 	private: System::Windows::Forms::Label^  contactTimeStimUnitLabel;
 	private: System::Windows::Forms::Label^  percentAgarUnitLabel;
 	private: System::Windows::Forms::Label^  ambientHumidityUnitLabel;
-	private: System::Windows::Forms::Button^  showStimulusButton;
+	private: System::Windows::Forms::Button^  submitStimulusButton;
 	private: System::Windows::Forms::Button^  saveStimButton;
 	private: System::Windows::Forms::SaveFileDialog^  saveStimFileDialog;
 	private: System::Windows::Forms::NumericUpDown^  ambientTemperatureNumericUpDown;
@@ -141,6 +148,29 @@ namespace BehaviorRig {
 	private: System::Windows::Forms::NumericUpDown^  cantileverFrequencyNumericUpDown;
 	private: System::Windows::Forms::ComboBox^  wormFoodStatusComboBox;
 	private: System::Windows::Forms::Label^  wormFoodStatusLabel;
+	private: System::Windows::Forms::NumericUpDown^  stimSineBiasNumericUpDown;
+	private: System::Windows::Forms::NumericUpDown^  stimSineFreqNumericUpDown;
+	private: System::Windows::Forms::DomainUpDown^  stimScaleTypeDomainUpDown;
+	private: System::Windows::Forms::NumericUpDown^  stimScaleNumericUpDown;
+	private: System::Windows::Forms::NumericUpDown^  stimMagnitudeNumericUpDown;
+	private: System::Windows::Forms::NumericUpDown^  stimNoCyclesNumericUpDown;
+	private: System::Windows::Forms::NumericUpDown^  stimContactTimeNumericUpDown;
+	private: System::Windows::Forms::NumericUpDown^  stimPeriodNumericUpDown;
+	private: System::Windows::Forms::NumericUpDown^  preStimRecordTimeNumericUpDown;
+	private: System::Windows::Forms::Label^  preStimRecordTimeUnitLabel;
+	private: System::Windows::Forms::Label^  preStimRecordTimeLabel;
+private: System::Windows::Forms::RadioButton^  openLoopClampRadioButton;
+private: System::Windows::Forms::Label^  dParameterLabel;
+private: System::Windows::Forms::Label^  iParameterLabel;
+private: System::Windows::Forms::Label^  pParameterLabel;
+private: System::Windows::Forms::Label^  controlParametersLabel;
+private: System::Windows::Forms::NumericUpDown^  dParameterNumericUpDown;
+
+private: System::Windows::Forms::NumericUpDown^  iParameterNumericUpDown;
+
+private: System::Windows::Forms::NumericUpDown^  pParameterNumericUpDown;
+private: System::Windows::Forms::RadioButton^  behaviorModeRadioButton;
+
 #pragma endregion
 
 	private:
@@ -157,9 +187,11 @@ namespace BehaviorRig {
 		void InitializeComponent(void)
 		{
 			System::ComponentModel::ComponentResourceManager^  resources = (gcnew System::ComponentModel::ComponentResourceManager(SetUpForm::typeid));
-			System::Windows::Forms::DataVisualization::Charting::ChartArea^  chartArea1 = (gcnew System::Windows::Forms::DataVisualization::Charting::ChartArea());
-			System::Windows::Forms::DataVisualization::Charting::Series^  series1 = (gcnew System::Windows::Forms::DataVisualization::Charting::Series());
+			System::Windows::Forms::DataVisualization::Charting::ChartArea^  chartArea2 = (gcnew System::Windows::Forms::DataVisualization::Charting::ChartArea());
+			System::Windows::Forms::DataVisualization::Charting::Series^  series2 = (gcnew System::Windows::Forms::DataVisualization::Charting::Series());
 			this->clampModeGroupBox = (gcnew System::Windows::Forms::GroupBox());
+			this->behaviorModeRadioButton = (gcnew System::Windows::Forms::RadioButton());
+			this->openLoopClampRadioButton = (gcnew System::Windows::Forms::RadioButton());
 			this->dispClampRadioButton = (gcnew System::Windows::Forms::RadioButton());
 			this->forceClampRadioButton = (gcnew System::Windows::Forms::RadioButton());
 			this->targetGroupBox = (gcnew System::Windows::Forms::GroupBox());
@@ -170,15 +202,21 @@ namespace BehaviorRig {
 			this->targetUnitLabel = (gcnew System::Windows::Forms::Label());
 			this->targetTrackBar = (gcnew System::Windows::Forms::TrackBar());
 			this->stimulusInfoGroupBox = (gcnew System::Windows::Forms::GroupBox());
+			this->stimSineBiasNumericUpDown = (gcnew System::Windows::Forms::NumericUpDown());
+			this->stimSineFreqNumericUpDown = (gcnew System::Windows::Forms::NumericUpDown());
+			this->stimScaleTypeDomainUpDown = (gcnew System::Windows::Forms::DomainUpDown());
+			this->stimScaleNumericUpDown = (gcnew System::Windows::Forms::NumericUpDown());
+			this->stimMagnitudeNumericUpDown = (gcnew System::Windows::Forms::NumericUpDown());
+			this->stimNoCyclesNumericUpDown = (gcnew System::Windows::Forms::NumericUpDown());
+			this->stimContactTimeNumericUpDown = (gcnew System::Windows::Forms::NumericUpDown());
+			this->stimPeriodNumericUpDown = (gcnew System::Windows::Forms::NumericUpDown());
 			this->saveStimButton = (gcnew System::Windows::Forms::Button());
-			this->showStimulusButton = (gcnew System::Windows::Forms::Button());
+			this->submitStimulusButton = (gcnew System::Windows::Forms::Button());
 			this->contactTimeStimUnitLabel = (gcnew System::Windows::Forms::Label());
 			this->sineBiasStimUnitLabel = (gcnew System::Windows::Forms::Label());
 			this->sineBiasStimLabel = (gcnew System::Windows::Forms::Label());
 			this->sineFreqStimLabel = (gcnew System::Windows::Forms::Label());
 			this->sineFreqStimUnitLabel = (gcnew System::Windows::Forms::Label());
-			this->sineBiasStimTextBox = (gcnew System::Windows::Forms::TextBox());
-			this->sineFreqStimTextBox = (gcnew System::Windows::Forms::TextBox());
 			this->customStimBrowseButton = (gcnew System::Windows::Forms::Button());
 			this->customStimFileTextBox = (gcnew System::Windows::Forms::TextBox());
 			this->customStimFileLabel = (gcnew System::Windows::Forms::Label());
@@ -191,12 +229,6 @@ namespace BehaviorRig {
 			this->magnitudeStimUnitLabel = (gcnew System::Windows::Forms::Label());
 			this->noCyclesStimUnitLabel = (gcnew System::Windows::Forms::Label());
 			this->periodStimUnitLabel = (gcnew System::Windows::Forms::Label());
-			this->scaleTypeStimComboBox = (gcnew System::Windows::Forms::ComboBox());
-			this->contactTimeStimTextBox = (gcnew System::Windows::Forms::TextBox());
-			this->noCyclesStimTextBox = (gcnew System::Windows::Forms::TextBox());
-			this->magnitudeStimTextBox = (gcnew System::Windows::Forms::TextBox());
-			this->scaleStimTextBox = (gcnew System::Windows::Forms::TextBox());
-			this->periodStimTextBox = (gcnew System::Windows::Forms::TextBox());
 			this->stimulusTypeGroupBox = (gcnew System::Windows::Forms::GroupBox());
 			this->customTypeRadioButton = (gcnew System::Windows::Forms::RadioButton());
 			this->sineTypeRadioButton = (gcnew System::Windows::Forms::RadioButton());
@@ -212,6 +244,9 @@ namespace BehaviorRig {
 			this->outputFolderBrowserDialog = (gcnew System::Windows::Forms::FolderBrowserDialog());
 			this->customStimOpenFileDialog = (gcnew System::Windows::Forms::OpenFileDialog());
 			this->experimentInfoGroupBox = (gcnew System::Windows::Forms::GroupBox());
+			this->preStimRecordTimeNumericUpDown = (gcnew System::Windows::Forms::NumericUpDown());
+			this->preStimRecordTimeUnitLabel = (gcnew System::Windows::Forms::Label());
+			this->preStimRecordTimeLabel = (gcnew System::Windows::Forms::Label());
 			this->wormFoodStatusComboBox = (gcnew System::Windows::Forms::ComboBox());
 			this->wormFoodStatusLabel = (gcnew System::Windows::Forms::Label());
 			this->ambientTemperatureNumericUpDown = (gcnew System::Windows::Forms::NumericUpDown());
@@ -236,6 +271,13 @@ namespace BehaviorRig {
 			this->wormStrainLabel = (gcnew System::Windows::Forms::Label());
 			this->experimentTitleLabel = (gcnew System::Windows::Forms::Label());
 			this->cantileverGroupBox = (gcnew System::Windows::Forms::GroupBox());
+			this->dParameterLabel = (gcnew System::Windows::Forms::Label());
+			this->iParameterLabel = (gcnew System::Windows::Forms::Label());
+			this->pParameterLabel = (gcnew System::Windows::Forms::Label());
+			this->controlParametersLabel = (gcnew System::Windows::Forms::Label());
+			this->dParameterNumericUpDown = (gcnew System::Windows::Forms::NumericUpDown());
+			this->iParameterNumericUpDown = (gcnew System::Windows::Forms::NumericUpDown());
+			this->pParameterNumericUpDown = (gcnew System::Windows::Forms::NumericUpDown());
 			this->cantileverSensitivityNumericUpDown = (gcnew System::Windows::Forms::NumericUpDown());
 			this->cantileverStiffnessNumericUpDown = (gcnew System::Windows::Forms::NumericUpDown());
 			this->cantileverFrequencyNumericUpDown = (gcnew System::Windows::Forms::NumericUpDown());
@@ -260,15 +302,26 @@ namespace BehaviorRig {
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->targetNumericUpDown))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->targetTrackBar))->BeginInit();
 			this->stimulusInfoGroupBox->SuspendLayout();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->stimSineBiasNumericUpDown))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->stimSineFreqNumericUpDown))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->stimScaleNumericUpDown))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->stimMagnitudeNumericUpDown))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->stimNoCyclesNumericUpDown))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->stimContactTimeNumericUpDown))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->stimPeriodNumericUpDown))->BeginInit();
 			this->stimulusTypeGroupBox->SuspendLayout();
 			this->stimulusSignalGroupBox->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->stimulusSignalChart))->BeginInit();
 			this->dataOutputGroupBox->SuspendLayout();
 			this->experimentInfoGroupBox->SuspendLayout();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->preStimRecordTimeNumericUpDown))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->ambientTemperatureNumericUpDown))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->ambientHumidityNumericUpDown))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->percentAgarNumericUpDown))->BeginInit();
 			this->cantileverGroupBox->SuspendLayout();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->dParameterNumericUpDown))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->iParameterNumericUpDown))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->pParameterNumericUpDown))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->cantileverSensitivityNumericUpDown))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->cantileverStiffnessNumericUpDown))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->cantileverFrequencyNumericUpDown))->BeginInit();
@@ -276,36 +329,60 @@ namespace BehaviorRig {
 			// 
 			// clampModeGroupBox
 			// 
+			this->clampModeGroupBox->Controls->Add(this->behaviorModeRadioButton);
+			this->clampModeGroupBox->Controls->Add(this->openLoopClampRadioButton);
 			this->clampModeGroupBox->Controls->Add(this->dispClampRadioButton);
 			this->clampModeGroupBox->Controls->Add(this->forceClampRadioButton);
 			this->clampModeGroupBox->Location = System::Drawing::Point(334, 12);
 			this->clampModeGroupBox->Name = L"clampModeGroupBox";
-			this->clampModeGroupBox->Size = System::Drawing::Size(133, 72);
-			this->clampModeGroupBox->TabIndex = 0;
+			this->clampModeGroupBox->Size = System::Drawing::Size(133, 112);
+			this->clampModeGroupBox->TabIndex = 12;
 			this->clampModeGroupBox->TabStop = false;
 			this->clampModeGroupBox->Text = L"Clamp Mode";
+			// 
+			// behaviorModeRadioButton
+			// 
+			this->behaviorModeRadioButton->AutoSize = true;
+			this->behaviorModeRadioButton->Location = System::Drawing::Point(7, 90);
+			this->behaviorModeRadioButton->Name = L"behaviorModeRadioButton";
+			this->behaviorModeRadioButton->Size = System::Drawing::Size(67, 17);
+			this->behaviorModeRadioButton->TabIndex = 15;
+			this->behaviorModeRadioButton->Text = L"Behavior";
+			this->behaviorModeRadioButton->UseVisualStyleBackColor = true;
+			this->behaviorModeRadioButton->CheckedChanged += gcnew System::EventHandler(this, &SetUpForm::behaviorModeRadioButton_CheckedChanged);
+			// 
+			// openLoopClampRadioButton
+			// 
+			this->openLoopClampRadioButton->AutoSize = true;
+			this->openLoopClampRadioButton->Location = System::Drawing::Point(7, 67);
+			this->openLoopClampRadioButton->Name = L"openLoopClampRadioButton";
+			this->openLoopClampRadioButton->Size = System::Drawing::Size(78, 17);
+			this->openLoopClampRadioButton->TabIndex = 14;
+			this->openLoopClampRadioButton->Text = L"Open Loop";
+			this->openLoopClampRadioButton->UseVisualStyleBackColor = true;
+			this->openLoopClampRadioButton->CheckedChanged += gcnew System::EventHandler(this, &SetUpForm::openLoopClampRadioButton_CheckedChanged);
 			// 
 			// dispClampRadioButton
 			// 
 			this->dispClampRadioButton->AutoSize = true;
-			this->dispClampRadioButton->Location = System::Drawing::Point(7, 44);
+			this->dispClampRadioButton->Location = System::Drawing::Point(7, 43);
 			this->dispClampRadioButton->Name = L"dispClampRadioButton";
 			this->dispClampRadioButton->Size = System::Drawing::Size(121, 17);
-			this->dispClampRadioButton->TabIndex = 1;
+			this->dispClampRadioButton->TabIndex = 13;
 			this->dispClampRadioButton->Text = L"Displacement Clamp";
 			this->dispClampRadioButton->UseVisualStyleBackColor = true;
+			this->dispClampRadioButton->CheckedChanged += gcnew System::EventHandler(this, &SetUpForm::dispClampRadioButton_CheckedChanged);
 			// 
 			// forceClampRadioButton
 			// 
 			this->forceClampRadioButton->AutoSize = true;
-			this->forceClampRadioButton->Checked = true;
 			this->forceClampRadioButton->Location = System::Drawing::Point(7, 20);
 			this->forceClampRadioButton->Name = L"forceClampRadioButton";
 			this->forceClampRadioButton->Size = System::Drawing::Size(84, 17);
-			this->forceClampRadioButton->TabIndex = 0;
-			this->forceClampRadioButton->TabStop = true;
+			this->forceClampRadioButton->TabIndex = 12;
 			this->forceClampRadioButton->Text = L"Force Clamp";
 			this->forceClampRadioButton->UseVisualStyleBackColor = true;
+			this->forceClampRadioButton->CheckedChanged += gcnew System::EventHandler(this, &SetUpForm::forceClampRadioButton_CheckedChanged);
 			// 
 			// targetGroupBox
 			// 
@@ -315,9 +392,10 @@ namespace BehaviorRig {
 			this->targetGroupBox->Controls->Add(this->targetNumericUpDown);
 			this->targetGroupBox->Controls->Add(this->targetUnitLabel);
 			this->targetGroupBox->Controls->Add(this->targetTrackBar);
-			this->targetGroupBox->Location = System::Drawing::Point(334, 90);
+			this->targetGroupBox->Enabled = false;
+			this->targetGroupBox->Location = System::Drawing::Point(334, 130);
 			this->targetGroupBox->Name = L"targetGroupBox";
-			this->targetGroupBox->Size = System::Drawing::Size(133, 285);
+			this->targetGroupBox->Size = System::Drawing::Size(133, 284);
 			this->targetGroupBox->TabIndex = 2;
 			this->targetGroupBox->TabStop = false;
 			this->targetGroupBox->Text = L"Target Selection";
@@ -325,7 +403,7 @@ namespace BehaviorRig {
 			// targetTailLabel
 			// 
 			this->targetTailLabel->AutoSize = true;
-			this->targetTailLabel->Location = System::Drawing::Point(83, 259);
+			this->targetTailLabel->Location = System::Drawing::Point(91, 257);
 			this->targetTailLabel->Name = L"targetTailLabel";
 			this->targetTailLabel->Size = System::Drawing::Size(31, 13);
 			this->targetTailLabel->TabIndex = 27;
@@ -334,7 +412,7 @@ namespace BehaviorRig {
 			// targetHeadLabel
 			// 
 			this->targetHeadLabel->AutoSize = true;
-			this->targetHeadLabel->Location = System::Drawing::Point(73, 19);
+			this->targetHeadLabel->Location = System::Drawing::Point(77, 13);
 			this->targetHeadLabel->Name = L"targetHeadLabel";
 			this->targetHeadLabel->Size = System::Drawing::Size(45, 13);
 			this->targetHeadLabel->TabIndex = 26;
@@ -342,19 +420,20 @@ namespace BehaviorRig {
 			// 
 			// targetWormPictureBox
 			// 
-			this->targetWormPictureBox->Location = System::Drawing::Point(62, 32);
+			this->targetWormPictureBox->Image = (cli::safe_cast<System::Drawing::Image^  >(resources->GetObject(L"targetWormPictureBox.Image")));
+			this->targetWormPictureBox->Location = System::Drawing::Point(58, 28);
 			this->targetWormPictureBox->Name = L"targetWormPictureBox";
-			this->targetWormPictureBox->Size = System::Drawing::Size(67, 224);
+			this->targetWormPictureBox->Size = System::Drawing::Size(71, 226);
 			this->targetWormPictureBox->SizeMode = System::Windows::Forms::PictureBoxSizeMode::Zoom;
 			this->targetWormPictureBox->TabIndex = 17;
 			this->targetWormPictureBox->TabStop = false;
 			// 
 			// targetNumericUpDown
 			// 
-			this->targetNumericUpDown->Location = System::Drawing::Point(6, 257);
+			this->targetNumericUpDown->Location = System::Drawing::Point(7, 254);
 			this->targetNumericUpDown->Name = L"targetNumericUpDown";
 			this->targetNumericUpDown->Size = System::Drawing::Size(40, 20);
-			this->targetNumericUpDown->TabIndex = 16;
+			this->targetNumericUpDown->TabIndex = 14;
 			this->targetNumericUpDown->Value = System::Decimal(gcnew cli::array< System::Int32 >(4) {50, 0, 0, 0});
 			this->targetNumericUpDown->ValueChanged += gcnew System::EventHandler(this, &SetUpForm::targetNumericUpDown_ValueChanged);
 			// 
@@ -363,7 +442,7 @@ namespace BehaviorRig {
 			this->targetUnitLabel->AutoSize = true;
 			this->targetUnitLabel->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9.75F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->targetUnitLabel->Location = System::Drawing::Point(48, 259);
+			this->targetUnitLabel->Location = System::Drawing::Point(51, 258);
 			this->targetUnitLabel->Name = L"targetUnitLabel";
 			this->targetUnitLabel->Size = System::Drawing::Size(20, 16);
 			this->targetUnitLabel->TabIndex = 15;
@@ -372,12 +451,12 @@ namespace BehaviorRig {
 			// targetTrackBar
 			// 
 			this->targetTrackBar->LargeChange = 10;
-			this->targetTrackBar->Location = System::Drawing::Point(11, 19);
+			this->targetTrackBar->Location = System::Drawing::Point(7, 19);
 			this->targetTrackBar->Maximum = 100;
 			this->targetTrackBar->Name = L"targetTrackBar";
 			this->targetTrackBar->Orientation = System::Windows::Forms::Orientation::Vertical;
-			this->targetTrackBar->Size = System::Drawing::Size(45, 237);
-			this->targetTrackBar->TabIndex = 0;
+			this->targetTrackBar->Size = System::Drawing::Size(45, 235);
+			this->targetTrackBar->TabIndex = 13;
 			this->targetTrackBar->TickFrequency = 5;
 			this->targetTrackBar->TickStyle = System::Windows::Forms::TickStyle::Both;
 			this->targetTrackBar->Value = 50;
@@ -385,15 +464,21 @@ namespace BehaviorRig {
 			// 
 			// stimulusInfoGroupBox
 			// 
+			this->stimulusInfoGroupBox->Controls->Add(this->stimSineBiasNumericUpDown);
+			this->stimulusInfoGroupBox->Controls->Add(this->stimSineFreqNumericUpDown);
+			this->stimulusInfoGroupBox->Controls->Add(this->stimScaleTypeDomainUpDown);
+			this->stimulusInfoGroupBox->Controls->Add(this->stimScaleNumericUpDown);
+			this->stimulusInfoGroupBox->Controls->Add(this->stimMagnitudeNumericUpDown);
+			this->stimulusInfoGroupBox->Controls->Add(this->stimNoCyclesNumericUpDown);
+			this->stimulusInfoGroupBox->Controls->Add(this->stimContactTimeNumericUpDown);
+			this->stimulusInfoGroupBox->Controls->Add(this->stimPeriodNumericUpDown);
 			this->stimulusInfoGroupBox->Controls->Add(this->saveStimButton);
-			this->stimulusInfoGroupBox->Controls->Add(this->showStimulusButton);
+			this->stimulusInfoGroupBox->Controls->Add(this->submitStimulusButton);
 			this->stimulusInfoGroupBox->Controls->Add(this->contactTimeStimUnitLabel);
 			this->stimulusInfoGroupBox->Controls->Add(this->sineBiasStimUnitLabel);
 			this->stimulusInfoGroupBox->Controls->Add(this->sineBiasStimLabel);
 			this->stimulusInfoGroupBox->Controls->Add(this->sineFreqStimLabel);
 			this->stimulusInfoGroupBox->Controls->Add(this->sineFreqStimUnitLabel);
-			this->stimulusInfoGroupBox->Controls->Add(this->sineBiasStimTextBox);
-			this->stimulusInfoGroupBox->Controls->Add(this->sineFreqStimTextBox);
 			this->stimulusInfoGroupBox->Controls->Add(this->customStimBrowseButton);
 			this->stimulusInfoGroupBox->Controls->Add(this->customStimFileTextBox);
 			this->stimulusInfoGroupBox->Controls->Add(this->customStimFileLabel);
@@ -406,19 +491,85 @@ namespace BehaviorRig {
 			this->stimulusInfoGroupBox->Controls->Add(this->magnitudeStimUnitLabel);
 			this->stimulusInfoGroupBox->Controls->Add(this->noCyclesStimUnitLabel);
 			this->stimulusInfoGroupBox->Controls->Add(this->periodStimUnitLabel);
-			this->stimulusInfoGroupBox->Controls->Add(this->scaleTypeStimComboBox);
-			this->stimulusInfoGroupBox->Controls->Add(this->contactTimeStimTextBox);
-			this->stimulusInfoGroupBox->Controls->Add(this->noCyclesStimTextBox);
-			this->stimulusInfoGroupBox->Controls->Add(this->magnitudeStimTextBox);
-			this->stimulusInfoGroupBox->Controls->Add(this->scaleStimTextBox);
-			this->stimulusInfoGroupBox->Controls->Add(this->periodStimTextBox);
 			this->stimulusInfoGroupBox->Controls->Add(this->stimulusTypeGroupBox);
-			this->stimulusInfoGroupBox->Location = System::Drawing::Point(473, 90);
+			this->stimulusInfoGroupBox->Enabled = false;
+			this->stimulusInfoGroupBox->Location = System::Drawing::Point(795, 12);
 			this->stimulusInfoGroupBox->Name = L"stimulusInfoGroupBox";
-			this->stimulusInfoGroupBox->Size = System::Drawing::Size(345, 285);
+			this->stimulusInfoGroupBox->Size = System::Drawing::Size(345, 310);
 			this->stimulusInfoGroupBox->TabIndex = 3;
 			this->stimulusInfoGroupBox->TabStop = false;
 			this->stimulusInfoGroupBox->Text = L"Stimulus Information";
+			// 
+			// stimSineBiasNumericUpDown
+			// 
+			this->stimSineBiasNumericUpDown->DecimalPlaces = 2;
+			this->stimSineBiasNumericUpDown->Location = System::Drawing::Point(207, 202);
+			this->stimSineBiasNumericUpDown->Name = L"stimSineBiasNumericUpDown";
+			this->stimSineBiasNumericUpDown->Size = System::Drawing::Size(85, 20);
+			this->stimSineBiasNumericUpDown->TabIndex = 34;
+			// 
+			// stimSineFreqNumericUpDown
+			// 
+			this->stimSineFreqNumericUpDown->DecimalPlaces = 2;
+			this->stimSineFreqNumericUpDown->Location = System::Drawing::Point(207, 176);
+			this->stimSineFreqNumericUpDown->Name = L"stimSineFreqNumericUpDown";
+			this->stimSineFreqNumericUpDown->Size = System::Drawing::Size(85, 20);
+			this->stimSineFreqNumericUpDown->TabIndex = 33;
+			// 
+			// stimScaleTypeDomainUpDown
+			// 
+			this->stimScaleTypeDomainUpDown->Items->Add(L"None");
+			this->stimScaleTypeDomainUpDown->Items->Add(L"Linear");
+			this->stimScaleTypeDomainUpDown->Items->Add(L"Geometric");
+			this->stimScaleTypeDomainUpDown->Location = System::Drawing::Point(207, 150);
+			this->stimScaleTypeDomainUpDown->Name = L"stimScaleTypeDomainUpDown";
+			this->stimScaleTypeDomainUpDown->SelectedIndex = 0;
+			this->stimScaleTypeDomainUpDown->Size = System::Drawing::Size(132, 20);
+			this->stimScaleTypeDomainUpDown->TabIndex = 32;
+			this->stimScaleTypeDomainUpDown->Text = L"None";
+			this->stimScaleTypeDomainUpDown->Wrap = true;
+			// 
+			// stimScaleNumericUpDown
+			// 
+			this->stimScaleNumericUpDown->DecimalPlaces = 2;
+			this->stimScaleNumericUpDown->Location = System::Drawing::Point(207, 123);
+			this->stimScaleNumericUpDown->Minimum = System::Decimal(gcnew cli::array< System::Int32 >(4) {100, 0, 0, System::Int32::MinValue});
+			this->stimScaleNumericUpDown->Name = L"stimScaleNumericUpDown";
+			this->stimScaleNumericUpDown->Size = System::Drawing::Size(85, 20);
+			this->stimScaleNumericUpDown->TabIndex = 31;
+			// 
+			// stimMagnitudeNumericUpDown
+			// 
+			this->stimMagnitudeNumericUpDown->DecimalPlaces = 2;
+			this->stimMagnitudeNumericUpDown->Location = System::Drawing::Point(207, 97);
+			this->stimMagnitudeNumericUpDown->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) {10000, 0, 0, 0});
+			this->stimMagnitudeNumericUpDown->Name = L"stimMagnitudeNumericUpDown";
+			this->stimMagnitudeNumericUpDown->Size = System::Drawing::Size(85, 20);
+			this->stimMagnitudeNumericUpDown->TabIndex = 30;
+			// 
+			// stimNoCyclesNumericUpDown
+			// 
+			this->stimNoCyclesNumericUpDown->Location = System::Drawing::Point(207, 71);
+			this->stimNoCyclesNumericUpDown->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) {1000, 0, 0, 0});
+			this->stimNoCyclesNumericUpDown->Name = L"stimNoCyclesNumericUpDown";
+			this->stimNoCyclesNumericUpDown->Size = System::Drawing::Size(85, 20);
+			this->stimNoCyclesNumericUpDown->TabIndex = 29;
+			// 
+			// stimContactTimeNumericUpDown
+			// 
+			this->stimContactTimeNumericUpDown->DecimalPlaces = 2;
+			this->stimContactTimeNumericUpDown->Location = System::Drawing::Point(207, 45);
+			this->stimContactTimeNumericUpDown->Name = L"stimContactTimeNumericUpDown";
+			this->stimContactTimeNumericUpDown->Size = System::Drawing::Size(85, 20);
+			this->stimContactTimeNumericUpDown->TabIndex = 28;
+			// 
+			// stimPeriodNumericUpDown
+			// 
+			this->stimPeriodNumericUpDown->DecimalPlaces = 2;
+			this->stimPeriodNumericUpDown->Location = System::Drawing::Point(207, 19);
+			this->stimPeriodNumericUpDown->Name = L"stimPeriodNumericUpDown";
+			this->stimPeriodNumericUpDown->Size = System::Drawing::Size(85, 20);
+			this->stimPeriodNumericUpDown->TabIndex = 27;
 			// 
 			// saveStimButton
 			// 
@@ -428,15 +579,17 @@ namespace BehaviorRig {
 			this->saveStimButton->TabIndex = 45;
 			this->saveStimButton->Text = L"Save Stimulus";
 			this->saveStimButton->UseVisualStyleBackColor = true;
+			this->saveStimButton->Click += gcnew System::EventHandler(this, &SetUpForm::saveStimButton_Click);
 			// 
-			// showStimulusButton
+			// submitStimulusButton
 			// 
-			this->showStimulusButton->Location = System::Drawing::Point(6, 142);
-			this->showStimulusButton->Name = L"showStimulusButton";
-			this->showStimulusButton->Size = System::Drawing::Size(75, 80);
-			this->showStimulusButton->TabIndex = 44;
-			this->showStimulusButton->Text = L"Show Stimulus";
-			this->showStimulusButton->UseVisualStyleBackColor = true;
+			this->submitStimulusButton->Location = System::Drawing::Point(6, 142);
+			this->submitStimulusButton->Name = L"submitStimulusButton";
+			this->submitStimulusButton->Size = System::Drawing::Size(75, 80);
+			this->submitStimulusButton->TabIndex = 35;
+			this->submitStimulusButton->Text = L"Submit Stimulus";
+			this->submitStimulusButton->UseVisualStyleBackColor = true;
+			this->submitStimulusButton->Click += gcnew System::EventHandler(this, &SetUpForm::submitStimulusButton_Click);
 			// 
 			// contactTimeStimUnitLabel
 			// 
@@ -485,32 +638,19 @@ namespace BehaviorRig {
 			this->sineFreqStimUnitLabel->TabIndex = 38;
 			this->sineFreqStimUnitLabel->Text = L"Hz";
 			// 
-			// sineBiasStimTextBox
-			// 
-			this->sineBiasStimTextBox->Location = System::Drawing::Point(207, 202);
-			this->sineBiasStimTextBox->Name = L"sineBiasStimTextBox";
-			this->sineBiasStimTextBox->Size = System::Drawing::Size(85, 20);
-			this->sineBiasStimTextBox->TabIndex = 37;
-			// 
-			// sineFreqStimTextBox
-			// 
-			this->sineFreqStimTextBox->Location = System::Drawing::Point(207, 176);
-			this->sineFreqStimTextBox->Name = L"sineFreqStimTextBox";
-			this->sineFreqStimTextBox->Size = System::Drawing::Size(85, 20);
-			this->sineFreqStimTextBox->TabIndex = 36;
-			// 
 			// customStimBrowseButton
 			// 
-			this->customStimBrowseButton->Location = System::Drawing::Point(284, 257);
+			this->customStimBrowseButton->Location = System::Drawing::Point(284, 271);
 			this->customStimBrowseButton->Name = L"customStimBrowseButton";
 			this->customStimBrowseButton->Size = System::Drawing::Size(55, 23);
 			this->customStimBrowseButton->TabIndex = 35;
 			this->customStimBrowseButton->Text = L"Browse";
 			this->customStimBrowseButton->UseVisualStyleBackColor = true;
+			this->customStimBrowseButton->Click += gcnew System::EventHandler(this, &SetUpForm::customStimBrowseButton_Click);
 			// 
 			// customStimFileTextBox
 			// 
-			this->customStimFileTextBox->Location = System::Drawing::Point(7, 259);
+			this->customStimFileTextBox->Location = System::Drawing::Point(7, 273);
 			this->customStimFileTextBox->Name = L"customStimFileTextBox";
 			this->customStimFileTextBox->Size = System::Drawing::Size(272, 20);
 			this->customStimFileTextBox->TabIndex = 34;
@@ -518,7 +658,7 @@ namespace BehaviorRig {
 			// customStimFileLabel
 			// 
 			this->customStimFileLabel->AutoSize = true;
-			this->customStimFileLabel->Location = System::Drawing::Point(6, 237);
+			this->customStimFileLabel->Location = System::Drawing::Point(6, 251);
 			this->customStimFileLabel->Name = L"customStimFileLabel";
 			this->customStimFileLabel->Size = System::Drawing::Size(106, 13);
 			this->customStimFileLabel->TabIndex = 33;
@@ -538,9 +678,9 @@ namespace BehaviorRig {
 			this->scaleStimLabel->AutoSize = true;
 			this->scaleStimLabel->Location = System::Drawing::Point(87, 126);
 			this->scaleStimLabel->Name = L"scaleStimLabel";
-			this->scaleStimLabel->Size = System::Drawing::Size(37, 13);
+			this->scaleStimLabel->Size = System::Drawing::Size(70, 13);
 			this->scaleStimLabel->TabIndex = 29;
-			this->scaleStimLabel->Text = L"Scale:";
+			this->scaleStimLabel->Text = L"Scale Factor:";
 			// 
 			// magnitudeStimLabel
 			// 
@@ -585,7 +725,7 @@ namespace BehaviorRig {
 			this->magnitudeStimUnitLabel->Name = L"magnitudeStimUnitLabel";
 			this->magnitudeStimUnitLabel->Size = System::Drawing::Size(41, 13);
 			this->magnitudeStimUnitLabel->TabIndex = 24;
-			this->magnitudeStimUnitLabel->Text = L"uN, um";
+			this->magnitudeStimUnitLabel->Text = L"nN, um";
 			// 
 			// noCyclesStimUnitLabel
 			// 
@@ -605,51 +745,6 @@ namespace BehaviorRig {
 			this->periodStimUnitLabel->TabIndex = 21;
 			this->periodStimUnitLabel->Text = L"s";
 			// 
-			// scaleTypeStimComboBox
-			// 
-			this->scaleTypeStimComboBox->FormattingEnabled = true;
-			this->scaleTypeStimComboBox->Items->AddRange(gcnew cli::array< System::Object^  >(3) {L"None", L"Linear", L"Geometric"});
-			this->scaleTypeStimComboBox->Location = System::Drawing::Point(207, 149);
-			this->scaleTypeStimComboBox->Name = L"scaleTypeStimComboBox";
-			this->scaleTypeStimComboBox->Size = System::Drawing::Size(132, 21);
-			this->scaleTypeStimComboBox->TabIndex = 14;
-			this->scaleTypeStimComboBox->Text = L"None";
-			// 
-			// contactTimeStimTextBox
-			// 
-			this->contactTimeStimTextBox->Location = System::Drawing::Point(207, 45);
-			this->contactTimeStimTextBox->Name = L"contactTimeStimTextBox";
-			this->contactTimeStimTextBox->Size = System::Drawing::Size(85, 20);
-			this->contactTimeStimTextBox->TabIndex = 6;
-			// 
-			// noCyclesStimTextBox
-			// 
-			this->noCyclesStimTextBox->Location = System::Drawing::Point(207, 71);
-			this->noCyclesStimTextBox->Name = L"noCyclesStimTextBox";
-			this->noCyclesStimTextBox->Size = System::Drawing::Size(85, 20);
-			this->noCyclesStimTextBox->TabIndex = 5;
-			// 
-			// magnitudeStimTextBox
-			// 
-			this->magnitudeStimTextBox->Location = System::Drawing::Point(207, 97);
-			this->magnitudeStimTextBox->Name = L"magnitudeStimTextBox";
-			this->magnitudeStimTextBox->Size = System::Drawing::Size(85, 20);
-			this->magnitudeStimTextBox->TabIndex = 4;
-			// 
-			// scaleStimTextBox
-			// 
-			this->scaleStimTextBox->Location = System::Drawing::Point(207, 123);
-			this->scaleStimTextBox->Name = L"scaleStimTextBox";
-			this->scaleStimTextBox->Size = System::Drawing::Size(85, 20);
-			this->scaleStimTextBox->TabIndex = 3;
-			// 
-			// periodStimTextBox
-			// 
-			this->periodStimTextBox->Location = System::Drawing::Point(207, 19);
-			this->periodStimTextBox->Name = L"periodStimTextBox";
-			this->periodStimTextBox->Size = System::Drawing::Size(85, 20);
-			this->periodStimTextBox->TabIndex = 1;
-			// 
 			// stimulusTypeGroupBox
 			// 
 			this->stimulusTypeGroupBox->Controls->Add(this->customTypeRadioButton);
@@ -659,7 +754,7 @@ namespace BehaviorRig {
 			this->stimulusTypeGroupBox->Location = System::Drawing::Point(7, 20);
 			this->stimulusTypeGroupBox->Name = L"stimulusTypeGroupBox";
 			this->stimulusTypeGroupBox->Size = System::Drawing::Size(74, 115);
-			this->stimulusTypeGroupBox->TabIndex = 0;
+			this->stimulusTypeGroupBox->TabIndex = 26;
 			this->stimulusTypeGroupBox->TabStop = false;
 			this->stimulusTypeGroupBox->Text = L"Type";
 			// 
@@ -708,9 +803,9 @@ namespace BehaviorRig {
 			// stimulusSignalGroupBox
 			// 
 			this->stimulusSignalGroupBox->Controls->Add(this->stimulusSignalChart);
-			this->stimulusSignalGroupBox->Location = System::Drawing::Point(334, 381);
+			this->stimulusSignalGroupBox->Location = System::Drawing::Point(473, 328);
 			this->stimulusSignalGroupBox->Name = L"stimulusSignalGroupBox";
-			this->stimulusSignalGroupBox->Size = System::Drawing::Size(484, 180);
+			this->stimulusSignalGroupBox->Size = System::Drawing::Size(667, 200);
 			this->stimulusSignalGroupBox->TabIndex = 4;
 			this->stimulusSignalGroupBox->TabStop = false;
 			this->stimulusSignalGroupBox->Text = L"Stimulus Signal";
@@ -718,16 +813,17 @@ namespace BehaviorRig {
 			// stimulusSignalChart
 			// 
 			this->stimulusSignalChart->BackColor = System::Drawing::SystemColors::Control;
-			chartArea1->AxisX->Title = L"Time (s)";
-			chartArea1->Name = L"ChartArea1";
-			this->stimulusSignalChart->ChartAreas->Add(chartArea1);
+			chartArea2->AxisX->Minimum = 0;
+			chartArea2->AxisX->Title = L"Time (s)";
+			chartArea2->Name = L"ChartArea1";
+			this->stimulusSignalChart->ChartAreas->Add(chartArea2);
 			this->stimulusSignalChart->Location = System::Drawing::Point(6, 19);
 			this->stimulusSignalChart->Name = L"stimulusSignalChart";
-			series1->ChartArea = L"ChartArea1";
-			series1->ChartType = System::Windows::Forms::DataVisualization::Charting::SeriesChartType::Line;
-			series1->Name = L"Series1";
-			this->stimulusSignalChart->Series->Add(series1);
-			this->stimulusSignalChart->Size = System::Drawing::Size(472, 155);
+			series2->ChartArea = L"ChartArea1";
+			series2->ChartType = System::Windows::Forms::DataVisualization::Charting::SeriesChartType::Line;
+			series2->Name = L"Stimulus";
+			this->stimulusSignalChart->Series->Add(series2);
+			this->stimulusSignalChart->Size = System::Drawing::Size(655, 175);
 			this->stimulusSignalChart->TabIndex = 0;
 			this->stimulusSignalChart->Text = L"stimulusSignalChart";
 			// 
@@ -737,17 +833,17 @@ namespace BehaviorRig {
 			this->dataOutputGroupBox->Controls->Add(this->outputLocationTextBox);
 			this->dataOutputGroupBox->Location = System::Drawing::Point(473, 12);
 			this->dataOutputGroupBox->Name = L"dataOutputGroupBox";
-			this->dataOutputGroupBox->Size = System::Drawing::Size(345, 72);
+			this->dataOutputGroupBox->Size = System::Drawing::Size(316, 84);
 			this->dataOutputGroupBox->TabIndex = 6;
 			this->dataOutputGroupBox->TabStop = false;
 			this->dataOutputGroupBox->Text = L"Data Output Location";
 			// 
 			// outputLocationBrowseButton
 			// 
-			this->outputLocationBrowseButton->Location = System::Drawing::Point(284, 28);
+			this->outputLocationBrowseButton->Location = System::Drawing::Point(248, 55);
 			this->outputLocationBrowseButton->Name = L"outputLocationBrowseButton";
 			this->outputLocationBrowseButton->Size = System::Drawing::Size(55, 23);
-			this->outputLocationBrowseButton->TabIndex = 20;
+			this->outputLocationBrowseButton->TabIndex = 16;
 			this->outputLocationBrowseButton->Text = L"Browse";
 			this->outputLocationBrowseButton->UseVisualStyleBackColor = true;
 			this->outputLocationBrowseButton->Click += gcnew System::EventHandler(this, &SetUpForm::outputLocationBrowseButton_Click);
@@ -756,36 +852,39 @@ namespace BehaviorRig {
 			// 
 			this->outputLocationTextBox->Location = System::Drawing::Point(6, 30);
 			this->outputLocationTextBox->Name = L"outputLocationTextBox";
-			this->outputLocationTextBox->Size = System::Drawing::Size(272, 20);
-			this->outputLocationTextBox->TabIndex = 1;
-			this->outputLocationTextBox->Text = L"C:\\\\Users\\\\Eileen Mazzochette\\\\Desktop\\\\TestFolder\\\\";
+			this->outputLocationTextBox->Size = System::Drawing::Size(297, 20);
+			this->outputLocationTextBox->TabIndex = 15;
+			this->outputLocationTextBox->Text = L"C:\\\\Users\\\\HAWK\\\\Documents\\\\HAWKData";
 			// 
 			// cancelSetupButton
 			// 
-			this->cancelSetupButton->Location = System::Drawing::Point(743, 567);
+			this->cancelSetupButton->Location = System::Drawing::Point(1065, 534);
 			this->cancelSetupButton->Name = L"cancelSetupButton";
 			this->cancelSetupButton->Size = System::Drawing::Size(75, 23);
-			this->cancelSetupButton->TabIndex = 7;
+			this->cancelSetupButton->TabIndex = 37;
 			this->cancelSetupButton->Text = L"Cancel";
 			this->cancelSetupButton->UseVisualStyleBackColor = true;
 			this->cancelSetupButton->Click += gcnew System::EventHandler(this, &SetUpForm::cancelSetupButton_Click);
 			// 
 			// finishSetupButton
 			// 
-			this->finishSetupButton->Location = System::Drawing::Point(662, 567);
+			this->finishSetupButton->Location = System::Drawing::Point(984, 534);
 			this->finishSetupButton->Name = L"finishSetupButton";
 			this->finishSetupButton->Size = System::Drawing::Size(75, 23);
-			this->finishSetupButton->TabIndex = 8;
+			this->finishSetupButton->TabIndex = 36;
 			this->finishSetupButton->Text = L"OK";
 			this->finishSetupButton->UseVisualStyleBackColor = true;
 			this->finishSetupButton->Click += gcnew System::EventHandler(this, &SetUpForm::finishSetupButton_Click);
 			// 
 			// customStimOpenFileDialog
 			// 
-			this->customStimOpenFileDialog->FileName = L"openFileDialog1";
+			this->customStimOpenFileDialog->InitialDirectory = L"C:\\Users\\Eileen Mazzochette\\Desktop\\Saved Stimuli";
 			// 
 			// experimentInfoGroupBox
 			// 
+			this->experimentInfoGroupBox->Controls->Add(this->preStimRecordTimeNumericUpDown);
+			this->experimentInfoGroupBox->Controls->Add(this->preStimRecordTimeUnitLabel);
+			this->experimentInfoGroupBox->Controls->Add(this->preStimRecordTimeLabel);
 			this->experimentInfoGroupBox->Controls->Add(this->wormFoodStatusComboBox);
 			this->experimentInfoGroupBox->Controls->Add(this->wormFoodStatusLabel);
 			this->experimentInfoGroupBox->Controls->Add(this->ambientTemperatureNumericUpDown);
@@ -811,20 +910,46 @@ namespace BehaviorRig {
 			this->experimentInfoGroupBox->Controls->Add(this->experimentTitleLabel);
 			this->experimentInfoGroupBox->Location = System::Drawing::Point(12, 12);
 			this->experimentInfoGroupBox->Name = L"experimentInfoGroupBox";
-			this->experimentInfoGroupBox->Size = System::Drawing::Size(316, 363);
+			this->experimentInfoGroupBox->Size = System::Drawing::Size(316, 402);
 			this->experimentInfoGroupBox->TabIndex = 9;
 			this->experimentInfoGroupBox->TabStop = false;
 			this->experimentInfoGroupBox->Text = L"Experiment Information";
 			// 
+			// preStimRecordTimeNumericUpDown
+			// 
+			this->preStimRecordTimeNumericUpDown->Location = System::Drawing::Point(141, 257);
+			this->preStimRecordTimeNumericUpDown->Name = L"preStimRecordTimeNumericUpDown";
+			this->preStimRecordTimeNumericUpDown->Size = System::Drawing::Size(45, 20);
+			this->preStimRecordTimeNumericUpDown->TabIndex = 10;
+			this->preStimRecordTimeNumericUpDown->Value = System::Decimal(gcnew cli::array< System::Int32 >(4) {10, 0, 0, 0});
+			// 
+			// preStimRecordTimeUnitLabel
+			// 
+			this->preStimRecordTimeUnitLabel->AutoSize = true;
+			this->preStimRecordTimeUnitLabel->Location = System::Drawing::Point(192, 259);
+			this->preStimRecordTimeUnitLabel->Name = L"preStimRecordTimeUnitLabel";
+			this->preStimRecordTimeUnitLabel->Size = System::Drawing::Size(97, 13);
+			this->preStimRecordTimeUnitLabel->TabIndex = 29;
+			this->preStimRecordTimeUnitLabel->Text = L"s - assuming 12 fps";
+			// 
+			// preStimRecordTimeLabel
+			// 
+			this->preStimRecordTimeLabel->AutoSize = true;
+			this->preStimRecordTimeLabel->Location = System::Drawing::Point(6, 259);
+			this->preStimRecordTimeLabel->Name = L"preStimRecordTimeLabel";
+			this->preStimRecordTimeLabel->Size = System::Drawing::Size(132, 13);
+			this->preStimRecordTimeLabel->TabIndex = 28;
+			this->preStimRecordTimeLabel->Text = L"Pre-Stimulus Record Time:";
+			// 
 			// wormFoodStatusComboBox
 			// 
 			this->wormFoodStatusComboBox->FormattingEnabled = true;
-			this->wormFoodStatusComboBox->Items->AddRange(gcnew cli::array< System::Object^  >(2) {L"on", L"off"});
+			this->wormFoodStatusComboBox->Items->AddRange(gcnew cli::array< System::Object^  >(3) {L"On", L"Off", L"See Notes"});
 			this->wormFoodStatusComboBox->Location = System::Drawing::Point(141, 177);
 			this->wormFoodStatusComboBox->Name = L"wormFoodStatusComboBox";
 			this->wormFoodStatusComboBox->Size = System::Drawing::Size(169, 21);
-			this->wormFoodStatusComboBox->TabIndex = 26;
-			this->wormFoodStatusComboBox->Text = L"off";
+			this->wormFoodStatusComboBox->TabIndex = 7;
+			this->wormFoodStatusComboBox->Text = L"Off";
 			// 
 			// wormFoodStatusLabel
 			// 
@@ -841,7 +966,7 @@ namespace BehaviorRig {
 			this->ambientTemperatureNumericUpDown->Location = System::Drawing::Point(141, 230);
 			this->ambientTemperatureNumericUpDown->Name = L"ambientTemperatureNumericUpDown";
 			this->ambientTemperatureNumericUpDown->Size = System::Drawing::Size(45, 20);
-			this->ambientTemperatureNumericUpDown->TabIndex = 25;
+			this->ambientTemperatureNumericUpDown->TabIndex = 9;
 			this->ambientTemperatureNumericUpDown->Value = System::Decimal(gcnew cli::array< System::Int32 >(4) {22, 0, 0, 0});
 			// 
 			// ambientHumidityNumericUpDown
@@ -850,7 +975,7 @@ namespace BehaviorRig {
 			this->ambientHumidityNumericUpDown->Location = System::Drawing::Point(141, 204);
 			this->ambientHumidityNumericUpDown->Name = L"ambientHumidityNumericUpDown";
 			this->ambientHumidityNumericUpDown->Size = System::Drawing::Size(45, 20);
-			this->ambientHumidityNumericUpDown->TabIndex = 24;
+			this->ambientHumidityNumericUpDown->TabIndex = 8;
 			this->ambientHumidityNumericUpDown->Value = System::Decimal(gcnew cli::array< System::Int32 >(4) {25, 0, 0, 0});
 			// 
 			// percentAgarNumericUpDown
@@ -858,7 +983,7 @@ namespace BehaviorRig {
 			this->percentAgarNumericUpDown->Location = System::Drawing::Point(141, 98);
 			this->percentAgarNumericUpDown->Name = L"percentAgarNumericUpDown";
 			this->percentAgarNumericUpDown->Size = System::Drawing::Size(45, 20);
-			this->percentAgarNumericUpDown->TabIndex = 23;
+			this->percentAgarNumericUpDown->TabIndex = 4;
 			this->percentAgarNumericUpDown->Value = System::Decimal(gcnew cli::array< System::Int32 >(4) {2, 0, 0, 0});
 			// 
 			// percentAgarUnitLabel
@@ -894,22 +1019,21 @@ namespace BehaviorRig {
 			// 
 			// otherInfoTextBox
 			// 
-			this->otherInfoTextBox->Location = System::Drawing::Point(141, 255);
+			this->otherInfoTextBox->Location = System::Drawing::Point(141, 286);
 			this->otherInfoTextBox->Multiline = true;
 			this->otherInfoTextBox->Name = L"otherInfoTextBox";
-			this->otherInfoTextBox->Size = System::Drawing::Size(169, 102);
-			this->otherInfoTextBox->TabIndex = 9;
-			this->otherInfoTextBox->Text = L"other info test";
+			this->otherInfoTextBox->Size = System::Drawing::Size(169, 96);
+			this->otherInfoTextBox->TabIndex = 11;
 			// 
 			// wormGenderComboBox
 			// 
 			this->wormGenderComboBox->FormattingEnabled = true;
-			this->wormGenderComboBox->Items->AddRange(gcnew cli::array< System::Object^  >(2) {L"Male", L"Hermaphradite"});
+			this->wormGenderComboBox->Items->AddRange(gcnew cli::array< System::Object^  >(2) {L"Male", L"Hermaphrodite"});
 			this->wormGenderComboBox->Location = System::Drawing::Point(141, 123);
 			this->wormGenderComboBox->Name = L"wormGenderComboBox";
 			this->wormGenderComboBox->Size = System::Drawing::Size(169, 21);
 			this->wormGenderComboBox->TabIndex = 5;
-			this->wormGenderComboBox->Text = L"Hermaphradite";
+			this->wormGenderComboBox->Text = L"Hermaphrodite";
 			// 
 			// wormTreatmentsTextBox
 			// 
@@ -917,7 +1041,6 @@ namespace BehaviorRig {
 			this->wormTreatmentsTextBox->Name = L"wormTreatmentsTextBox";
 			this->wormTreatmentsTextBox->Size = System::Drawing::Size(169, 20);
 			this->wormTreatmentsTextBox->TabIndex = 3;
-			this->wormTreatmentsTextBox->Text = L"none";
 			// 
 			// wormStrainTextBox
 			// 
@@ -925,7 +1048,6 @@ namespace BehaviorRig {
 			this->wormStrainTextBox->Name = L"wormStrainTextBox";
 			this->wormStrainTextBox->Size = System::Drawing::Size(169, 20);
 			this->wormStrainTextBox->TabIndex = 2;
-			this->wormStrainTextBox->Text = L"N2";
 			// 
 			// experimentTitleTextBox
 			// 
@@ -933,7 +1055,6 @@ namespace BehaviorRig {
 			this->experimentTitleTextBox->Name = L"experimentTitleTextBox";
 			this->experimentTitleTextBox->Size = System::Drawing::Size(169, 20);
 			this->experimentTitleTextBox->TabIndex = 1;
-			this->experimentTitleTextBox->Text = L"TitleTest";
 			// 
 			// wormAgeComboBox
 			// 
@@ -948,7 +1069,7 @@ namespace BehaviorRig {
 			// otherInfoLabel
 			// 
 			this->otherInfoLabel->AutoSize = true;
-			this->otherInfoLabel->Location = System::Drawing::Point(6, 258);
+			this->otherInfoLabel->Location = System::Drawing::Point(6, 286);
 			this->otherInfoLabel->Name = L"otherInfoLabel";
 			this->otherInfoLabel->Size = System::Drawing::Size(122, 13);
 			this->otherInfoLabel->TabIndex = 8;
@@ -1028,6 +1149,13 @@ namespace BehaviorRig {
 			// 
 			// cantileverGroupBox
 			// 
+			this->cantileverGroupBox->Controls->Add(this->dParameterLabel);
+			this->cantileverGroupBox->Controls->Add(this->iParameterLabel);
+			this->cantileverGroupBox->Controls->Add(this->pParameterLabel);
+			this->cantileverGroupBox->Controls->Add(this->controlParametersLabel);
+			this->cantileverGroupBox->Controls->Add(this->dParameterNumericUpDown);
+			this->cantileverGroupBox->Controls->Add(this->iParameterNumericUpDown);
+			this->cantileverGroupBox->Controls->Add(this->pParameterNumericUpDown);
 			this->cantileverGroupBox->Controls->Add(this->cantileverSensitivityNumericUpDown);
 			this->cantileverGroupBox->Controls->Add(this->cantileverStiffnessNumericUpDown);
 			this->cantileverGroupBox->Controls->Add(this->cantileverFrequencyNumericUpDown);
@@ -1045,39 +1173,100 @@ namespace BehaviorRig {
 			this->cantileverGroupBox->Controls->Add(this->cantileverFrequencyLabel);
 			this->cantileverGroupBox->Controls->Add(this->waferIDTextBox);
 			this->cantileverGroupBox->Controls->Add(this->cantileverIDSearchButton);
-			this->cantileverGroupBox->Location = System::Drawing::Point(12, 381);
+			this->cantileverGroupBox->Enabled = false;
+			this->cantileverGroupBox->Location = System::Drawing::Point(473, 101);
 			this->cantileverGroupBox->Name = L"cantileverGroupBox";
-			this->cantileverGroupBox->Size = System::Drawing::Size(316, 180);
+			this->cantileverGroupBox->Size = System::Drawing::Size(316, 222);
 			this->cantileverGroupBox->TabIndex = 10;
 			this->cantileverGroupBox->TabStop = false;
 			this->cantileverGroupBox->Text = L"Cantilever Information";
 			// 
+			// dParameterLabel
+			// 
+			this->dParameterLabel->AutoSize = true;
+			this->dParameterLabel->Location = System::Drawing::Point(207, 178);
+			this->dParameterLabel->Name = L"dParameterLabel";
+			this->dParameterLabel->Size = System::Drawing::Size(18, 13);
+			this->dParameterLabel->TabIndex = 35;
+			this->dParameterLabel->Text = L"D:";
+			// 
+			// iParameterLabel
+			// 
+			this->iParameterLabel->AutoSize = true;
+			this->iParameterLabel->Location = System::Drawing::Point(207, 151);
+			this->iParameterLabel->Name = L"iParameterLabel";
+			this->iParameterLabel->Size = System::Drawing::Size(13, 13);
+			this->iParameterLabel->TabIndex = 34;
+			this->iParameterLabel->Text = L"I:";
+			// 
+			// pParameterLabel
+			// 
+			this->pParameterLabel->AutoSize = true;
+			this->pParameterLabel->Location = System::Drawing::Point(207, 126);
+			this->pParameterLabel->Name = L"pParameterLabel";
+			this->pParameterLabel->Size = System::Drawing::Size(17, 13);
+			this->pParameterLabel->TabIndex = 33;
+			this->pParameterLabel->Text = L"P:";
+			// 
+			// controlParametersLabel
+			// 
+			this->controlParametersLabel->AutoSize = true;
+			this->controlParametersLabel->Location = System::Drawing::Point(204, 102);
+			this->controlParametersLabel->Name = L"controlParametersLabel";
+			this->controlParametersLabel->Size = System::Drawing::Size(99, 13);
+			this->controlParametersLabel->TabIndex = 32;
+			this->controlParametersLabel->Text = L"Control Parameters:";
+			// 
+			// dParameterNumericUpDown
+			// 
+			this->dParameterNumericUpDown->DecimalPlaces = 5;
+			this->dParameterNumericUpDown->Location = System::Drawing::Point(230, 175);
+			this->dParameterNumericUpDown->Name = L"dParameterNumericUpDown";
+			this->dParameterNumericUpDown->Size = System::Drawing::Size(73, 20);
+			this->dParameterNumericUpDown->TabIndex = 25;
+			// 
+			// iParameterNumericUpDown
+			// 
+			this->iParameterNumericUpDown->DecimalPlaces = 5;
+			this->iParameterNumericUpDown->Location = System::Drawing::Point(230, 149);
+			this->iParameterNumericUpDown->Name = L"iParameterNumericUpDown";
+			this->iParameterNumericUpDown->Size = System::Drawing::Size(73, 20);
+			this->iParameterNumericUpDown->TabIndex = 24;
+			// 
+			// pParameterNumericUpDown
+			// 
+			this->pParameterNumericUpDown->DecimalPlaces = 5;
+			this->pParameterNumericUpDown->Location = System::Drawing::Point(230, 123);
+			this->pParameterNumericUpDown->Name = L"pParameterNumericUpDown";
+			this->pParameterNumericUpDown->Size = System::Drawing::Size(73, 20);
+			this->pParameterNumericUpDown->TabIndex = 23;
+			// 
 			// cantileverSensitivityNumericUpDown
 			// 
-			this->cantileverSensitivityNumericUpDown->DecimalPlaces = 4;
-			this->cantileverSensitivityNumericUpDown->Location = System::Drawing::Point(141, 152);
-			this->cantileverSensitivityNumericUpDown->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) {1000, 0, 0, 0});
+			this->cantileverSensitivityNumericUpDown->DecimalPlaces = 5;
+			this->cantileverSensitivityNumericUpDown->Location = System::Drawing::Point(66, 175);
+			this->cantileverSensitivityNumericUpDown->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) {100000, 0, 0, 0});
 			this->cantileverSensitivityNumericUpDown->Name = L"cantileverSensitivityNumericUpDown";
-			this->cantileverSensitivityNumericUpDown->Size = System::Drawing::Size(135, 20);
-			this->cantileverSensitivityNumericUpDown->TabIndex = 28;
+			this->cantileverSensitivityNumericUpDown->Size = System::Drawing::Size(80, 20);
+			this->cantileverSensitivityNumericUpDown->TabIndex = 22;
 			// 
 			// cantileverStiffnessNumericUpDown
 			// 
-			this->cantileverStiffnessNumericUpDown->DecimalPlaces = 4;
-			this->cantileverStiffnessNumericUpDown->Location = System::Drawing::Point(141, 126);
+			this->cantileverStiffnessNumericUpDown->DecimalPlaces = 5;
+			this->cantileverStiffnessNumericUpDown->Location = System::Drawing::Point(66, 149);
 			this->cantileverStiffnessNumericUpDown->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) {1000, 0, 0, 0});
 			this->cantileverStiffnessNumericUpDown->Name = L"cantileverStiffnessNumericUpDown";
-			this->cantileverStiffnessNumericUpDown->Size = System::Drawing::Size(135, 20);
-			this->cantileverStiffnessNumericUpDown->TabIndex = 27;
+			this->cantileverStiffnessNumericUpDown->Size = System::Drawing::Size(80, 20);
+			this->cantileverStiffnessNumericUpDown->TabIndex = 21;
 			// 
 			// cantileverFrequencyNumericUpDown
 			// 
 			this->cantileverFrequencyNumericUpDown->DecimalPlaces = 4;
-			this->cantileverFrequencyNumericUpDown->Location = System::Drawing::Point(141, 100);
-			this->cantileverFrequencyNumericUpDown->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) {1000, 0, 0, 0});
+			this->cantileverFrequencyNumericUpDown->Location = System::Drawing::Point(66, 123);
+			this->cantileverFrequencyNumericUpDown->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) {1000000, 0, 0, 0});
 			this->cantileverFrequencyNumericUpDown->Name = L"cantileverFrequencyNumericUpDown";
-			this->cantileverFrequencyNumericUpDown->Size = System::Drawing::Size(135, 20);
-			this->cantileverFrequencyNumericUpDown->TabIndex = 26;
+			this->cantileverFrequencyNumericUpDown->Size = System::Drawing::Size(80, 20);
+			this->cantileverFrequencyNumericUpDown->TabIndex = 20;
 			// 
 			// deviceIDExampleLabel
 			// 
@@ -1111,7 +1300,7 @@ namespace BehaviorRig {
 			this->deviceIDTextBox->Location = System::Drawing::Point(141, 45);
 			this->deviceIDTextBox->Name = L"deviceIDTextBox";
 			this->deviceIDTextBox->Size = System::Drawing::Size(115, 20);
-			this->deviceIDTextBox->TabIndex = 13;
+			this->deviceIDTextBox->TabIndex = 18;
 			this->deviceIDTextBox->Text = L"1001";
 			// 
 			// cantileverSpecLabel
@@ -1135,16 +1324,16 @@ namespace BehaviorRig {
 			// cantileverSensitivityUnitLabel
 			// 
 			this->cantileverSensitivityUnitLabel->AutoSize = true;
-			this->cantileverSensitivityUnitLabel->Location = System::Drawing::Point(283, 155);
+			this->cantileverSensitivityUnitLabel->Location = System::Drawing::Point(148, 178);
 			this->cantileverSensitivityUnitLabel->Name = L"cantileverSensitivityUnitLabel";
-			this->cantileverSensitivityUnitLabel->Size = System::Drawing::Size(27, 13);
+			this->cantileverSensitivityUnitLabel->Size = System::Drawing::Size(33, 13);
 			this->cantileverSensitivityUnitLabel->TabIndex = 10;
-			this->cantileverSensitivityUnitLabel->Text = L"V/N";
+			this->cantileverSensitivityUnitLabel->Text = L"um/V";
 			// 
 			// cantileverSensitivityLabel
 			// 
 			this->cantileverSensitivityLabel->AutoSize = true;
-			this->cantileverSensitivityLabel->Location = System::Drawing::Point(6, 155);
+			this->cantileverSensitivityLabel->Location = System::Drawing::Point(6, 178);
 			this->cantileverSensitivityLabel->Name = L"cantileverSensitivityLabel";
 			this->cantileverSensitivityLabel->Size = System::Drawing::Size(57, 13);
 			this->cantileverSensitivityLabel->TabIndex = 8;
@@ -1153,7 +1342,7 @@ namespace BehaviorRig {
 			// cantileverStiffnessUnitLabel
 			// 
 			this->cantileverStiffnessUnitLabel->AutoSize = true;
-			this->cantileverStiffnessUnitLabel->Location = System::Drawing::Point(282, 129);
+			this->cantileverStiffnessUnitLabel->Location = System::Drawing::Point(147, 152);
 			this->cantileverStiffnessUnitLabel->Name = L"cantileverStiffnessUnitLabel";
 			this->cantileverStiffnessUnitLabel->Size = System::Drawing::Size(28, 13);
 			this->cantileverStiffnessUnitLabel->TabIndex = 7;
@@ -1162,16 +1351,16 @@ namespace BehaviorRig {
 			// cantileverFreqUnitLabel
 			// 
 			this->cantileverFreqUnitLabel->AutoSize = true;
-			this->cantileverFreqUnitLabel->Location = System::Drawing::Point(282, 103);
+			this->cantileverFreqUnitLabel->Location = System::Drawing::Point(147, 126);
 			this->cantileverFreqUnitLabel->Name = L"cantileverFreqUnitLabel";
-			this->cantileverFreqUnitLabel->Size = System::Drawing::Size(20, 13);
+			this->cantileverFreqUnitLabel->Size = System::Drawing::Size(26, 13);
 			this->cantileverFreqUnitLabel->TabIndex = 6;
-			this->cantileverFreqUnitLabel->Text = L"Hz";
+			this->cantileverFreqUnitLabel->Text = L"kHz";
 			// 
 			// cantileverStiffnessLabel
 			// 
 			this->cantileverStiffnessLabel->AutoSize = true;
-			this->cantileverStiffnessLabel->Location = System::Drawing::Point(6, 129);
+			this->cantileverStiffnessLabel->Location = System::Drawing::Point(6, 152);
 			this->cantileverStiffnessLabel->Name = L"cantileverStiffnessLabel";
 			this->cantileverStiffnessLabel->Size = System::Drawing::Size(50, 13);
 			this->cantileverStiffnessLabel->TabIndex = 3;
@@ -1180,7 +1369,7 @@ namespace BehaviorRig {
 			// cantileverFrequencyLabel
 			// 
 			this->cantileverFrequencyLabel->AutoSize = true;
-			this->cantileverFrequencyLabel->Location = System::Drawing::Point(6, 103);
+			this->cantileverFrequencyLabel->Location = System::Drawing::Point(6, 126);
 			this->cantileverFrequencyLabel->Name = L"cantileverFrequencyLabel";
 			this->cantileverFrequencyLabel->Size = System::Drawing::Size(60, 13);
 			this->cantileverFrequencyLabel->TabIndex = 2;
@@ -1191,7 +1380,7 @@ namespace BehaviorRig {
 			this->waferIDTextBox->Location = System::Drawing::Point(141, 19);
 			this->waferIDTextBox->Name = L"waferIDTextBox";
 			this->waferIDTextBox->Size = System::Drawing::Size(115, 20);
-			this->waferIDTextBox->TabIndex = 1;
+			this->waferIDTextBox->TabIndex = 17;
 			this->waferIDTextBox->Text = L"EM10A";
 			// 
 			// cantileverIDSearchButton
@@ -1199,16 +1388,20 @@ namespace BehaviorRig {
 			this->cantileverIDSearchButton->Location = System::Drawing::Point(141, 71);
 			this->cantileverIDSearchButton->Name = L"cantileverIDSearchButton";
 			this->cantileverIDSearchButton->Size = System::Drawing::Size(169, 23);
-			this->cantileverIDSearchButton->TabIndex = 0;
+			this->cantileverIDSearchButton->TabIndex = 19;
 			this->cantileverIDSearchButton->Text = L"Extract From Spreadsheet";
 			this->cantileverIDSearchButton->UseVisualStyleBackColor = true;
 			this->cantileverIDSearchButton->Click += gcnew System::EventHandler(this, &SetUpForm::cantileverIDSearchButton_Click);
+			// 
+			// saveStimFileDialog
+			// 
+			this->saveStimFileDialog->InitialDirectory = L"C:\\Users\\HAWK\\Documents\\HAWKData";
 			// 
 			// SetUpForm
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(830, 598);
+			this->ClientSize = System::Drawing::Size(1150, 564);
 			this->Controls->Add(this->cantileverGroupBox);
 			this->Controls->Add(this->experimentInfoGroupBox);
 			this->Controls->Add(this->finishSetupButton);
@@ -1218,7 +1411,9 @@ namespace BehaviorRig {
 			this->Controls->Add(this->stimulusInfoGroupBox);
 			this->Controls->Add(this->targetGroupBox);
 			this->Controls->Add(this->clampModeGroupBox);
+			this->FormBorderStyle = System::Windows::Forms::FormBorderStyle::FixedDialog;
 			this->Name = L"SetUpForm";
+			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
 			this->Text = L"Experiment Set Up";
 			this->clampModeGroupBox->ResumeLayout(false);
 			this->clampModeGroupBox->PerformLayout();
@@ -1229,6 +1424,13 @@ namespace BehaviorRig {
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->targetTrackBar))->EndInit();
 			this->stimulusInfoGroupBox->ResumeLayout(false);
 			this->stimulusInfoGroupBox->PerformLayout();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->stimSineBiasNumericUpDown))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->stimSineFreqNumericUpDown))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->stimScaleNumericUpDown))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->stimMagnitudeNumericUpDown))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->stimNoCyclesNumericUpDown))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->stimContactTimeNumericUpDown))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->stimPeriodNumericUpDown))->EndInit();
 			this->stimulusTypeGroupBox->ResumeLayout(false);
 			this->stimulusTypeGroupBox->PerformLayout();
 			this->stimulusSignalGroupBox->ResumeLayout(false);
@@ -1237,11 +1439,15 @@ namespace BehaviorRig {
 			this->dataOutputGroupBox->PerformLayout();
 			this->experimentInfoGroupBox->ResumeLayout(false);
 			this->experimentInfoGroupBox->PerformLayout();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->preStimRecordTimeNumericUpDown))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->ambientTemperatureNumericUpDown))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->ambientHumidityNumericUpDown))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->percentAgarNumericUpDown))->EndInit();
 			this->cantileverGroupBox->ResumeLayout(false);
 			this->cantileverGroupBox->PerformLayout();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->dParameterNumericUpDown))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->iParameterNumericUpDown))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->pParameterNumericUpDown))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->cantileverSensitivityNumericUpDown))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->cantileverStiffnessNumericUpDown))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->cantileverFrequencyNumericUpDown))->EndInit();
@@ -1251,11 +1457,42 @@ namespace BehaviorRig {
 #pragma endregion
 
 
-private: 
+private:
+	/* Function: finishSetupButton_Click
+	 * ---------------------------------
+	 * Click event handler to finish setting up the experiment. If the form is
+	 * complete the contained data is output to the experiment object. The YAML
+	 * and Video data writers are set up.
+	 */
 	System::Void finishSetupButton_Click(System::Object^  sender, System::EventArgs^  e)
 	{
 		if (formIsComplete()) {
 			populateExperimentFromForm();
+			
+			//retrieve info from FPGA and display to user:
+			String^ fpgaData = "Current Parameters Stored in the FPGA: " + System::Environment::NewLine;
+			fpgaData = String::Concat(fpgaData,"P Parameter: ", (gcnew System::Double(comm->P_Parameter))->ToString()) + System::Environment::NewLine;
+			fpgaData = String::Concat(fpgaData, "I Parameter: ", (gcnew System::Double(comm->I_Parameter))->ToString()) + System::Environment::NewLine;
+			fpgaData = String::Concat(fpgaData, "D Parameter: ", (gcnew System::Double(comm->D_Parameter))->ToString()) + System::Environment::NewLine;
+			if (comm->clampModeParameter == 2)
+				fpgaData = String::Concat(fpgaData, "Clamp Mode: Force clamp") + System::Environment::NewLine;
+			else if (comm->clampModeParameter == 1)
+				fpgaData = String::Concat(fpgaData, "Clamp Mode: Displacement clamp") + System::Environment::NewLine;
+			else 
+				fpgaData = String::Concat(fpgaData, "Clamp Mode: Open Loop") + System::Environment::NewLine;
+
+			//fpgaData = String::Concat(fpgaData, "Clamp Mode: ", (gcnew System::Double(comm->clampModeParameter))->ToString()) + System::Environment::NewLine;
+			fpgaData = String::Concat(fpgaData, "Trigger Mode: ", (gcnew System::Double(comm->triggerModeParameter))->ToString()) + System::Environment::NewLine;
+			fpgaData = String::Concat(fpgaData, "Acquisition Frequency: ", (gcnew System::Double(comm->acquisitionFreqParameter))->ToString()) + System::Environment::NewLine;
+			fpgaData = String::Concat(fpgaData, "Actuator Frequency: ", (gcnew System::Double(comm->actuatorFreqParameter))->ToString()) + System::Environment::NewLine;
+			if (comm->waveTablePresentParameter == 1)
+				fpgaData = String::Concat(fpgaData, "Wave Table Present: Yes") + System::Environment::NewLine;
+			else 
+				fpgaData = String::Concat(fpgaData, "Wave Table Present: No") + System::Environment::NewLine;
+			//fpgaData = String::Concat(fpgaData, "Wave Table Present: ", (gcnew System::Double(comm->waveTablePresentParameter))->ToString()) + System::Environment::NewLine;
+			MessageBox::Show(fpgaData);
+			
+
 			int dataOutputError = experiment->setUpDataOutput();
 			if (dataOutputError == AVI_OPEN_ERROR) {
 				MessageBox::Show("There was an error creating a writable AVI file.");
@@ -1266,47 +1503,96 @@ private:
 				this->Close();
 			}
 		}
+
+
+
 	}
 
+	/* Function: cancelSetupButton_Click
+	 * ---------------------------------
+	 * Click event handler to cancel setting up the experiment. The form
+	 * result is set to cancel and the form is closed.
+	 */
 	System::Void cancelSetupButton_Click(System::Object^  sender, System::EventArgs^  e)
 	{
 		this->DialogResult = Windows::Forms::DialogResult::Cancel;
 		this->Close();
 	}
 
+	/* Function: formIsComplete
+	 * ------------------------
+	 * Returns true is all neccessary parts of the form are completed. Provides
+	 * dialogs indicating those that are not.
+	 */
 	bool formIsComplete(void)
 	{
+		//First check all parameters
 		if (outputLocationTextBox->Text->Length == 0) {
-			
+			MessageBox::Show("Please provide an output location for the experiment data.");
+			return false;
 		} else if (experimentTitleTextBox->Text->Length == 0) {
 			MessageBox::Show("Please provide a title for the experiment.");
+			return false;
 		} else if (wormStrainTextBox->Text->Length == 0) {
 			MessageBox::Show("Please specify the worm strain.");
+			return false;
 		} else if (wormTreatmentsTextBox->Text->Length == 0) {
 			MessageBox::Show("Please specify any worm treatments. Enter none if applicable.");
+			return false;
 		} else if (percentAgarNumericUpDown->Value.Equals(Decimal(0))) {
 			MessageBox::Show("Please specify the percent agar that the worm is crawling on.");
+			return false;
 		} else if (wormGenderComboBox->Text->Length == 0) {
 			MessageBox::Show("Please specify the worm gender.");
+			return false;
 		} else if (wormFoodStatusComboBox->Text->Length == 0) {
 			MessageBox::Show("Please specify the food status of the worm.");
+			return false;
 		} else if (ambientTemperatureNumericUpDown->Value.Equals(Decimal(0))) {
 			MessageBox::Show("Please specify the current ambient temperature.");
+			return false;
 		} else if (ambientHumidityNumericUpDown->Value.Equals(Decimal(0))) {
 			MessageBox::Show("Please specify the current ambient humidity.");
-		} else if (waferIDTextBox->Text->Length == 0) {
-			MessageBox::Show("Please specify the wafer ID for the cantilever in use.");
-		} else if (deviceIDTextBox->Text->Length == 0) {
-			MessageBox::Show("Please specify the device ID for the cantilever in use.");
-		} else if (cantileverFrequencyNumericUpDown->Value.Equals(Decimal(0)) ||
+			return false;
+		} else if (stimulusSubmitted == false) {
+				MessageBox::Show("Please submit a stimulus profile.");
+				return false;
+		} 
+		
+
+		// next check based on operating mode
+		if (dispClampRadioButton-> Checked || openLoopClampRadioButton->Checked || forceClampRadioButton->Checked){
+			// these must all be true if not in behavior mode
+			if (waferIDTextBox->Text->Length == 0){
+				MessageBox::Show("Please specify the wafer ID for the cantilever in use.");
+				return false;
+			} else if (deviceIDTextBox->Text->Length == 0) {
+				MessageBox::Show("Please specify the device ID for the cantilever in use.");
+				return false;
+			} else if(forceClampRadioButton->Checked){
+				if (cantileverFrequencyNumericUpDown->Value.Equals(Decimal(0)) ||
 				   cantileverStiffnessNumericUpDown->Value.Equals(Decimal(0)) ||
 				   cantileverSensitivityNumericUpDown->Value.Equals(Decimal(0))) {
-			MessageBox::Show("Please extract or provide the specifications for the cantilever in use.");
+					MessageBox::Show("Please extract or provide the specifications for the cantilever in use.");
+					return false;
+				} else if (pParameterNumericUpDown->Value.Equals(Decimal(0)) ||
+				   iParameterNumericUpDown->Value.Equals(Decimal(0)) ||
+				   dParameterNumericUpDown->Value.Equals(Decimal(0))) {
+					MessageBox::Show("Please extract or provide the specifications for the PID control.");
+					return false;
+				}
+			} else return true;
+			
 		} else return true;
 
-		return false;
+		return true;
+
 	}
 
+	/* Function: populateExperimentFromForm
+	 * ------------------------------------
+	 * Stores all the data from the form in the properties of the experiment.
+	 */
 	void populateExperimentFromForm(void)
 	{
 		marshal_context^ context = gcnew marshal_context();
@@ -1322,17 +1608,44 @@ private:
 		experiment->wormProperties.foodStatus = context->marshal_as<string>(wormFoodStatusComboBox->Text);
 		experiment->ambientParameters.temperature = Decimal::ToDouble(ambientTemperatureNumericUpDown->Value);
 		experiment->ambientParameters.humidity = Decimal::ToDouble(ambientHumidityNumericUpDown->Value);
-		experiment->otherInfo = context->marshal_as<string>(otherInfoTextBox->Text);	
+		experiment->otherInfo = context->marshal_as<string>(otherInfoTextBox->Text);
+		
+		experiment->waitingBufferSize = Decimal::ToInt32(preStimRecordTimeNumericUpDown->Value); // unit: seconds
 
 		experiment->cantileverProperties.serialNumber = context->marshal_as<string>(System::String::Concat(waferIDTextBox->Text, deviceIDTextBox->Text));
 		experiment->cantileverProperties.frequency = Decimal::ToDouble(cantileverFrequencyNumericUpDown->Value);
 		experiment->cantileverProperties.stiffness = Decimal::ToDouble(cantileverStiffnessNumericUpDown->Value);
 		experiment->cantileverProperties.sensitivity = Decimal::ToDouble(cantileverSensitivityNumericUpDown->Value);
-
-		experiment->experimentMode = (forceClampRadioButton->Checked) ? std::string("Force Clamp") : std::string("Displacement Clamp");
+		experiment->cantileverProperties.P_parameter = Decimal::ToDouble(pParameterNumericUpDown->Value);
+		experiment->cantileverProperties.I_parameter = Decimal::ToDouble(iParameterNumericUpDown->Value);
+		experiment->cantileverProperties.D_parameter = Decimal::ToDouble(dParameterNumericUpDown->Value);
 		experiment->targetLocation = Decimal::ToDouble(targetNumericUpDown->Value)/100.0;
+
+		if (forceClampRadioButton->Checked)
+			experiment->experimentMode = std::string("Force Clamp");
+		else if(dispClampRadioButton->Checked)
+			experiment->experimentMode = std::string("Displacement Clamp");
+		else if(openLoopClampRadioButton->Checked)
+			experiment->experimentMode = std::string("Open Loop");
+		else 
+			experiment->experimentMode = std::string("Behavior Mode");
+
+		experiment->reportedFPGAParameters.P_Parameter = comm->P_Parameter;
+		experiment->reportedFPGAParameters.I_Parameter = comm->I_Parameter;
+		experiment->reportedFPGAParameters.D_Parameter = comm->D_Parameter;
+		experiment->reportedFPGAParameters.clampModeParameter = comm->clampModeParameter;
+		experiment->reportedFPGAParameters.triggerModeParameter = comm->triggerModeParameter;
+		experiment->reportedFPGAParameters.acquisitionFreqParameter = comm->acquisitionFreqParameter;
+		experiment->reportedFPGAParameters.actuatorFreqParameter = comm->actuatorFreqParameter;
+		experiment->reportedFPGAParameters.waveTablePresentParameter = comm->waveTablePresentParameter;
+		
 	}
 
+	/* Function: outputLocationBrowseButton_Click
+	 * ------------------------------------------
+	 * Click event handler that opens up a browser dialog for setting the output
+	 * location of the data files.
+	 */
 	System::Void outputLocationBrowseButton_Click(System::Object^  sender, System::EventArgs^  e)
 	{
 		if (outputFolderBrowserDialog->ShowDialog() == Windows::Forms::DialogResult::OK) {
@@ -1340,16 +1653,31 @@ private:
 		}
 	}
 
+	/* Function: targetTrackBar_Scroll
+	 * -------------------------------
+	 * Scroll event handler to keep the target track bar and the target numeric
+	 * up down in sych with one another.
+	 */
 	System::Void targetTrackBar_Scroll(System::Object^  sender, System::EventArgs^  e)
 	{
 		targetNumericUpDown->Value = Decimal(100 - targetTrackBar->Value);
 	}
 
+	/* Function: targetNumericUpDown_ValueChanged
+	 * ------------------------------------------
+	 * Value changed event handler to keep the target track bar and the target numeric
+	 * up down in sych with one another.
+	 */
 	System::Void targetNumericUpDown_ValueChanged(System::Object^  sender, System::EventArgs^  e)
 	{
 		targetTrackBar->Value = 100 - Decimal::ToInt32(targetNumericUpDown->Value);
 	}
 
+	/* Function: cantileverIDSearchButton_Click
+	 * ----------------------------------------
+	 * Click event handler to get the cantilever properties from the excel spreadsheet
+	 * and into the form.
+	 */
 	System::Void cantileverIDSearchButton_Click(System::Object^  sender, System::EventArgs^  e)
 	{
 		System::String^ waferID = waferIDTextBox->Text;
@@ -1369,8 +1697,286 @@ private:
 			cantileverFrequencyNumericUpDown->Value = Decimal(cantileverSpecs[0]);
 			cantileverStiffnessNumericUpDown->Value = Decimal(cantileverSpecs[1]);
 			cantileverSensitivityNumericUpDown->Value = Decimal(cantileverSpecs[2]);
+			/*Not implemented yet: need to modify the look up specs function.*/
+			pParameterNumericUpDown->Value = Decimal(cantileverSpecs[3]);
+			iParameterNumericUpDown->Value = Decimal(cantileverSpecs[4]);
+			dParameterNumericUpDown->Value = Decimal(cantileverSpecs[5]);
+			
 		}
 	}
 
+	/* Function: submitStimulusButton_Click
+	 * ------------------------------------
+	 * Click event handler to create a Stimulus object from the information in the
+	 * form, plot that stimulus, and send the wave table to the force clamp.
+	 */
+	System::Void submitStimulusButton_Click(System::Object^  sender, System::EventArgs^  e)
+	{
+		
+		// TO DO: Check that you have all the info necessary to create stimulus!
+		if (behaviorModeRadioButton->Checked == false && confirmAllStimInfo() == false){
+			return;
+		}  
+
+		Stimulus stim = createStimulus();
+		
+		stimulusSignalChart->Series["Stimulus"]->Points->Clear();
+
+		vector<double> waveTable = stim.waveTable;
+		int size = waveTable.size();
+
+		//plot on chart
+		for (int i = 0; i < size; i++) {
+			double value = waveTable[i];
+			stimulusSignalChart->Series["Stimulus"]->Points->AddXY(i * DELTA_T, value);
+		}
+
+		
+
+		//covert to an array of voltage doubles
+		double* stimVoltages = new double[size];
+		for (int i = 0; i < size; i++) {
+			double value = stim.voltages[i] ;
+			stimVoltages[i] = value;
+		}
+
+		comm->sendWaveTable(stimVoltages, size);
+		delete stimVoltages;
+
+		stim.totalPoints = waveTable.size();
+		stim.totalTime = stim.totalPoints/DELTA_T;
+
+		experiment->stim = stim;
+
+		// send all the data to the FPGA:
+		//Wave interval - spacing between points on wave table
+		comm->sendWaveInterval((int)(DELTA_T*1000000)); // need to convert from s to us for this
+		Threading::Thread::Sleep(500);
+		//PID parameters:
+		int numParams = 4;
+		double* parameters = new double[numParams];
+		if (forceClampRadioButton->Checked){
+			//Send PID parameters:
+			parameters[0] = Decimal::ToDouble(pParameterNumericUpDown->Value);
+			parameters[1] = Decimal::ToDouble(iParameterNumericUpDown->Value);
+			parameters[2] = Decimal::ToDouble(dParameterNumericUpDown->Value);
+			parameters[3] = 4; //need to make sure this parameter is OK.
+			comm->sendPIDParameters(parameters, numParams);
+			Threading::Thread::Sleep(500);
+			comm->sendClampMode(2);
+		}
+		else if(dispClampRadioButton->Checked){
+			//Send PID parameters:
+			parameters[0] = 0.3;
+			parameters[1] = 50;
+			parameters[2] = 0.00001;
+			parameters[3] = 4; //need to make sure this parameter is OK.
+			comm->sendPIDParameters(parameters, numParams);
+			Threading::Thread::Sleep(500);
+			comm->sendClampMode(1);
+		}
+		else // in open loop or behavior mode:
+			comm->sendClampMode(0);
+
+		Threading::Thread::Sleep(500);
+
+		//Send all the data to FPGA, request info back
+		//Send trigger mode
+		comm->sendTriggerMode(1);
+		//Send data acquisition parameter
+		Threading::Thread::Sleep(500);
+		comm->sendAcquisitionInterval(1000); // number of us between two points "1000" = 1kHz sampling, min value this can be is 100 ("100" = 10 kHz)
+		stimulusSubmitted = true;
+	}
+
+	/* Function: customStimBrowseButton_Click
+	 * --------------------------------------
+	 * Click event handler that opens up a browser dialog for setting the location
+	 * of the custom stimulus file to open.
+	 */
+	System::Void customStimBrowseButton_Click(System::Object^  sender, System::EventArgs^  e)
+	{
+		if (customStimOpenFileDialog->ShowDialog() == Windows::Forms::DialogResult::OK) {
+			customStimFileTextBox->Text = customStimOpenFileDialog->FileName;
+		}
+	}
+
+	/* Function: saveStimButton_Click
+	 * ------------------------------
+	 * Click event handler that opens up a browser dialog for setting the location
+	 * of where to save a stimulus. The current Stimulus is then saved in a YAML format.
+	 */
+	System::Void saveStimButton_Click(System::Object^  sender, System::EventArgs^  e)
+	{
+		if (saveStimFileDialog->ShowDialog() == Windows::Forms::DialogResult::OK) {
+			Stimulus stim = createStimulus();
+			marshal_context^ context = gcnew marshal_context();
+			stim.saveAsYAML(context->marshal_as<string>(saveStimFileDialog->FileName) + string(".yaml"));
+		}
+	}
+
+	/* Function: createStimulus
+	 * ------------------------
+	 * A Stimulus is returned with the wave table of what is currently in the form fields.
+	 */
+	Stimulus createStimulus(void)
+	{
+		double period = Decimal::ToDouble(stimPeriodNumericUpDown->Value);
+		double contactTime = Decimal::ToDouble(stimContactTimeNumericUpDown->Value);
+		int noCycles = Decimal::ToInt32(stimNoCyclesNumericUpDown->Value);
+		double magnitude = Decimal::ToDouble(stimMagnitudeNumericUpDown->Value);
+		double scale = Decimal::ToDouble(stimScaleNumericUpDown->Value);
+		int scaleType = stimScaleTypeDomainUpDown->SelectedIndex;
+		double sineFreq = Decimal::ToDouble(stimSineFreqNumericUpDown->Value);
+		double sineBias = Decimal::ToDouble(stimSineBiasNumericUpDown->Value);
+
+
+		if(behaviorModeRadioButton->Checked){
+			contactTime = 100;
+			noCycles = 1;
+			magnitude = 1;
+			scale = 0;
+			scaleType = 0;
+			sineFreq = 0;
+			sineBias = 0;
+		} 
+		
+		Stimulus stim(period, contactTime, noCycles, magnitude, scale, scaleType, sineFreq, sineBias);
+		
+		if (squareTypeRadioButton->Checked) {
+			stim.createSquare();
+		} else if (triangleTypeRadioButton->Checked) {
+			stim.createTriangle();
+		} else if (sineTypeRadioButton->Checked) {
+			stim.createSine();
+		} else if (customTypeRadioButton->Checked) {
+			marshal_context^ context = gcnew marshal_context();
+			stim.createFromYAML(context->marshal_as<string>(customStimFileTextBox->Text));
+		}
+
+		//stim.appendZeroPulse();
+
+		if (forceClampRadioButton->Checked)
+			stim.convertToVoltages(1/(Decimal::ToDouble(cantileverSensitivityNumericUpDown->Value) * Decimal::ToDouble(cantileverStiffnessNumericUpDown->Value) * 1000));
+		else if(dispClampRadioButton->Checked)
+			stim.convertToVoltages(1/ACTUATOR_SENSITIVITY);
+		else if(openLoopClampRadioButton->Checked)
+			stim.convertToVoltages(1);
+		else if (behaviorModeRadioButton->Checked)
+			stim.convertToVoltages(1);
+
+
+		return stim;
+	}
+
+	bool confirmAllStimInfo(void){
+
+		// check all necessary stim parameters:
+		if (customTypeRadioButton->Checked && customStimFileTextBox->Text->Length <= 0 ){
+			MessageBox::Show("Enter a file for a custom stimulus");
+			return false;
+		}
+		else {
+			if (stimPeriodNumericUpDown->Value <= 0){
+				MessageBox::Show("Please enter the length of the stimulus period");
+				return false;
+			}
+			else if (stimContactTimeNumericUpDown->Value <= 0){
+				MessageBox::Show("The amount of time in contact with the worm must be greater than 0.");
+				return false;
+			}
+			else if (stimNoCyclesNumericUpDown->Value < 1){
+				MessageBox::Show("Please select at least one stimulus cycle");
+				return false;
+			}
+			else if (stimMagnitudeNumericUpDown->Value <= 0){
+				MessageBox::Show("Please enter a magnitude value greater than one");
+				return false;
+			}
+		}
+
+		//check displacment clamp setting
+		if(forceClampRadioButton->Checked == false &&
+			dispClampRadioButton->Checked == false && 
+			openLoopClampRadioButton->Checked == false && 
+			behaviorModeRadioButton->Checked == false){
+				MessageBox::Show("Please select a clamp mode");
+				return false;
+		}
+		//if in force clamp mode:
+		else if (forceClampRadioButton->Checked == true){	
+			//check PID parameters
+			if(pParameterNumericUpDown->Value.Equals(Decimal(0)) ||
+				   iParameterNumericUpDown->Value.Equals(Decimal(0)) ||
+				   dParameterNumericUpDown->Value.Equals(Decimal(0))) {
+				MessageBox::Show("For force clamp mode, please extract or provide the specifications for the PID control.");
+				return false;
+			} 
+			//check cantilever parameters
+			if(cantileverStiffnessNumericUpDown->Value.Equals(Decimal(0)) || 
+				cantileverSensitivityNumericUpDown->Value.Equals(Decimal(0))) {
+				MessageBox::Show("For force clamp mode, please extract or provide the sensitivity and stiffness of the cantilever.");
+				return false;
+			} 
+		
+		} 
+		
+	
+		return true;
+	
+	}
+
+
+
+
+private: System::Void forceClampRadioButton_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
+			 if (forceClampRadioButton->Checked){
+				 cantileverGroupBox->Enabled = true;
+				 stimulusInfoGroupBox->Enabled = true;
+				 targetGroupBox->Enabled = true;
+			 }
+			  if (forceClampRadioButton->Checked == false){
+				 cantileverGroupBox->Enabled = false;
+				 stimulusInfoGroupBox->Enabled = false;
+				 targetGroupBox->Enabled = false;
+			 }
+
+		 }
+private: System::Void dispClampRadioButton_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
+			 if (dispClampRadioButton->Checked){
+				 cantileverGroupBox->Enabled = true;
+				 stimulusInfoGroupBox->Enabled = true;
+				 targetGroupBox->Enabled = true;
+			 }
+			 if (dispClampRadioButton->Checked == false){
+				 cantileverGroupBox->Enabled = false;
+				 stimulusInfoGroupBox->Enabled = false;
+				 targetGroupBox->Enabled = false;
+			 }
+		 }
+private: System::Void openLoopClampRadioButton_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
+			 if (openLoopClampRadioButton->Checked){
+				 cantileverGroupBox->Enabled = true;
+				 stimulusInfoGroupBox->Enabled = true;
+				 targetGroupBox->Enabled = true;
+			 }
+			 if (openLoopClampRadioButton->Checked == false){
+				 cantileverGroupBox->Enabled = false;
+				 stimulusInfoGroupBox->Enabled = false;
+				 targetGroupBox->Enabled = false;
+			 }
+		 }
+private: System::Void behaviorModeRadioButton_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
+			 if (behaviorModeRadioButton->Checked){
+				 cantileverGroupBox->Enabled = false;
+				 stimulusInfoGroupBox->Enabled = true;
+				 targetGroupBox->Enabled = false;
+			 }
+			 if (behaviorModeRadioButton->Checked == false){
+				 cantileverGroupBox->Enabled = false;
+				 stimulusInfoGroupBox->Enabled = false;
+				 targetGroupBox->Enabled = false;
+			 }
+		 }
 };
 }

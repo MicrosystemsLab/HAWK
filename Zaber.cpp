@@ -30,7 +30,7 @@ Zaber::Zaber()
 {
 	// Set up serial port
 	 port = gcnew SerialPort();
-	 port->PortName = "COM6";
+	 port->PortName = "COM1";
 	 port->BaudRate = 9600;
 	 port->DataBits = 8;
 	 port->Parity = Parity::None;
@@ -38,20 +38,33 @@ Zaber::Zaber()
 	 port->Handshake = Handshake::None;
 
 	 moveUnit = MICROSTEP;
+	 homePosition = 0;
+	 hoverPosition = 0;
+	 scanPosition = 0;
 }
 
 int Zaber::openPort(void)
 {
-	if (port->IsOpen) return -1;
-	port->Open();
-	return 0;
+	if (!port->IsOpen) {
+		port->Open();
+	}
+	if (port->IsOpen) {
+		return 0;
+	} else {
+		return -1;
+	}
 }
 
 int Zaber::closePort(void)
 {
-	if(!port->IsOpen) return -1;
-	port->Close();
-	return 0;
+	if (port->IsOpen) {
+		port->Close();
+	}
+	if (!port->IsOpen) {
+		return 0;
+	} else {
+		return -1;
+	}
 }
 
 Movement determineStageMovement(Point target, Point cantilever)
@@ -97,6 +110,16 @@ void Zaber::moveActuatorToPosition(double position)
 	device = 3;
 	command = CMD_MOVE_ABSOLUTE;
 	data = (unsigned int)convertToActuatorMicrosteps(position);
+	sendCommand();
+
+	waitForReply(3, CMD_MOVE_ABSOLUTE);
+}
+
+void Zaber::moveActuatorHome(void)
+{
+	device = 3;
+	command = CMD_MOVE_ABSOLUTE;
+	data = 0;
 	sendCommand();
 }
 
@@ -152,6 +175,23 @@ Point2d Zaber::getStagePosition(void)
 	//Wait for device to reply with y position
 	waitForReply(2, CMD_RETURN_CURRENT_POSITION);
 	position.y = convertFromStageMicrosteps(data);
+
+	return position;
+}
+
+double Zaber::getActuatorPosition(void)
+{
+	double position;
+
+	// Send command to request z position
+	device = 3;
+	command = CMD_RETURN_CURRENT_POSITION;
+	data = 0;
+	sendCommand();
+
+	//Wait for device to reply with x position
+	waitForReply(3, CMD_RETURN_CURRENT_POSITION);
+	position = convertFromStageMicrosteps(data);
 
 	return position;
 }

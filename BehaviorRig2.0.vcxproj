@@ -21,14 +21,15 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CLRSupport>true</CLRSupport>
-    <CharacterSet>Unicode</CharacterSet>
-    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+    <UseOfMfc>Dynamic</UseOfMfc>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <CLRSupport>Pure</CLRSupport>
-    <CharacterSet>Unicode</CharacterSet>
+    <CLRSupport>true</CLRSupport>
+    <CharacterSet>MultiByte</CharacterSet>
+    <UseOfMfc>Dynamic</UseOfMfc>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -42,10 +43,11 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <LibraryPath>C:\Users\Eileen Mazzochette\Documents\IC Imaging Control 3.3\classlib\win32\debug;$(LibraryPath)</LibraryPath>
+    <LibraryPath>C:\Users\HAWK\Documents\IC Imaging Control 3.3\classlib\win32\debug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
+    <LibraryPath>C:\Users\Eileen Mazzochette\Documents\IC Imaging Control 3.3\classlib\win32\release;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -53,30 +55,35 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <AdditionalIncludeDirectories>C:\opencv\build\include;C:\opencv\build\include\opencv2;C:\opencv\build\include\opencv;$(OPENCV_DIR)\..\..\include;$(OPENCV_DIR)\..\..\include\opencv2;$(OPENCV_DIR)\..\..\include\opencv;C:\Users\Eileen Mazzochette\Documents\IC Imaging Control 3.3\classlib\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\opencv\build\include;C:\opencv\build\include\opencv2;C:\opencv\build\include\opencv;$(OPENCV_DIR)\..\..\include;$(OPENCV_DIR)\..\..\include\opencv2;$(OPENCV_DIR)\..\..\include\opencv;C:\Users\HAWK\Documents\IC Imaging Control 3.3\classlib\include</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>
       </DisableSpecificWarnings>
+      <AdditionalOptions>-D_SCL_SECURE_NO_WARNINGS %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>opencv_core249d.lib;opencv_imgproc249d.lib;opencv_highgui249d.lib;opencv_ml249d.lib;opencv_video249d.lib;opencv_features2d249d.lib;opencv_calib3d249d.lib;opencv_objdetect249d.lib;opencv_contrib249d.lib;opencv_legacy249d.lib;opencv_flann249d.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Windows</SubSystem>
       <EntryPointSymbol>main</EntryPointSymbol>
-      <AdditionalLibraryDirectories>C:\opencv\build\x86\vc10\lib;C:\opencv\build\x86\vc10\bin;C:\Users\Eileen Mazzochette\Documents\IC Imaging Control 3.3\classlib\win32\debug</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\opencv\build\x86\vc10\lib;C:\opencv\build\x86\vc10\bin;C:\Users\HAWK\Documents\IC Imaging Control 3.3\classlib\win32\debug</AdditionalLibraryDirectories>
+      <ForceSymbolReferences>__DllMainCRTStartup@12;%(ForceSymbolReferences)</ForceSymbolReferences>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>WIN32;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
+      <AdditionalIncludeDirectories>C:\opencv\build\include;C:\opencv\build\include\opencv2;C:\opencv\build\include\opencv;$(OPENCV_DIR)\..\..\include;$(OPENCV_DIR)\..\..\include\opencv2;$(OPENCV_DIR)\..\..\include\opencv;C:\Users\HAWK\Documents\IC Imaging Control 3.3\classlib\include</AdditionalIncludeDirectories>
+      <Optimization>Full</Optimization>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>
-      </AdditionalDependencies>
+      <AdditionalDependencies>opencv_core249.lib;opencv_imgproc249.lib;opencv_highgui249.lib;opencv_ml249.lib;opencv_video249.lib;opencv_features2d249.lib;opencv_calib3d249.lib;opencv_objdetect249.lib;opencv_contrib249.lib;opencv_legacy249.lib;opencv_flann249.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Windows</SubSystem>
       <EntryPointSymbol>main</EntryPointSymbol>
+      <AdditionalLibraryDirectories>C:\opencv\build\x86\vc10\lib;C:\opencv\build\x86\vc10\bin;C:\Users\HAWK\Documents\IC Imaging Control 3.3\classlib\win32\release</AdditionalLibraryDirectories>
+      <ForceSymbolReferences>__DllMainCRTStartup@12;%(ForceSymbolReferences)</ForceSymbolReferences>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -88,6 +95,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="$this.Icon.ico" />
+    <None Include="raptorIcon.ico" />
     <None Include="app.ico" />
     <None Include="ReadMe.txt" />
     <None Include="wormImage.png" />
@@ -96,16 +105,24 @@
     <ClCompile Include="AssemblyInfo.cpp" />
     <ClCompile Include="BasicExcel.cpp" />
     <ClCompile Include="BehaviorRig2.0.cpp" />
+    <ClCompile Include="CalibratePIDParameters.cpp" />
+    <ClCompile Include="CalibrateSensitivityForm.cpp" />
     <ClCompile Include="DataManagement.cpp" />
     <ClCompile Include="ExcelFormat.cpp" />
     <ClCompile Include="ExcelInterface.cpp" />
     <ClCompile Include="Experiment.cpp" />
     <ClCompile Include="ImageControl.cpp" />
+    <ClCompile Include="PostExperimentForm.cpp" />
     <ClCompile Include="SetUpForm.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Stimulus.cpp" />
+    <ClCompile Include="STM Convert.cpp" />
+    <ClCompile Include="STMDispatch.cpp" />
+    <ClCompile Include="STMSession.cpp" />
+    <ClCompile Include="STM_Communicator.cpp" />
     <ClCompile Include="tictoc.cpp" />
     <ClCompile Include="Timing.cpp" />
     <ClCompile Include="Worm.cpp" />
@@ -113,6 +130,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BasicExcel.hpp" />
+    <ClInclude Include="CalibratePIDParameters.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
+    <ClInclude Include="CalibrateSensitivityForm.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
     <ClInclude Include="DataManagement.h" />
     <ClInclude Include="ExcelFormat.h" />
     <ClInclude Include="ExcelInterface.h" />
@@ -121,12 +144,20 @@
     <ClInclude Include="MainForm.h">
       <FileType>CppForm</FileType>
     </ClInclude>
+    <ClInclude Include="PostExperimentForm.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
     <ClInclude Include="resource.h" />
     <ClInclude Include="SafeQueue.h" />
     <ClInclude Include="SetUpForm.h">
       <FileType>CppForm</FileType>
     </ClInclude>
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="Stimulus.h" />
+    <ClInclude Include="STM Convert.h" />
+    <ClInclude Include="STMDispatch.h" />
+    <ClInclude Include="STMSession.h" />
+    <ClInclude Include="STM_Communicator.h" />
     <ClInclude Include="tictoc.h" />
     <ClInclude Include="Timing.h" />
     <ClInclude Include="Worm.h" />
@@ -136,11 +167,19 @@
     <ResourceCompile Include="app.rc" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="CalibratePIDParameters.resx">
+      <DependentUpon>CalibratePIDParameters.h</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CalibrateSensitivityForm.resx">
+      <DependentUpon>CalibrateSensitivityForm.h</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resX">
       <DependentUpon>MainForm.h</DependentUpon>
       <SubType>Designer</SubType>
-      <LogicalName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-      </LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PostExperimentForm.resx">
+      <DependentUpon>PostExperimentForm.h</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="SetUpForm.resx">
       <DependentUpon>SetUpForm.h</DependentUpon>
@@ -152,4 +191,9 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties RESOURCE_FILE="app.rc" />
+    </VisualStudio>
+  </ProjectExtensions>
 </Project>
