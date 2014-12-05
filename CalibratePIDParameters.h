@@ -518,10 +518,10 @@ Stimulus createStimulus(void)
 private: System::Void testParametersButton_Click(System::Object^  sender, System::EventArgs^  e) {
 		double magnitude;
 		if (forceClampRadioButton->Checked){
-			magnitude = 1;
+			magnitude = 1; // this is the voltage we want to clamp onto, not the force.
 		}
 		else {
-			magnitude = 40;
+			magnitude = 40; // 
 		}
 		Stimulus stim = createTestStimulus(magnitude);
 		
@@ -534,7 +534,7 @@ private: System::Void testParametersButton_Click(System::Object^  sender, System
 		}
 
 		comm->sendWaveTable(stimVoltages, size);
-		delete stimVoltages;
+		delete stimVoltages; 
 
 		stim.totalPoints = stim.waveTable.size();
 		stim.totalTime = stim.totalPoints/DELTA_T;
@@ -574,9 +574,6 @@ private: System::Void testParametersButton_Click(System::Object^  sender, System
 		Threading::Thread::Sleep(500);
 		comm->sendAcquisitionInterval(1000); // number of us between two points "1000" = 1kHz sampling, min value this can be is 100 ("100" = 10 kHz)
 		Threading::Thread::Sleep(500);
-		//parameters[3] = 5;
-		//comm->sendPIDParameters(parameters, numParams);
-		//Threading::Thread::Sleep(500);
 		comm->triggerStimulus();
 		
 	 }
