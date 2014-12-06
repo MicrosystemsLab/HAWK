@@ -78,6 +78,9 @@ namespace BehaviorRig20 {
 	private: System::Windows::Forms::Label^  averageLabel;
 	private: System::Windows::Forms::TextBox^  cantileverIDTextBox;
 	private: System::Windows::Forms::Label^  cantileverIDLabel;
+	private: System::Windows::Forms::CheckBox^  recordDataCheckBox;
+	private: System::Windows::Forms::TextBox^  dataCommentsTextBox;
+	private: System::Windows::Forms::Label^  label1;
 
 
 
@@ -130,6 +133,9 @@ namespace BehaviorRig20 {
 			this->averageLabel = (gcnew System::Windows::Forms::Label());
 			this->cantileverIDTextBox = (gcnew System::Windows::Forms::TextBox());
 			this->cantileverIDLabel = (gcnew System::Windows::Forms::Label());
+			this->recordDataCheckBox = (gcnew System::Windows::Forms::CheckBox());
+			this->dataCommentsTextBox = (gcnew System::Windows::Forms::TextBox());
+			this->label1 = (gcnew System::Windows::Forms::Label());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->maxProfileNumericUpDown))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->cantileverSignalChart))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->actuatorPositionChart))->BeginInit();
@@ -376,11 +382,41 @@ namespace BehaviorRig20 {
 			this->cantileverIDLabel->TabIndex = 20;
 			this->cantileverIDLabel->Text = L"Cantilever ID:";
 			// 
+			// recordDataCheckBox
+			// 
+			this->recordDataCheckBox->AutoSize = true;
+			this->recordDataCheckBox->Location = System::Drawing::Point(857, 273);
+			this->recordDataCheckBox->Name = L"recordDataCheckBox";
+			this->recordDataCheckBox->Size = System::Drawing::Size(87, 17);
+			this->recordDataCheckBox->TabIndex = 21;
+			this->recordDataCheckBox->Text = L"Record Data";
+			this->recordDataCheckBox->UseVisualStyleBackColor = true;
+			// 
+			// dataCommentsTextBox
+			// 
+			this->dataCommentsTextBox->Location = System::Drawing::Point(852, 311);
+			this->dataCommentsTextBox->Multiline = true;
+			this->dataCommentsTextBox->Name = L"dataCommentsTextBox";
+			this->dataCommentsTextBox->Size = System::Drawing::Size(157, 85);
+			this->dataCommentsTextBox->TabIndex = 22;
+			// 
+			// label1
+			// 
+			this->label1->AutoSize = true;
+			this->label1->Location = System::Drawing::Point(853, 292);
+			this->label1->Name = L"label1";
+			this->label1->Size = System::Drawing::Size(131, 13);
+			this->label1->TabIndex = 23;
+			this->label1->Text = L"Comments for output data:";
+			// 
 			// CalibrateSensitivityForm
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(1021, 707);
+			this->Controls->Add(this->label1);
+			this->Controls->Add(this->dataCommentsTextBox);
+			this->Controls->Add(this->recordDataCheckBox);
 			this->Controls->Add(this->cantileverIDLabel);
 			this->Controls->Add(this->cantileverIDTextBox);
 			this->Controls->Add(this->averageLabel);
@@ -541,13 +577,13 @@ private: System::Void getCalibrationDataButton_Click(System::Object^  sender, Sy
 
 				sensitivityChart->Series["Sensitivity"]->Points->AddXY(i * DELTA_T, sensitivity[i]);
 			}
+			if (recordDataCheckBox->Checked){
+				marshal_context^ context = gcnew marshal_context();
+				string cantileverID = context->marshal_as<string>(cantileverIDTextBox->Text);
+				string commentsForData = context->marshal_as<string>(dataCommentsTextBox->Text);
 			
-			marshal_context^ context = gcnew marshal_context();
-			string cantileverID = context->marshal_as<string>(cantileverIDTextBox->Text);
-
-			writeCalibrationDataToDisk( actuatorPositions,  cantileverSignal, cantileverID);
-
-
+				writeCalibrationDataToDisk( actuatorPositions,  cantileverSignal, cantileverID, commentsForData);
+			}
 
 			 double startTimeIndex = Decimal::ToDouble(startAverageNumericUpDown->Value)/DELTA_T;
 			 double endTimeIndex = Decimal::ToDouble(endAverageNumericUpDown->Value)/DELTA_T;
@@ -577,7 +613,7 @@ private: System::Void takeAverageButton_Click(System::Object^  sender, System::E
 		 }
 
 		 
-private: void writeCalibrationDataToDisk(vector<double> actuatorPositions, vector<double> cantileverSignal, string cantileverID){
+private: void writeCalibrationDataToDisk(vector<double> actuatorPositions, vector<double> cantileverSignal, string cantileverID, string commentsForData){
 			cv::FileStorage dataWriter;
 			 
 			 SYSTEMTIME now;
@@ -585,18 +621,19 @@ private: void writeCalibrationDataToDisk(vector<double> actuatorPositions, vecto
 
 			string time;
 			char* cTime = new char[50];
-			sprintf(cTime, "%04d%02d%02d_%02d%02d%02d_", now.wYear, now.wMonth, now.wDay, now.wHour, now.wMinute, now.wSecond);
+			sprintf(cTime, "%04d_%02d_%02d__%02d%02d%02d_", now.wYear, now.wMonth, now.wDay, now.wHour, now.wMinute, now.wSecond);
 			time = string(cTime);
 			delete cTime;
 
-			string directory = string("C:\\\\Users\\\\HAWK\\\\Documents\\\\CantileverCalibrationData\\\\");
-			string fileName = cantileverID + string("_") + time + string("_sensitivityData.yaml");
+			string directory = string("C:\\\\Users\\\\HAWK\\\\Documents\\\\CantileverCalibrationData\\\\SensitivityData\\\\") + cantileverID + string("\\\\");
+			string fileName =  time + string("_") + cantileverID + string("_sensitivityData.yaml");
 			string fullfile = directory + fileName;
 
 			dataWriter.open(fullfile, cv::FileStorage::WRITE);
 
 			dataWriter << string("Time") << time;
 			dataWriter << string("Cantilever") << cantileverID;
+			dataWriter << string("Comments") << commentsForData;
 
 			string nodeTitle;
 			char* title = new char[50];

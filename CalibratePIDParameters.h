@@ -518,7 +518,7 @@ Stimulus createStimulus(void)
 private: System::Void testParametersButton_Click(System::Object^  sender, System::EventArgs^  e) {
 		double magnitude;
 		if (forceClampRadioButton->Checked){
-			magnitude = 1; // this is the voltage we want to clamp onto, not the force.
+			magnitude = 2; // this is the voltage we want to clamp onto, not the force.
 		}
 		else {
 			magnitude = 40; // 
@@ -550,7 +550,7 @@ private: System::Void testParametersButton_Click(System::Object^  sender, System
 		parameters[0] = Decimal::ToDouble(pParameterNumericUpDown->Value);
 		parameters[1] = Decimal::ToDouble(iParameterNumericUpDown->Value);
 		parameters[2] = Decimal::ToDouble(dParameterNumericUpDown->Value);
-		parameters[3] = 0.3; //need to make sure this parameter is OK.
+		parameters[3] = 5; //need to make sure this parameter is OK.
 		comm->sendPIDParameters(parameters, numParams);
 		Threading::Thread::Sleep(500);
 
@@ -623,7 +623,7 @@ Stimulus createTestStimulus(double magnitude)
 
 		Stimulus stim(period, contactTime, noCycles, magnitude, scale, scaleType, sineFreq, sineBias);
 		
-		stim.prependZeroPulse(1000);
+		//stim.prependZeroPulse(1000);
 
 		stim.createSquare();
 				

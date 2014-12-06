@@ -161,7 +161,7 @@ void Stimulus::prependZeroPulse(int numberOfZeros)
 {
 	for(int i = 0; i < numberOfZeros; i++)
 	{
-		waveTable.push_back(0);
+		waveTable.push_back(0.05);
 	}
 }
 void Stimulus::createCalibrationWaveTable(void){
