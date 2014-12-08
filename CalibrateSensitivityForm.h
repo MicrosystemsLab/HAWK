@@ -621,13 +621,16 @@ private: void writeCalibrationDataToDisk(vector<double> actuatorPositions, vecto
 
 			string time;
 			char* cTime = new char[50];
-			sprintf(cTime, "%04d_%02d_%02d__%02d%02d%02d_", now.wYear, now.wMonth, now.wDay, now.wHour, now.wMinute, now.wSecond);
+			sprintf(cTime, "%04d_%02d_%02d__%02d_%02d_%02d__", now.wYear, now.wMonth, now.wDay, now.wHour, now.wMinute, now.wSecond);
 			time = string(cTime);
 			delete cTime;
 
-			string directory = string("C:\\\\Users\\\\HAWK\\\\Documents\\\\CantileverCalibrationData\\\\SensitivityData\\\\") + cantileverID + string("\\\\");
+			
+
+			string directory = string("C:\\\\Users\\\\HAWK\\\\Documents\\\\CantileverCalibrationData\\\\SensitivityData\\\\"); // + cantileverID + string("\\\\");
+			CreateDirectoryA((directory + cantileverID + string("\\\\")).c_str(), NULL);
 			string fileName =  time + string("_") + cantileverID + string("_sensitivityData.yaml");
-			string fullfile = directory + fileName;
+			string fullfile = directory + cantileverID + string("\\\\") + fileName;
 
 			dataWriter.open(fullfile, cv::FileStorage::WRITE);
 

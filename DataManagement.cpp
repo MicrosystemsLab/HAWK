@@ -12,7 +12,7 @@ string DataManager::localTimeFilename(SYSTEMTIME now)
 	string result;
 
 	char* cTime = new char[50];
-	sprintf(cTime, "%04d%02d%02d_%02d%02d%02d_", now.wYear, now.wMonth, now.wDay, now.wHour, now.wMinute, now.wSecond);
+	sprintf(cTime, "%04d_%02d_%02d__%02d_%02d_%02d__", now.wYear, now.wMonth, now.wDay, now.wHour, now.wMinute, now.wSecond);
 	result = string(cTime);
 	delete cTime;
 

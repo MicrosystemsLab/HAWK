@@ -84,6 +84,9 @@ namespace BehaviorRig20 {
 	private: System::Windows::Forms::PictureBox^  pictureBox1;
 	private: System::Windows::Forms::TextBox^  cantileverIDTextBox;
 	private: System::Windows::Forms::Label^  cantileverIDLabel;
+	private: System::Windows::Forms::CheckBox^  recordDataCheckBox;
+	private: System::Windows::Forms::TextBox^  dataCommentsTextBox;
+	private: System::Windows::Forms::Label^  label1;
 
 
 
@@ -128,6 +131,9 @@ namespace BehaviorRig20 {
 			this->pictureBox1 = (gcnew System::Windows::Forms::PictureBox());
 			this->cantileverIDTextBox = (gcnew System::Windows::Forms::TextBox());
 			this->cantileverIDLabel = (gcnew System::Windows::Forms::Label());
+			this->recordDataCheckBox = (gcnew System::Windows::Forms::CheckBox());
+			this->dataCommentsTextBox = (gcnew System::Windows::Forms::TextBox());
+			this->label1 = (gcnew System::Windows::Forms::Label());
 			this->clampModeGroupBox->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->kuNumericUpDown))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->tuNumericUpDown))->BeginInit();
@@ -263,7 +269,7 @@ namespace BehaviorRig20 {
 			this->calculatedParametersGroupBox->Controls->Add(this->pEquationLabel);
 			this->calculatedParametersGroupBox->Controls->Add(this->iEquationLabel);
 			this->calculatedParametersGroupBox->Controls->Add(this->dEquationLabel);
-			this->calculatedParametersGroupBox->Location = System::Drawing::Point(13, 106);
+			this->calculatedParametersGroupBox->Location = System::Drawing::Point(13, 89);
 			this->calculatedParametersGroupBox->Name = L"calculatedParametersGroupBox";
 			this->calculatedParametersGroupBox->Size = System::Drawing::Size(234, 88);
 			this->calculatedParametersGroupBox->TabIndex = 13;
@@ -318,7 +324,7 @@ namespace BehaviorRig20 {
 			// 
 			// testParametersButton
 			// 
-			this->testParametersButton->Location = System::Drawing::Point(263, 136);
+			this->testParametersButton->Location = System::Drawing::Point(263, 94);
 			this->testParametersButton->Name = L"testParametersButton";
 			this->testParametersButton->Size = System::Drawing::Size(130, 23);
 			this->testParametersButton->TabIndex = 16;
@@ -343,7 +349,7 @@ namespace BehaviorRig20 {
 			// 
 			// getDataButton
 			// 
-			this->getDataButton->Location = System::Drawing::Point(263, 165);
+			this->getDataButton->Location = System::Drawing::Point(263, 121);
 			this->getDataButton->Name = L"getDataButton";
 			this->getDataButton->Size = System::Drawing::Size(130, 23);
 			this->getDataButton->TabIndex = 18;
@@ -377,11 +383,41 @@ namespace BehaviorRig20 {
 			this->cantileverIDLabel->Text = L"Cantilever ID:";
 			this->cantileverIDLabel->UseMnemonic = false;
 			// 
+			// recordDataCheckBox
+			// 
+			this->recordDataCheckBox->AutoSize = true;
+			this->recordDataCheckBox->Location = System::Drawing::Point(399, 125);
+			this->recordDataCheckBox->Name = L"recordDataCheckBox";
+			this->recordDataCheckBox->Size = System::Drawing::Size(87, 17);
+			this->recordDataCheckBox->TabIndex = 22;
+			this->recordDataCheckBox->Text = L"Record Data";
+			this->recordDataCheckBox->UseVisualStyleBackColor = true;
+			// 
+			// dataCommentsTextBox
+			// 
+			this->dataCommentsTextBox->Location = System::Drawing::Point(263, 162);
+			this->dataCommentsTextBox->Multiline = true;
+			this->dataCommentsTextBox->Name = L"dataCommentsTextBox";
+			this->dataCommentsTextBox->Size = System::Drawing::Size(245, 33);
+			this->dataCommentsTextBox->TabIndex = 23;
+			// 
+			// label1
+			// 
+			this->label1->AutoSize = true;
+			this->label1->Location = System::Drawing::Point(263, 147);
+			this->label1->Name = L"label1";
+			this->label1->Size = System::Drawing::Size(119, 13);
+			this->label1->TabIndex = 24;
+			this->label1->Text = L"Comments for Data File:";
+			// 
 			// CalibratePIDParameters
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(698, 511);
+			this->Controls->Add(this->label1);
+			this->Controls->Add(this->dataCommentsTextBox);
+			this->Controls->Add(this->recordDataCheckBox);
 			this->Controls->Add(this->cantileverIDLabel);
 			this->Controls->Add(this->cantileverIDTextBox);
 			this->Controls->Add(this->pictureBox1);
@@ -491,7 +527,7 @@ Stimulus createStimulus(void)
 	{
 		double maxSignal = 0;
 		double contactTime = 100;
-		double period = 4;
+		double period = 5;
 		int noCycles = 1;
 		double scale = 0;
 		double magnitude = maxSignal;
@@ -581,16 +617,21 @@ private: System::Void getDataButton_Click(System::Object^  sender, System::Event
 		//gather data, write to plots:
 		signalChart->Series["Signal"]->Points->Clear();
 		
-
 		vector<double> actuatorSignal = comm->actuatorPositionData;
 		vector<double> cantileverSignal = comm->piezoSignalData;
 		vector<double> actuatorCommandSignal = comm->actuatorCommandData;
-
-		marshal_context^ context = gcnew marshal_context();
-		string cantileverID = context->marshal_as<string>(cantileverIDTextBox->Text);
-
-		writeCalibrationDataToDisk( actuatorCommandSignal,  cantileverSignal, cantileverID);
-
+		
+		if (recordDataCheckBox->Checked){
+			marshal_context^ context = gcnew marshal_context();
+			string cantileverID = context->marshal_as<string>(cantileverIDTextBox->Text);
+			string commentsForData = context->marshal_as<string>(dataCommentsTextBox->Text);
+			vector<double> PIDParameters;
+			PIDParameters.push_back(Decimal::ToDouble(pParameterNumericUpDown->Value));
+			PIDParameters.push_back(Decimal::ToDouble(iParameterNumericUpDown->Value));
+			PIDParameters.push_back(Decimal::ToDouble(dParameterNumericUpDown->Value)); 
+			writeCalibrationDataToDisk( actuatorCommandSignal,  cantileverSignal, cantileverID, commentsForData, PIDParameters);
+			PIDParameters.clear();
+		}
 
 
 		vector<double> signal; 
@@ -640,7 +681,7 @@ Stimulus createTestStimulus(double magnitude)
 	}
 
 
-void writeCalibrationDataToDisk(vector<double> actuatorPositions, vector<double> cantileverSignal, string cantileverID){
+void writeCalibrationDataToDisk(vector<double> actuatorPositions, vector<double> cantileverSignal, string cantileverID, string commentsForData, vector<double> PIDParameters){
 			cv::FileStorage dataWriter;
 			 
 			 SYSTEMTIME now;
@@ -648,19 +689,28 @@ void writeCalibrationDataToDisk(vector<double> actuatorPositions, vector<double>
 
 			string time;
 			char* cTime = new char[50];
-			sprintf(cTime, "%04d%02d%02d_%02d%02d%02d_", now.wYear, now.wMonth, now.wDay, now.wHour, now.wMinute, now.wSecond);
+			sprintf(cTime, "%04d_%02d_%02d__%02d_%02d_%02d__", now.wYear, now.wMonth, now.wDay, now.wHour, now.wMinute, now.wSecond);
 			time = string(cTime);
 			delete cTime;
 
-			string directory = string("C:\\\\Users\\\\HAWK\\\\Documents\\\\CantileverCalibrationData\\\\");
-			string fileName = cantileverID + string("_") + time + string("_PIDData.yaml");
-			string fullfile = directory + fileName;
+			//string directory = string("C:\\\\Users\\\\HAWK\\\\Documents\\\\CantileverCalibrationData\\\\");
+			//string fileName = cantileverID + string("_") + time + string("_PIDData.yaml");
+			//string fullfile = directory + fileName;
 
+			string directory = string("C:\\\\Users\\\\HAWK\\\\Documents\\\\CantileverCalibrationData\\\\PIDParameterData\\\\");
+			CreateDirectoryA((directory + cantileverID + string("\\\\")).c_str(), NULL);
+			string fileName =  time + string("_") + cantileverID + string("_PIDData.yaml");
+			string fullfile = directory + cantileverID + string("\\\\") + fileName;
+			
+			
 			dataWriter.open(fullfile, cv::FileStorage::WRITE);
 
 			dataWriter << string("Time") << time;
 			dataWriter << string("Cantilever") << cantileverID;
-
+			dataWriter << string("p Parameter") << PIDParameters[0];
+			dataWriter << string("i Parameter") << PIDParameters[1];
+			dataWriter << string("d Parameter") << PIDParameters[2];
+			dataWriter << string("Comments") << commentsForData;
 			string nodeTitle;
 			char* title = new char[50];
 			//Write actuator position:
