@@ -170,6 +170,20 @@ private: System::Windows::Forms::NumericUpDown^  iParameterNumericUpDown;
 
 private: System::Windows::Forms::NumericUpDown^  pParameterNumericUpDown;
 private: System::Windows::Forms::RadioButton^  behaviorModeRadioButton;
+private: System::Windows::Forms::NumericUpDown^  experimentNumericUpDown;
+
+private: System::Windows::Forms::NumericUpDown^  slideNumberNumericUpDown;
+
+private: System::Windows::Forms::NumericUpDown^  postStimRecordTimeNumericUpDown;
+private: System::Windows::Forms::Label^  postStimRecordTimeUnitLabel;
+
+private: System::Windows::Forms::Label^  experimentNumberLabel;
+private: System::Windows::Forms::Label^  slideNumberLabel;
+private: System::Windows::Forms::Label^  postStimRecordTimeLabel;
+
+
+
+
 
 #pragma endregion
 
@@ -244,6 +258,13 @@ private: System::Windows::Forms::RadioButton^  behaviorModeRadioButton;
 			this->outputFolderBrowserDialog = (gcnew System::Windows::Forms::FolderBrowserDialog());
 			this->customStimOpenFileDialog = (gcnew System::Windows::Forms::OpenFileDialog());
 			this->experimentInfoGroupBox = (gcnew System::Windows::Forms::GroupBox());
+			this->postStimRecordTimeUnitLabel = (gcnew System::Windows::Forms::Label());
+			this->experimentNumberLabel = (gcnew System::Windows::Forms::Label());
+			this->slideNumberLabel = (gcnew System::Windows::Forms::Label());
+			this->postStimRecordTimeLabel = (gcnew System::Windows::Forms::Label());
+			this->experimentNumericUpDown = (gcnew System::Windows::Forms::NumericUpDown());
+			this->slideNumberNumericUpDown = (gcnew System::Windows::Forms::NumericUpDown());
+			this->postStimRecordTimeNumericUpDown = (gcnew System::Windows::Forms::NumericUpDown());
 			this->preStimRecordTimeNumericUpDown = (gcnew System::Windows::Forms::NumericUpDown());
 			this->preStimRecordTimeUnitLabel = (gcnew System::Windows::Forms::Label());
 			this->preStimRecordTimeLabel = (gcnew System::Windows::Forms::Label());
@@ -314,6 +335,9 @@ private: System::Windows::Forms::RadioButton^  behaviorModeRadioButton;
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->stimulusSignalChart))->BeginInit();
 			this->dataOutputGroupBox->SuspendLayout();
 			this->experimentInfoGroupBox->SuspendLayout();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->experimentNumericUpDown))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->slideNumberNumericUpDown))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->postStimRecordTimeNumericUpDown))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->preStimRecordTimeNumericUpDown))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->ambientTemperatureNumericUpDown))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->ambientHumidityNumericUpDown))->BeginInit();
@@ -882,6 +906,13 @@ private: System::Windows::Forms::RadioButton^  behaviorModeRadioButton;
 			// 
 			// experimentInfoGroupBox
 			// 
+			this->experimentInfoGroupBox->Controls->Add(this->postStimRecordTimeUnitLabel);
+			this->experimentInfoGroupBox->Controls->Add(this->experimentNumberLabel);
+			this->experimentInfoGroupBox->Controls->Add(this->slideNumberLabel);
+			this->experimentInfoGroupBox->Controls->Add(this->postStimRecordTimeLabel);
+			this->experimentInfoGroupBox->Controls->Add(this->experimentNumericUpDown);
+			this->experimentInfoGroupBox->Controls->Add(this->slideNumberNumericUpDown);
+			this->experimentInfoGroupBox->Controls->Add(this->postStimRecordTimeNumericUpDown);
 			this->experimentInfoGroupBox->Controls->Add(this->preStimRecordTimeNumericUpDown);
 			this->experimentInfoGroupBox->Controls->Add(this->preStimRecordTimeUnitLabel);
 			this->experimentInfoGroupBox->Controls->Add(this->preStimRecordTimeLabel);
@@ -908,12 +939,70 @@ private: System::Windows::Forms::RadioButton^  behaviorModeRadioButton;
 			this->experimentInfoGroupBox->Controls->Add(this->wormTreatmentsLabel);
 			this->experimentInfoGroupBox->Controls->Add(this->wormStrainLabel);
 			this->experimentInfoGroupBox->Controls->Add(this->experimentTitleLabel);
-			this->experimentInfoGroupBox->Location = System::Drawing::Point(12, 12);
+			this->experimentInfoGroupBox->Location = System::Drawing::Point(4, 12);
 			this->experimentInfoGroupBox->Name = L"experimentInfoGroupBox";
-			this->experimentInfoGroupBox->Size = System::Drawing::Size(316, 402);
+			this->experimentInfoGroupBox->Size = System::Drawing::Size(324, 483);
 			this->experimentInfoGroupBox->TabIndex = 9;
 			this->experimentInfoGroupBox->TabStop = false;
 			this->experimentInfoGroupBox->Text = L"Experiment Information";
+			// 
+			// postStimRecordTimeUnitLabel
+			// 
+			this->postStimRecordTimeUnitLabel->AutoSize = true;
+			this->postStimRecordTimeUnitLabel->Location = System::Drawing::Point(192, 287);
+			this->postStimRecordTimeUnitLabel->Name = L"postStimRecordTimeUnitLabel";
+			this->postStimRecordTimeUnitLabel->Size = System::Drawing::Size(97, 13);
+			this->postStimRecordTimeUnitLabel->TabIndex = 36;
+			this->postStimRecordTimeUnitLabel->Text = L"s - assuming 12 fps";
+			// 
+			// experimentNumberLabel
+			// 
+			this->experimentNumberLabel->AutoSize = true;
+			this->experimentNumberLabel->Location = System::Drawing::Point(4, 334);
+			this->experimentNumberLabel->Name = L"experimentNumberLabel";
+			this->experimentNumberLabel->Size = System::Drawing::Size(102, 26);
+			this->experimentNumberLabel->TabIndex = 35;
+			this->experimentNumberLabel->Text = L"Experiment Number \r\non this Slide:";
+			// 
+			// slideNumberLabel
+			// 
+			this->slideNumberLabel->AutoSize = true;
+			this->slideNumberLabel->Location = System::Drawing::Point(4, 313);
+			this->slideNumberLabel->Name = L"slideNumberLabel";
+			this->slideNumberLabel->Size = System::Drawing::Size(73, 13);
+			this->slideNumberLabel->TabIndex = 34;
+			this->slideNumberLabel->Text = L"Slide Number:";
+			// 
+			// postStimRecordTimeLabel
+			// 
+			this->postStimRecordTimeLabel->AutoSize = true;
+			this->postStimRecordTimeLabel->Location = System::Drawing::Point(4, 286);
+			this->postStimRecordTimeLabel->Name = L"postStimRecordTimeLabel";
+			this->postStimRecordTimeLabel->Size = System::Drawing::Size(137, 13);
+			this->postStimRecordTimeLabel->TabIndex = 33;
+			this->postStimRecordTimeLabel->Text = L"Post-Stimulus Record Time:";
+			// 
+			// experimentNumericUpDown
+			// 
+			this->experimentNumericUpDown->Location = System::Drawing::Point(141, 337);
+			this->experimentNumericUpDown->Name = L"experimentNumericUpDown";
+			this->experimentNumericUpDown->Size = System::Drawing::Size(45, 20);
+			this->experimentNumericUpDown->TabIndex = 32;
+			// 
+			// slideNumberNumericUpDown
+			// 
+			this->slideNumberNumericUpDown->Location = System::Drawing::Point(141, 311);
+			this->slideNumberNumericUpDown->Name = L"slideNumberNumericUpDown";
+			this->slideNumberNumericUpDown->Size = System::Drawing::Size(45, 20);
+			this->slideNumberNumericUpDown->TabIndex = 31;
+			// 
+			// postStimRecordTimeNumericUpDown
+			// 
+			this->postStimRecordTimeNumericUpDown->Location = System::Drawing::Point(141, 284);
+			this->postStimRecordTimeNumericUpDown->Name = L"postStimRecordTimeNumericUpDown";
+			this->postStimRecordTimeNumericUpDown->Size = System::Drawing::Size(45, 20);
+			this->postStimRecordTimeNumericUpDown->TabIndex = 30;
+			this->postStimRecordTimeNumericUpDown->Value = System::Decimal(gcnew cli::array< System::Int32 >(4) {10, 0, 0, 0});
 			// 
 			// preStimRecordTimeNumericUpDown
 			// 
@@ -935,7 +1024,7 @@ private: System::Windows::Forms::RadioButton^  behaviorModeRadioButton;
 			// preStimRecordTimeLabel
 			// 
 			this->preStimRecordTimeLabel->AutoSize = true;
-			this->preStimRecordTimeLabel->Location = System::Drawing::Point(6, 259);
+			this->preStimRecordTimeLabel->Location = System::Drawing::Point(5, 259);
 			this->preStimRecordTimeLabel->Name = L"preStimRecordTimeLabel";
 			this->preStimRecordTimeLabel->Size = System::Drawing::Size(132, 13);
 			this->preStimRecordTimeLabel->TabIndex = 28;
@@ -954,7 +1043,7 @@ private: System::Windows::Forms::RadioButton^  behaviorModeRadioButton;
 			// wormFoodStatusLabel
 			// 
 			this->wormFoodStatusLabel->AutoSize = true;
-			this->wormFoodStatusLabel->Location = System::Drawing::Point(6, 180);
+			this->wormFoodStatusLabel->Location = System::Drawing::Point(4, 180);
 			this->wormFoodStatusLabel->Name = L"wormFoodStatusLabel";
 			this->wormFoodStatusLabel->Size = System::Drawing::Size(98, 13);
 			this->wormFoodStatusLabel->TabIndex = 27;
@@ -1019,7 +1108,7 @@ private: System::Windows::Forms::RadioButton^  behaviorModeRadioButton;
 			// 
 			// otherInfoTextBox
 			// 
-			this->otherInfoTextBox->Location = System::Drawing::Point(141, 286);
+			this->otherInfoTextBox->Location = System::Drawing::Point(141, 375);
 			this->otherInfoTextBox->Multiline = true;
 			this->otherInfoTextBox->Name = L"otherInfoTextBox";
 			this->otherInfoTextBox->Size = System::Drawing::Size(169, 96);
@@ -1069,7 +1158,7 @@ private: System::Windows::Forms::RadioButton^  behaviorModeRadioButton;
 			// otherInfoLabel
 			// 
 			this->otherInfoLabel->AutoSize = true;
-			this->otherInfoLabel->Location = System::Drawing::Point(6, 286);
+			this->otherInfoLabel->Location = System::Drawing::Point(4, 375);
 			this->otherInfoLabel->Name = L"otherInfoLabel";
 			this->otherInfoLabel->Size = System::Drawing::Size(122, 13);
 			this->otherInfoLabel->TabIndex = 8;
@@ -1078,7 +1167,7 @@ private: System::Windows::Forms::RadioButton^  behaviorModeRadioButton;
 			// wormAgeLabel
 			// 
 			this->wormAgeLabel->AutoSize = true;
-			this->wormAgeLabel->Location = System::Drawing::Point(6, 153);
+			this->wormAgeLabel->Location = System::Drawing::Point(4, 153);
 			this->wormAgeLabel->Name = L"wormAgeLabel";
 			this->wormAgeLabel->Size = System::Drawing::Size(60, 13);
 			this->wormAgeLabel->TabIndex = 7;
@@ -1087,7 +1176,7 @@ private: System::Windows::Forms::RadioButton^  behaviorModeRadioButton;
 			// wormGenderLabel
 			// 
 			this->wormGenderLabel->AutoSize = true;
-			this->wormGenderLabel->Location = System::Drawing::Point(6, 126);
+			this->wormGenderLabel->Location = System::Drawing::Point(5, 125);
 			this->wormGenderLabel->Name = L"wormGenderLabel";
 			this->wormGenderLabel->Size = System::Drawing::Size(76, 13);
 			this->wormGenderLabel->TabIndex = 6;
@@ -1096,7 +1185,7 @@ private: System::Windows::Forms::RadioButton^  behaviorModeRadioButton;
 			// percentAgarLabel
 			// 
 			this->percentAgarLabel->AutoSize = true;
-			this->percentAgarLabel->Location = System::Drawing::Point(6, 100);
+			this->percentAgarLabel->Location = System::Drawing::Point(4, 101);
 			this->percentAgarLabel->Name = L"percentAgarLabel";
 			this->percentAgarLabel->Size = System::Drawing::Size(43, 13);
 			this->percentAgarLabel->TabIndex = 5;
@@ -1105,7 +1194,7 @@ private: System::Windows::Forms::RadioButton^  behaviorModeRadioButton;
 			// ambientTemperatureLabel
 			// 
 			this->ambientTemperatureLabel->AutoSize = true;
-			this->ambientTemperatureLabel->Location = System::Drawing::Point(6, 232);
+			this->ambientTemperatureLabel->Location = System::Drawing::Point(4, 233);
 			this->ambientTemperatureLabel->Name = L"ambientTemperatureLabel";
 			this->ambientTemperatureLabel->Size = System::Drawing::Size(111, 13);
 			this->ambientTemperatureLabel->TabIndex = 4;
@@ -1114,7 +1203,7 @@ private: System::Windows::Forms::RadioButton^  behaviorModeRadioButton;
 			// ambientHumidityLabel
 			// 
 			this->ambientHumidityLabel->AutoSize = true;
-			this->ambientHumidityLabel->Location = System::Drawing::Point(6, 206);
+			this->ambientHumidityLabel->Location = System::Drawing::Point(4, 206);
 			this->ambientHumidityLabel->Name = L"ambientHumidityLabel";
 			this->ambientHumidityLabel->Size = System::Drawing::Size(91, 13);
 			this->ambientHumidityLabel->TabIndex = 3;
@@ -1123,7 +1212,7 @@ private: System::Windows::Forms::RadioButton^  behaviorModeRadioButton;
 			// wormTreatmentsLabel
 			// 
 			this->wormTreatmentsLabel->AutoSize = true;
-			this->wormTreatmentsLabel->Location = System::Drawing::Point(6, 74);
+			this->wormTreatmentsLabel->Location = System::Drawing::Point(4, 73);
 			this->wormTreatmentsLabel->Name = L"wormTreatmentsLabel";
 			this->wormTreatmentsLabel->Size = System::Drawing::Size(94, 13);
 			this->wormTreatmentsLabel->TabIndex = 2;
@@ -1132,7 +1221,7 @@ private: System::Windows::Forms::RadioButton^  behaviorModeRadioButton;
 			// wormStrainLabel
 			// 
 			this->wormStrainLabel->AutoSize = true;
-			this->wormStrainLabel->Location = System::Drawing::Point(6, 48);
+			this->wormStrainLabel->Location = System::Drawing::Point(4, 49);
 			this->wormStrainLabel->Name = L"wormStrainLabel";
 			this->wormStrainLabel->Size = System::Drawing::Size(71, 13);
 			this->wormStrainLabel->TabIndex = 1;
@@ -1141,7 +1230,7 @@ private: System::Windows::Forms::RadioButton^  behaviorModeRadioButton;
 			// experimentTitleLabel
 			// 
 			this->experimentTitleLabel->AutoSize = true;
-			this->experimentTitleLabel->Location = System::Drawing::Point(6, 23);
+			this->experimentTitleLabel->Location = System::Drawing::Point(4, 22);
 			this->experimentTitleLabel->Name = L"experimentTitleLabel";
 			this->experimentTitleLabel->Size = System::Drawing::Size(85, 13);
 			this->experimentTitleLabel->TabIndex = 0;
@@ -1439,6 +1528,9 @@ private: System::Windows::Forms::RadioButton^  behaviorModeRadioButton;
 			this->dataOutputGroupBox->PerformLayout();
 			this->experimentInfoGroupBox->ResumeLayout(false);
 			this->experimentInfoGroupBox->PerformLayout();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->experimentNumericUpDown))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->slideNumberNumericUpDown))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->postStimRecordTimeNumericUpDown))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->preStimRecordTimeNumericUpDown))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->ambientTemperatureNumericUpDown))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->ambientHumidityNumericUpDown))->EndInit();
@@ -1611,6 +1703,10 @@ private:
 		experiment->otherInfo = context->marshal_as<string>(otherInfoTextBox->Text);
 		
 		experiment->waitingBufferSize = Decimal::ToInt32(preStimRecordTimeNumericUpDown->Value); // unit: seconds
+		experiment->postWaitingBufferSize = Decimal::ToInt32(postStimRecordTimeNumericUpDown->Value); // unit: seconds
+		experiment->experimentPerSlideNumber = Decimal::ToInt32(experimentNumericUpDown->Value);
+		experiment->slideNumber = Decimal::ToInt32(slideNumberNumericUpDown->Value);
+
 
 		experiment->cantileverProperties.serialNumber = context->marshal_as<string>(System::String::Concat(waferIDTextBox->Text, deviceIDTextBox->Text));
 		experiment->cantileverProperties.frequency = Decimal::ToDouble(cantileverFrequencyNumericUpDown->Value);
@@ -1760,7 +1856,7 @@ private:
 			parameters[0] = Decimal::ToDouble(pParameterNumericUpDown->Value);
 			parameters[1] = Decimal::ToDouble(iParameterNumericUpDown->Value);
 			parameters[2] = Decimal::ToDouble(dParameterNumericUpDown->Value);
-			parameters[3] = 4; //need to make sure this parameter is OK.
+			parameters[3] = 5; //need to make sure this parameter is OK.
 			comm->sendPIDParameters(parameters, numParams);
 			Threading::Thread::Sleep(500);
 			comm->sendClampMode(2);

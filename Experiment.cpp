@@ -13,8 +13,13 @@ int Experiment::setUpDataOutput(void)
 	if (result == 0) {
 		dataManager.writeStringToDisk("Experiment Title", experimentTitle);
 		dataManager.writeStringToDisk("Experiment Mode", experimentMode);
+		dataManager.writeDoubleToDisk("Target Location", targetLocation*100);
+		dataManager.writeIntToDisk("Slide Number", slideNumber);
+		dataManager.writeIntToDisk("Experiment on this slide Number", experimentPerSlideNumber);
+		dataManager.writeIntToDisk("Pre-Stimulus Record Time", waitingBufferSize);
+		dataManager.writeIntToDisk("Post-Stimulus Record Time", postWaitingBufferSize);
 		dataManager.writeStringToDisk("Other Experiment Info", otherInfo);
-
+		
 		dataManager.startNode("Worm Properties");
 		dataManager.writeStringToDisk("Worm Strain", wormProperties.wormStrain);
 		dataManager.writeStringToDisk("Worm Treatments", wormProperties.wormTreatments);
@@ -49,7 +54,12 @@ int Experiment::setUpDataOutput(void)
 		dataManager.writeDoubleToDisk("Temperature", ambientParameters.temperature);
 		dataManager.writeDoubleToDisk("Humidity", ambientParameters.humidity);
 		dataManager.endNode();
+
+		
 	}
+	
+	stim.saveAsYAML(dataManager.stimDataFileName);
+	
 	return result;
 }
 
@@ -65,10 +75,11 @@ void Experiment::writefpgaDataToDisk(int stimNum, vector<double> piezoSignalData
 
 void Experiment::endExperiment(void)
 {
+	dataManager.writeIntToDisk("Number Of Stimulus", stimulusNumber);
 	dataManager.writeStringToDisk("Post Experiment Notes", postExpNotes);
 	dataManager.writeStringToDisk("Timing Data", TICTOC::timer().generateReport());
 
-	stim.saveAsYAML(dataManager.stimDataFileName);
+	
 
 	dataManager.closeDataWriters();
 }

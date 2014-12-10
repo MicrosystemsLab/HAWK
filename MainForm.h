@@ -989,7 +989,7 @@ private:
 				worker->ReportProgress(WRITE_FRAME);
 				// checks if recording 
 				if (stimulusFinishedCountDown == 0) {
-					stimulusFinishedCountDown = experiment->waitingBufferSize*12; //reset countdown buffer, need to convert to frames, assumes 12 fps
+					stimulusFinishedCountDown = experiment->postWaitingBufferSize*12; //reset countdown buffer, need to convert to frames, assumes 12 fps
 					experiment->postStimulusRecording = false;
 					experiment->stimulusNumber++;
 					worker->ReportProgress(STIM_DONE);
@@ -1119,7 +1119,7 @@ private:
 				if(stimStarted == true){
 					start = std::clock();
 					stimStarted = false;
-				} else {
+				} else { // not sure if this works:
 					if (( std::clock() - start ) / (double) CLOCKS_PER_SEC > experiment->stim.totalTime){
 						experiment->stimulusActive = false;
 						experiment->postStimulusRecording = true;

@@ -45,8 +45,14 @@ public:
 	string postExpNotes;
 	//the DataManager for this experiment
 	DataManager dataManager;
-	//the number of frames to have in the dataManager's buffer before stimulus is applied
+	// amount of time to record frames (converts to the number of frames to have in the dataManager's buffer) before stimulus is applied
 	int waitingBufferSize;
+	// amount of time to record frames (converts to the number of frames) to record after stimulus is applied
+	int postWaitingBufferSize;
+	// counter for the number of experiments done on a particular slide
+	int experimentPerSlideNumber;
+	// counter for the number of slides experimented in this session.
+	int slideNumber;
 	//user defined properties of the worm
 	struct WormProperties{
 		string wormStrain;

@@ -127,13 +127,29 @@ void Stimulus::createFromYAML(string filePath)
 void Stimulus::saveAsYAML(string filePath)
 {
 	FileStorage stimFile(filePath, FileStorage::WRITE);
+
+	string nodeTitle;
+	char* title = new char[50];
+
 	if (stimFile.isOpened()) {
-		stimFile << "Magnitudes" << "[";
+		//First print desired magnitudes 
+		stimFile << "Magnitudes" << "{";
 		//print rest of data
 		for (unsigned int i = 0; i < waveTable.size(); i++) {
-			stimFile << waveTable[i];
+			sprintf(title, "Point %d", i);
+			nodeTitle = string(title);
+			stimFile << nodeTitle << waveTable[i];
 		}
-		stimFile << "]";
+		stimFile << "}";
+		// Next print FPGA target voltages
+		stimFile << "Voltages" << "{";
+		//print rest of data
+		for (unsigned int i = 0; i < voltages.size(); i++) {
+			sprintf(title, "Point %d", i);
+			nodeTitle = string(title);
+			stimFile << nodeTitle << voltages[i];
+		}
+		stimFile << "}";
 		stimFile.release();
 	} else {
 		//handle error
