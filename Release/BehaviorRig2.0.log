@@ -1,24 +1,81 @@
-﻿Build started 10/22/2014 9:13:00 AM.
+﻿Build started 12/10/2014 6:25:48 PM.
      1>Project "C:\Users\HAWK\Documents\Visual Studio 2010\Projects\BehaviorRig2.0\BehaviorRig2.0\BehaviorRig2.0.vcxproj" on node 2 (build target(s)).
      1>InitializeBuildStatus:
          Creating "Release\BehaviorRig2.0.unsuccessfulbuild" because "AlwaysCreate" was specified.
        GenerateTargetFrameworkMonikerAttribute:
        Skipping target "GenerateTargetFrameworkMonikerAttribute" because all output files are up-to-date with respect to the input files.
        ClCompile:
-         All outputs are up-to-date.
-         All outputs are up-to-date.
-         All outputs are up-to-date.
+         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /IC:\opencv\build\include /IC:\opencv\build\include\opencv2 /IC:\opencv\build\include\opencv /I\..\..\include /I\..\..\include\opencv2 /I\..\..\include\opencv /I"C:\Users\HAWK\Documents\IC Imaging Control 3.3\classlib\include" /AI"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0" /Zi /clr /nologo /W3 /WX- /Ox /Oy- /D WIN32 /D NDEBUG /D _CRT_SECURE_NO_WARNINGS /D _MBCS /D _AFXDLL /EHa /MD /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yc"StdAfx.h" /Fp"Release\BehaviorRig2.0.pch" /Fo"Release\\" /Fd"Release\vc100.pdb" /TP /FU"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Core.dll" /FU"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Data.dll" /FU"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.dll" /FU"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Drawing.dll" /FU"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Windows.Forms.DataVisualization.dll" /FU"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Windows.Forms.dll" /FU"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Xml.dll" /analyze- /errorReport:prompt stdafx.cpp /clr:nostdlib 
+         stdafx.cpp
+         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /IC:\opencv\build\include /IC:\opencv\build\include\opencv2 /IC:\opencv\build\include\opencv /I\..\..\include /I\..\..\include\opencv2 /I\..\..\include\opencv /I"C:\Users\HAWK\Documents\IC Imaging Control 3.3\classlib\include" /AI"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0" /Zi /clr /nologo /W3 /WX- /Ox /Oy- /D WIN32 /D NDEBUG /D _CRT_SECURE_NO_WARNINGS /D _MBCS /D _AFXDLL /EHa /MD /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yu"StdAfx.h" /Fp"Release\BehaviorRig2.0.pch" /Fo"Release\\" /Fd"Release\vc100.pdb" /TP /FU"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Core.dll" /FU"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Data.dll" /FU"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.dll" /FU"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Drawing.dll" /FU"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Windows.Forms.DataVisualization.dll" /FU"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Windows.Forms.dll" /FU"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Xml.dll" /analyze- /errorReport:prompt AssemblyInfo.cpp BasicExcel.cpp BehaviorRig2.0.cpp CalibratePIDParameters.cpp CalibrateSensitivityForm.cpp DataManagement.cpp ExcelFormat.cpp ExcelInterface.cpp Experiment.cpp ImageControl.cpp PostExperimentForm.cpp SetUpForm.cpp Stimulus.cpp "STM Convert.cpp" STMDispatch.cpp STMSession.cpp STM_Communicator.cpp tictoc.cpp Timing.cpp Worm.cpp Zaber.cpp /clr:nostdlib 
+         AssemblyInfo.cpp
+         BasicExcel.cpp
+         BehaviorRig2.0.cpp
+     1>c:\users\hawk\documents\visual studio 2010\projects\behaviorrig2.0\behaviorrig2.0\CalibrateSensitivityForm.h(595): warning C4244: 'initializing' : conversion from 'double' to 'int', possible loss of data
+         CalibratePIDParameters.cpp
+         CalibrateSensitivityForm.cpp
+     1>c:\users\hawk\documents\visual studio 2010\projects\behaviorrig2.0\behaviorrig2.0\CalibrateSensitivityForm.h(595): warning C4244: 'initializing' : conversion from 'double' to 'int', possible loss of data
+         DataManagement.cpp
+         ExcelFormat.cpp
+         ExcelInterface.cpp
+         Experiment.cpp
+         ImageControl.cpp
+         PostExperimentForm.cpp
+         SetUpForm.cpp
+         Stimulus.cpp
+     1>Stimulus.cpp(180): warning C4018: '<' : signed/unsigned mismatch
+         STM Convert.cpp
+         STMDispatch.cpp
+         STMSession.cpp
+         STM_Communicator.cpp
+     1>STM_Communicator.cpp(167): warning C4554: '&' : check operator precedence for possible error; use parentheses to clarify precedence
+     1>STM_Communicator.cpp(167): warning C4554: '&' : check operator precedence for possible error; use parentheses to clarify precedence
+         tictoc.cpp
+         Timing.cpp
+         Worm.cpp
+         Generating Code...
+         Compiling...
+         Zaber.cpp
+         Generating Code...
+         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /IC:\opencv\build\include /IC:\opencv\build\include\opencv2 /IC:\opencv\build\include\opencv /I\..\..\include /I\..\..\include\opencv2 /I\..\..\include\opencv /I"C:\Users\HAWK\Documents\IC Imaging Control 3.3\classlib\include" /Zi /clr /nologo /W3 /WX- /Ox /Oy- /D WIN32 /D NDEBUG /D _CRT_SECURE_NO_WARNINGS /D _MBCS /D _AFXDLL /EHa /MD /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Release\\" /Fd"Release\vc100.pdb" /TP /analyze- /errorReport:prompt "C:\Users\HAWK\AppData\Local\Temp\.NETFramework,Version=v4.0.AssemblyAttributes.cpp"
+         .NETFramework,Version=v4.0.AssemblyAttributes.cpp
        CoreResGen:
-         No resources are out of date with respect to their source files. Skipping resource generation.
+         "C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\NETFX 4.0 Tools\resgen.exe" /useSourcePath /r:"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Core.dll" /r:"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Data.dll" /r:"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.dll" /r:"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Drawing.dll" /r:"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Windows.Forms.DataVisualization.dll" /r:"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Windows.Forms.dll" /r:"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Xml.dll" /compile CalibratePIDParameters.resx,Release\BehaviorRig20.CalibratePIDParameters.resources CalibrateSensitivityForm.resx,Release\BehaviorRig20.CalibrateSensitivityForm.resources MainForm.resX,Release\BehaviorRig20.MainForm.resources PostExperimentForm.resx,Release\BehaviorRig20.PostExperimentForm.resources SetUpForm.resx,Release\BehaviorRig20.SetUpForm.resources
+         Processing resource file "CalibratePIDParameters.resx" into "Release\BehaviorRig20.CalibratePIDParameters.resources".
+         Processing resource file "CalibrateSensitivityForm.resx" into "Release\BehaviorRig20.CalibrateSensitivityForm.resources".
+         Processing resource file "MainForm.resX" into "Release\BehaviorRig20.MainForm.resources".
+         Processing resource file "PostExperimentForm.resx" into "Release\BehaviorRig20.PostExperimentForm.resources".
+         Processing resource file "SetUpForm.resx" into "Release\BehaviorRig20.SetUpForm.resources".
        ResourceCompile:
-         All outputs are up-to-date.
+         C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\rc.exe /D _AFXDLL /l"0x0409" /nologo /fo"Release\app.res" app.rc 
        Link:
-         All outputs are up-to-date.
+         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\HAWK\Documents\Visual Studio 2010\Projects\BehaviorRig2.0\Release\BehaviorRig2.0.exe" /INCREMENTAL:NO /NOLOGO /LIBPATH:C:\opencv\build\x86\vc10\lib /LIBPATH:C:\opencv\build\x86\vc10\bin /LIBPATH:"C:\Users\HAWK\Documents\IC Imaging Control 3.3\classlib\win32\release" opencv_core249.lib opencv_imgproc249.lib opencv_highgui249.lib opencv_ml249.lib opencv_video249.lib opencv_features2d249.lib opencv_calib3d249.lib opencv_objdetect249.lib opencv_contrib249.lib opencv_legacy249.lib opencv_flann249.lib /ASSEMBLYRESOURCE:Release\BehaviorRig20.CalibratePIDParameters.resources /ASSEMBLYRESOURCE:Release\BehaviorRig20.CalibrateSensitivityForm.resources /ASSEMBLYRESOURCE:Release\BehaviorRig20.MainForm.resources /ASSEMBLYRESOURCE:Release\BehaviorRig20.PostExperimentForm.resources /ASSEMBLYRESOURCE:Release\BehaviorRig20.SetUpForm.resources /INCLUDE:"__DllMainCRTStartup@12" /MANIFEST /ManifestFile:"Release\BehaviorRig2.0.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:\Users\HAWK\Documents\Visual Studio 2010\Projects\BehaviorRig2.0\Release\BehaviorRig2.0.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /ENTRY:"main" /DYNAMICBASE /FIXED:NO /NXCOMPAT /MACHINE:X86 Release\app.res
+         Release\AssemblyInfo.obj
+         Release\BasicExcel.obj
+         Release\BehaviorRig2.0.obj
+         Release\CalibratePIDParameters.obj
+         Release\CalibrateSensitivityForm.obj
+         Release\DataManagement.obj
+         Release\ExcelFormat.obj
+         Release\ExcelInterface.obj
+         Release\Experiment.obj
+         Release\ImageControl.obj
+         Release\PostExperimentForm.obj
+         Release\SetUpForm.obj
+         Release\stdafx.obj
+         Release\Stimulus.obj
+         "Release\STM Convert.obj"
+         Release\STMDispatch.obj
+         Release\STMSession.obj
+         Release\STM_Communicator.obj
+         Release\tictoc.obj
+         Release\Timing.obj
+         Release\Worm.obj
+         Release\Zaber.obj
+         "Release\.NETFramework,Version=v4.0.AssemblyAttributes.obj"
          BehaviorRig2.0.vcxproj -> C:\Users\HAWK\Documents\Visual Studio 2010\Projects\BehaviorRig2.0\Release\BehaviorRig2.0.exe
-       MetaGen:
-       Skipping target "MetaGen" because all output files are up-to-date with respect to the input files.
        Manifest:
-         All outputs are up-to-date.
+         C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /outputresource:"C:\Users\HAWK\Documents\Visual Studio 2010\Projects\BehaviorRig2.0\Release\BehaviorRig2.0.exe;#1" /manifest Release\BehaviorRig2.0.exe.intermediate.manifest "c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\Include\Manifest\dpiaware.manifest"
        FinalizeBuildStatus:
          Deleting file "Release\BehaviorRig2.0.unsuccessfulbuild".
          Touching "Release\BehaviorRig2.0.lastbuildstate".
@@ -26,4 +83,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:00.15
+Time Elapsed 00:00:29.85
