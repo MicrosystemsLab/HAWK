@@ -38,6 +38,8 @@ private:
 	double sineFrequency;
 	//a bias applied to the sine wave
 	double sineBias;
+	//append this length of zeros to the end of the stimulus waveform.
+	double zeroPulseDuration;
 
 	//the calculated count of number of points in a period
 	int totalPointsPerPeriod;
@@ -59,7 +61,7 @@ public:
 	 * Constructors for a Stimulus object. Sets up the properties from the given parameters.
 	 */
 	Stimulus();
-	Stimulus(double prd, double percentConTime, int noCyc, double mag, double scl, int sclType, double snFreq, double snBias);
+	Stimulus(double prd, double percentConTime, int noCyc, double mag, double scl, int sclType, double snFreq, double snBias, double zeroPulse);
 
 	/* Function: createSquare
 	 * ----------------------
@@ -101,7 +103,7 @@ public:
 	 * ----------------------------
 	 * appends a 2 s zero pulse to the wave table.
 	 */
-	void appendZeroPulse(void);
+	void appendZeroPulse(double secondsToAppend);
 
 	/* Function: prepend ZeroPulse
 	 * ----------------------------

@@ -20,7 +20,7 @@ Stimulus::Stimulus()
 
 }
 
-Stimulus::Stimulus(double prd, double percentConTime, int noCyc, double mag, double scl, int sclType, double snFreq, double snBias)
+Stimulus::Stimulus(double prd, double percentConTime, int noCyc, double mag, double scl, int sclType, double snFreq, double snBias, double zeroPulse)
 {
 	period = prd;
 	contactTime = percentConTime * prd / 100;
@@ -30,6 +30,7 @@ Stimulus::Stimulus(double prd, double percentConTime, int noCyc, double mag, dou
 	scaleType = sclType;
 	sineFrequency = snFreq;
 	sineBias = snBias;
+	zeroPulseDuration = zeroPulse;
 
 	waveTable.clear();
 	voltages.clear();
@@ -132,6 +133,24 @@ void Stimulus::saveAsYAML(string filePath)
 	char* title = new char[50];
 
 	if (stimFile.isOpened()) {
+		//Print the characteristics of the stimulus:
+		stimFile << "Period" << period;
+		//the amount of time at the begining of the period in which there is a non-zero magnitude
+		stimFile << "Contact Time" << contactTime;
+		//number of cycles
+		stimFile << "Number of Cycles" << noCycles;
+		//magnitude of the wave with no scale
+		stimFile << "Magnitude" << magnitude;
+		//scaling factor
+		stimFile << "Scale" << scale;
+		//none, linear, or geometric
+		stimFile << "Scale Type" << scaleType;
+		//the frequency of the sine wave within the contactTime
+		stimFile << "Sine Frequency" << sineFrequency;
+		//a bias applied to the sine wave
+		stimFile << "Sine bias" << sineBias;
+		// post stimulus zero pulse duration
+		stimFile << "Zero pulse Duration" << zeroPulseDuration;
 		//First print desired magnitudes 
 		stimFile << "Magnitudes" << "{";
 		//print rest of data
@@ -165,9 +184,9 @@ void Stimulus::convertToVoltages(double sensitivity)
 
 }
 
-void Stimulus::appendZeroPulse(void)
+void Stimulus::appendZeroPulse(double secondsToAppend)
 {
-	for(int i = 0; i < 2/DELTA_T; i++)
+	for(int i = 0; i < secondsToAppend/DELTA_T; i++)
 	{
 		waveTable.push_back(0);
 	}

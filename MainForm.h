@@ -163,6 +163,7 @@ namespace BehaviorRig20 {
 			this->toggleHeadTailButton = (gcnew System::Windows::Forms::Button());
 			this->trackingBackgroundWorker = (gcnew System::ComponentModel::BackgroundWorker());
 			this->liveFeedPanel = (gcnew System::Windows::Forms::Panel());
+			this->statusStrip1 = (gcnew System::Windows::Forms::StatusStrip());
 			this->statusStrip = (gcnew System::Windows::Forms::StatusStrip());
 			this->toolStripStatusLabel = (gcnew System::Windows::Forms::ToolStripStatusLabel());
 			this->toolStripStatusText = (gcnew System::Windows::Forms::ToolStripStatusLabel());
@@ -201,7 +202,6 @@ namespace BehaviorRig20 {
 			this->calibrateCantileverButton = (gcnew System::Windows::Forms::Button());
 			this->calibratePIDButton = (gcnew System::Windows::Forms::Button());
 			this->calibrationToolsGroupBox = (gcnew System::Windows::Forms::GroupBox());
-			this->statusStrip1 = (gcnew System::Windows::Forms::StatusStrip());
 			this->trackingGroupBox->SuspendLayout();
 			this->liveFeedPanel->SuspendLayout();
 			this->statusStrip->SuspendLayout();
@@ -230,7 +230,7 @@ namespace BehaviorRig20 {
 			this->startTrackButton->Name = L"startTrackButton";
 			this->startTrackButton->Size = System::Drawing::Size(97, 23);
 			this->startTrackButton->TabIndex = 9;
-			this->startTrackButton->Text = L"Commence";
+			this->startTrackButton->Text = L"Start";
 			this->startTrackButton->UseVisualStyleBackColor = true;
 			this->startTrackButton->Click += gcnew System::EventHandler(this, &MainForm::startTrackButton_Click);
 			// 
@@ -241,7 +241,7 @@ namespace BehaviorRig20 {
 			this->stopTrackButton->Name = L"stopTrackButton";
 			this->stopTrackButton->Size = System::Drawing::Size(97, 23);
 			this->stopTrackButton->TabIndex = 10;
-			this->stopTrackButton->Text = L"Force Stop";
+			this->stopTrackButton->Text = L"Stop";
 			this->stopTrackButton->UseVisualStyleBackColor = true;
 			this->stopTrackButton->Click += gcnew System::EventHandler(this, &MainForm::stopTrackButton_Click);
 			// 
@@ -252,7 +252,7 @@ namespace BehaviorRig20 {
 			this->trackingGroupBox->Controls->Add(this->stopTrackButton);
 			this->trackingGroupBox->Location = System::Drawing::Point(12, 12);
 			this->trackingGroupBox->Name = L"trackingGroupBox";
-			this->trackingGroupBox->Size = System::Drawing::Size(109, 105);
+			this->trackingGroupBox->Size = System::Drawing::Size(109, 125);
 			this->trackingGroupBox->TabIndex = 11;
 			this->trackingGroupBox->TabStop = false;
 			this->trackingGroupBox->Text = L"Tracking";
@@ -262,9 +262,9 @@ namespace BehaviorRig20 {
 			this->toggleHeadTailButton->Enabled = false;
 			this->toggleHeadTailButton->Location = System::Drawing::Point(6, 77);
 			this->toggleHeadTailButton->Name = L"toggleHeadTailButton";
-			this->toggleHeadTailButton->Size = System::Drawing::Size(97, 23);
+			this->toggleHeadTailButton->Size = System::Drawing::Size(97, 39);
 			this->toggleHeadTailButton->TabIndex = 11;
-			this->toggleHeadTailButton->Text = L"Head = Tail";
+			this->toggleHeadTailButton->Text = L"Head, Tail Toggle";
 			this->toggleHeadTailButton->UseVisualStyleBackColor = true;
 			this->toggleHeadTailButton->Click += gcnew System::EventHandler(this, &MainForm::toggleHeadTailButton_Click);
 			// 
@@ -284,6 +284,14 @@ namespace BehaviorRig20 {
 			this->liveFeedPanel->Name = L"liveFeedPanel";
 			this->liveFeedPanel->Size = System::Drawing::Size(768, 576);
 			this->liveFeedPanel->TabIndex = 18;
+			// 
+			// statusStrip1
+			// 
+			this->statusStrip1->Location = System::Drawing::Point(0, 550);
+			this->statusStrip1->Name = L"statusStrip1";
+			this->statusStrip1->Size = System::Drawing::Size(764, 22);
+			this->statusStrip1->TabIndex = 0;
+			this->statusStrip1->Text = L"statusStrip1";
 			// 
 			// statusStrip
 			// 
@@ -560,7 +568,7 @@ namespace BehaviorRig20 {
 			this->experimentGroupBox->Controls->Add(this->endStimulusButton);
 			this->experimentGroupBox->Controls->Add(this->setUpExpButton);
 			this->experimentGroupBox->Controls->Add(this->applyStimButton);
-			this->experimentGroupBox->Location = System::Drawing::Point(12, 123);
+			this->experimentGroupBox->Location = System::Drawing::Point(12, 143);
 			this->experimentGroupBox->Name = L"experimentGroupBox";
 			this->experimentGroupBox->Size = System::Drawing::Size(109, 105);
 			this->experimentGroupBox->TabIndex = 31;
@@ -592,7 +600,7 @@ namespace BehaviorRig20 {
 			// 
 			this->exposureGroupBox->Controls->Add(this->autoExposeRadioButton);
 			this->exposureGroupBox->Controls->Add(this->defaultExposeRadioButton);
-			this->exposureGroupBox->Location = System::Drawing::Point(12, 234);
+			this->exposureGroupBox->Location = System::Drawing::Point(12, 254);
 			this->exposureGroupBox->Name = L"exposureGroupBox";
 			this->exposureGroupBox->Size = System::Drawing::Size(109, 67);
 			this->exposureGroupBox->TabIndex = 32;
@@ -683,14 +691,6 @@ namespace BehaviorRig20 {
 			this->calibrationToolsGroupBox->TabStop = false;
 			this->calibrationToolsGroupBox->Text = L"Calibration Tools";
 			// 
-			// statusStrip1
-			// 
-			this->statusStrip1->Location = System::Drawing::Point(0, 550);
-			this->statusStrip1->Name = L"statusStrip1";
-			this->statusStrip1->Size = System::Drawing::Size(764, 22);
-			this->statusStrip1->TabIndex = 0;
-			this->statusStrip1->Text = L"statusStrip1";
-			// 
 			// MainForm
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
@@ -756,10 +756,25 @@ private:
 		setUpForm->ShowDialog();
 
 		if (setUpForm->DialogResult == Windows::Forms::DialogResult::OK) {
-			setCantileverPositionManually();
+			if (experiment->experimentMode == std::string("Behavior Mode")){
+				// set up point in image space to be tracked to be the center of the screen.
+				System::Drawing::Point cursorPoint;
+				cursorPoint.X = liveFeedPanel->Size.Width;
+				cursorPoint.Y = liveFeedPanel->Size.Height;
+				Point cvCursorPoint = Point((int)((cursorPoint.X)/2 * IMAGE_RESIZE_SCALE/SCREEN_RESIZE_SCALE), (int)((cursorPoint.Y)/2 * IMAGE_RESIZE_SCALE/SCREEN_RESIZE_SCALE));
+				experiment->cantileverProperties.positionInImageSpace = cvCursorPoint;
+				
+			}
+			else{
+				// ask user where the cantilever is in the image. 
+				setCantileverPositionManually();
+			}
 			experiment->stimulusNumber = 0;
 			experiment->experimentSetUp = true;
 			experiment->trackingReady = true;
+			toolStripStatusText->Text = "Experiment Set Up Complete";
+			this->setUpExpButton->Enabled = true;
+			this->startTrackButton->Enabled = true;
 		} else {
 			experiment->experimentSetUp = false;
 			experiment->endExperiment();
@@ -923,7 +938,7 @@ private:
 		Movement stageMovement;
 		WormOutputData data;
 		bool toggled = false;
-		experiment->stimulusNumber = 1;
+		experiment->stimulusNumber = 0;
 		int frameCount = 0;
 
 		int stimulusFinishedCountDown = experiment->waitingBufferSize*12; //convert to frames
@@ -961,20 +976,20 @@ private:
 			imageController->overlayCircle(worm.tail, 10);
 			imageController->overlayCircle(worm.target, 5);
 			
-			if (experiment->stimulusActive == false){
+			//if (experiment->stimulusActive == false){
 				//determine stage movement
 				stageMovement = determineStageMovement(worm.target, cantilever);
 				//move stage
 				TICTOC::timer().tic("MoveStage");
 				zaber->moveStage(stageMovement);
 				TICTOC::timer().toc("MoveStage");
-			} else {
-				stageMovement.x = 0;
-				stageMovement.y = 0;
-			}
+			//} else {
+			//	stageMovement.x = 0;
+			//	stageMovement.y = 0;
+			//}
 
 			
-			data = worm.extractWormOutputData(stageMovement, stagePosition, cantilever, toggled, experiment->stimulusActive, experiment->stimulusNumber);
+			data = worm.extractWormOutputData(stageMovement, stagePosition, cantilever, toggled, experiment->stimulusActive, experiment->stimulusNumber+1);
 			// based on current status of stimulus, do something with data, report status, etc.
 			if (experiment->stimulusActive == true){
 				//data = worm.extractWormOutputData(stageMovement, stagePosition, cantilever, toggled, experiment->stimulusActive, experiment->stimulusNumber);
@@ -1110,7 +1125,7 @@ private:
 
 				// need to append stimulus data to .yaml file
 				int size = comm->piezoSignalData.size();
-				experiment->writefpgaDataToDisk( experiment->stimulusNumber, comm->piezoSignalData,  comm->actuatorPositionData, comm->actuatorCommandData, comm->desiredSignalData);
+				experiment->writefpgaDataToDisk( experiment->stimulusNumber+1, comm->piezoSignalData,  comm->actuatorPositionData, comm->actuatorCommandData, comm->desiredSignalData);
 				comm->messageReceivedCount = 0;
 			} 
 			 
@@ -1197,9 +1212,9 @@ private:
 		if (confirmResult ==  Windows::Forms::DialogResult::Yes) {
 			liveFeedPanel->MouseDown -= gcnew MouseEventHandler(this, &MainForm::liveFeedPanel_MouseDown);
 			experiment->cantileverProperties.positionInImageSpace = cvCursorPoint;
-			toolStripStatusText->Text = "Experiment Set Up Complete";
-			this->setUpExpButton->Enabled = true;
-			this->startTrackButton->Enabled = true;
+			//toolStripStatusText->Text = "Experiment Set Up Complete";
+			//this->setUpExpButton->Enabled = true;
+			//this->startTrackButton->Enabled = true;
 		}
 		imageController->clearOverlay();
 	}

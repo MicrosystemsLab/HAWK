@@ -180,6 +180,9 @@ private: System::Windows::Forms::Label^  postStimRecordTimeUnitLabel;
 private: System::Windows::Forms::Label^  experimentNumberLabel;
 private: System::Windows::Forms::Label^  slideNumberLabel;
 private: System::Windows::Forms::Label^  postStimRecordTimeLabel;
+private: System::Windows::Forms::Label^  postStimZerlPulseUnitLabel;
+private: System::Windows::Forms::Label^  postStimZeroPulseLabel;
+private: System::Windows::Forms::NumericUpDown^  postStimZeroPulseNumericUpDown;
 
 
 
@@ -201,8 +204,8 @@ private: System::Windows::Forms::Label^  postStimRecordTimeLabel;
 		void InitializeComponent(void)
 		{
 			System::ComponentModel::ComponentResourceManager^  resources = (gcnew System::ComponentModel::ComponentResourceManager(SetUpForm::typeid));
-			System::Windows::Forms::DataVisualization::Charting::ChartArea^  chartArea2 = (gcnew System::Windows::Forms::DataVisualization::Charting::ChartArea());
-			System::Windows::Forms::DataVisualization::Charting::Series^  series2 = (gcnew System::Windows::Forms::DataVisualization::Charting::Series());
+			System::Windows::Forms::DataVisualization::Charting::ChartArea^  chartArea1 = (gcnew System::Windows::Forms::DataVisualization::Charting::ChartArea());
+			System::Windows::Forms::DataVisualization::Charting::Series^  series1 = (gcnew System::Windows::Forms::DataVisualization::Charting::Series());
 			this->clampModeGroupBox = (gcnew System::Windows::Forms::GroupBox());
 			this->behaviorModeRadioButton = (gcnew System::Windows::Forms::RadioButton());
 			this->openLoopClampRadioButton = (gcnew System::Windows::Forms::RadioButton());
@@ -317,6 +320,9 @@ private: System::Windows::Forms::Label^  postStimRecordTimeLabel;
 			this->waferIDTextBox = (gcnew System::Windows::Forms::TextBox());
 			this->cantileverIDSearchButton = (gcnew System::Windows::Forms::Button());
 			this->saveStimFileDialog = (gcnew System::Windows::Forms::SaveFileDialog());
+			this->postStimZeroPulseNumericUpDown = (gcnew System::Windows::Forms::NumericUpDown());
+			this->postStimZeroPulseLabel = (gcnew System::Windows::Forms::Label());
+			this->postStimZerlPulseUnitLabel = (gcnew System::Windows::Forms::Label());
 			this->clampModeGroupBox->SuspendLayout();
 			this->targetGroupBox->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->targetWormPictureBox))->BeginInit();
@@ -349,6 +355,7 @@ private: System::Windows::Forms::Label^  postStimRecordTimeLabel;
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->cantileverSensitivityNumericUpDown))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->cantileverStiffnessNumericUpDown))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->cantileverFrequencyNumericUpDown))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->postStimZeroPulseNumericUpDown))->BeginInit();
 			this->SuspendLayout();
 			// 
 			// clampModeGroupBox
@@ -488,6 +495,9 @@ private: System::Windows::Forms::Label^  postStimRecordTimeLabel;
 			// 
 			// stimulusInfoGroupBox
 			// 
+			this->stimulusInfoGroupBox->Controls->Add(this->postStimZerlPulseUnitLabel);
+			this->stimulusInfoGroupBox->Controls->Add(this->postStimZeroPulseLabel);
+			this->stimulusInfoGroupBox->Controls->Add(this->postStimZeroPulseNumericUpDown);
 			this->stimulusInfoGroupBox->Controls->Add(this->stimSineBiasNumericUpDown);
 			this->stimulusInfoGroupBox->Controls->Add(this->stimSineFreqNumericUpDown);
 			this->stimulusInfoGroupBox->Controls->Add(this->stimScaleTypeDomainUpDown);
@@ -527,7 +537,7 @@ private: System::Windows::Forms::Label^  postStimRecordTimeLabel;
 			// stimSineBiasNumericUpDown
 			// 
 			this->stimSineBiasNumericUpDown->DecimalPlaces = 2;
-			this->stimSineBiasNumericUpDown->Location = System::Drawing::Point(207, 202);
+			this->stimSineBiasNumericUpDown->Location = System::Drawing::Point(211, 202);
 			this->stimSineBiasNumericUpDown->Name = L"stimSineBiasNumericUpDown";
 			this->stimSineBiasNumericUpDown->Size = System::Drawing::Size(85, 20);
 			this->stimSineBiasNumericUpDown->TabIndex = 34;
@@ -535,7 +545,7 @@ private: System::Windows::Forms::Label^  postStimRecordTimeLabel;
 			// stimSineFreqNumericUpDown
 			// 
 			this->stimSineFreqNumericUpDown->DecimalPlaces = 2;
-			this->stimSineFreqNumericUpDown->Location = System::Drawing::Point(207, 176);
+			this->stimSineFreqNumericUpDown->Location = System::Drawing::Point(211, 176);
 			this->stimSineFreqNumericUpDown->Name = L"stimSineFreqNumericUpDown";
 			this->stimSineFreqNumericUpDown->Size = System::Drawing::Size(85, 20);
 			this->stimSineFreqNumericUpDown->TabIndex = 33;
@@ -545,10 +555,10 @@ private: System::Windows::Forms::Label^  postStimRecordTimeLabel;
 			this->stimScaleTypeDomainUpDown->Items->Add(L"None");
 			this->stimScaleTypeDomainUpDown->Items->Add(L"Linear");
 			this->stimScaleTypeDomainUpDown->Items->Add(L"Geometric");
-			this->stimScaleTypeDomainUpDown->Location = System::Drawing::Point(207, 150);
+			this->stimScaleTypeDomainUpDown->Location = System::Drawing::Point(211, 150);
 			this->stimScaleTypeDomainUpDown->Name = L"stimScaleTypeDomainUpDown";
 			this->stimScaleTypeDomainUpDown->SelectedIndex = 0;
-			this->stimScaleTypeDomainUpDown->Size = System::Drawing::Size(132, 20);
+			this->stimScaleTypeDomainUpDown->Size = System::Drawing::Size(107, 20);
 			this->stimScaleTypeDomainUpDown->TabIndex = 32;
 			this->stimScaleTypeDomainUpDown->Text = L"None";
 			this->stimScaleTypeDomainUpDown->Wrap = true;
@@ -556,7 +566,7 @@ private: System::Windows::Forms::Label^  postStimRecordTimeLabel;
 			// stimScaleNumericUpDown
 			// 
 			this->stimScaleNumericUpDown->DecimalPlaces = 2;
-			this->stimScaleNumericUpDown->Location = System::Drawing::Point(207, 123);
+			this->stimScaleNumericUpDown->Location = System::Drawing::Point(211, 123);
 			this->stimScaleNumericUpDown->Minimum = System::Decimal(gcnew cli::array< System::Int32 >(4) {100, 0, 0, System::Int32::MinValue});
 			this->stimScaleNumericUpDown->Name = L"stimScaleNumericUpDown";
 			this->stimScaleNumericUpDown->Size = System::Drawing::Size(85, 20);
@@ -565,7 +575,7 @@ private: System::Windows::Forms::Label^  postStimRecordTimeLabel;
 			// stimMagnitudeNumericUpDown
 			// 
 			this->stimMagnitudeNumericUpDown->DecimalPlaces = 2;
-			this->stimMagnitudeNumericUpDown->Location = System::Drawing::Point(207, 97);
+			this->stimMagnitudeNumericUpDown->Location = System::Drawing::Point(211, 97);
 			this->stimMagnitudeNumericUpDown->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) {10000, 0, 0, 0});
 			this->stimMagnitudeNumericUpDown->Name = L"stimMagnitudeNumericUpDown";
 			this->stimMagnitudeNumericUpDown->Size = System::Drawing::Size(85, 20);
@@ -573,7 +583,7 @@ private: System::Windows::Forms::Label^  postStimRecordTimeLabel;
 			// 
 			// stimNoCyclesNumericUpDown
 			// 
-			this->stimNoCyclesNumericUpDown->Location = System::Drawing::Point(207, 71);
+			this->stimNoCyclesNumericUpDown->Location = System::Drawing::Point(211, 71);
 			this->stimNoCyclesNumericUpDown->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) {1000, 0, 0, 0});
 			this->stimNoCyclesNumericUpDown->Name = L"stimNoCyclesNumericUpDown";
 			this->stimNoCyclesNumericUpDown->Size = System::Drawing::Size(85, 20);
@@ -582,7 +592,7 @@ private: System::Windows::Forms::Label^  postStimRecordTimeLabel;
 			// stimContactTimeNumericUpDown
 			// 
 			this->stimContactTimeNumericUpDown->DecimalPlaces = 2;
-			this->stimContactTimeNumericUpDown->Location = System::Drawing::Point(207, 45);
+			this->stimContactTimeNumericUpDown->Location = System::Drawing::Point(211, 45);
 			this->stimContactTimeNumericUpDown->Name = L"stimContactTimeNumericUpDown";
 			this->stimContactTimeNumericUpDown->Size = System::Drawing::Size(85, 20);
 			this->stimContactTimeNumericUpDown->TabIndex = 28;
@@ -590,16 +600,16 @@ private: System::Windows::Forms::Label^  postStimRecordTimeLabel;
 			// stimPeriodNumericUpDown
 			// 
 			this->stimPeriodNumericUpDown->DecimalPlaces = 2;
-			this->stimPeriodNumericUpDown->Location = System::Drawing::Point(207, 19);
+			this->stimPeriodNumericUpDown->Location = System::Drawing::Point(211, 19);
 			this->stimPeriodNumericUpDown->Name = L"stimPeriodNumericUpDown";
 			this->stimPeriodNumericUpDown->Size = System::Drawing::Size(85, 20);
 			this->stimPeriodNumericUpDown->TabIndex = 27;
 			// 
 			// saveStimButton
 			// 
-			this->saveStimButton->Location = System::Drawing::Point(207, 228);
+			this->saveStimButton->Location = System::Drawing::Point(7, 196);
 			this->saveStimButton->Name = L"saveStimButton";
-			this->saveStimButton->Size = System::Drawing::Size(132, 23);
+			this->saveStimButton->Size = System::Drawing::Size(74, 48);
 			this->saveStimButton->TabIndex = 45;
 			this->saveStimButton->Text = L"Save Stimulus";
 			this->saveStimButton->UseVisualStyleBackColor = true;
@@ -609,7 +619,7 @@ private: System::Windows::Forms::Label^  postStimRecordTimeLabel;
 			// 
 			this->submitStimulusButton->Location = System::Drawing::Point(6, 142);
 			this->submitStimulusButton->Name = L"submitStimulusButton";
-			this->submitStimulusButton->Size = System::Drawing::Size(75, 80);
+			this->submitStimulusButton->Size = System::Drawing::Size(75, 50);
 			this->submitStimulusButton->TabIndex = 35;
 			this->submitStimulusButton->Text = L"Submit Stimulus";
 			this->submitStimulusButton->UseVisualStyleBackColor = true;
@@ -837,16 +847,16 @@ private: System::Windows::Forms::Label^  postStimRecordTimeLabel;
 			// stimulusSignalChart
 			// 
 			this->stimulusSignalChart->BackColor = System::Drawing::SystemColors::Control;
-			chartArea2->AxisX->Minimum = 0;
-			chartArea2->AxisX->Title = L"Time (s)";
-			chartArea2->Name = L"ChartArea1";
-			this->stimulusSignalChart->ChartAreas->Add(chartArea2);
+			chartArea1->AxisX->Minimum = 0;
+			chartArea1->AxisX->Title = L"Time (s)";
+			chartArea1->Name = L"ChartArea1";
+			this->stimulusSignalChart->ChartAreas->Add(chartArea1);
 			this->stimulusSignalChart->Location = System::Drawing::Point(6, 19);
 			this->stimulusSignalChart->Name = L"stimulusSignalChart";
-			series2->ChartArea = L"ChartArea1";
-			series2->ChartType = System::Windows::Forms::DataVisualization::Charting::SeriesChartType::Line;
-			series2->Name = L"Stimulus";
-			this->stimulusSignalChart->Series->Add(series2);
+			series1->ChartArea = L"ChartArea1";
+			series1->ChartType = System::Windows::Forms::DataVisualization::Charting::SeriesChartType::Line;
+			series1->Name = L"Stimulus";
+			this->stimulusSignalChart->Series->Add(series1);
 			this->stimulusSignalChart->Size = System::Drawing::Size(655, 175);
 			this->stimulusSignalChart->TabIndex = 0;
 			this->stimulusSignalChart->Text = L"stimulusSignalChart";
@@ -1486,6 +1496,32 @@ private: System::Windows::Forms::Label^  postStimRecordTimeLabel;
 			// 
 			this->saveStimFileDialog->InitialDirectory = L"C:\\Users\\HAWK\\Documents\\HAWKData";
 			// 
+			// postStimZeroPulseNumericUpDown
+			// 
+			this->postStimZeroPulseNumericUpDown->Location = System::Drawing::Point(211, 228);
+			this->postStimZeroPulseNumericUpDown->Name = L"postStimZeroPulseNumericUpDown";
+			this->postStimZeroPulseNumericUpDown->Size = System::Drawing::Size(85, 20);
+			this->postStimZeroPulseNumericUpDown->TabIndex = 46;
+			// 
+			// postStimZeroPulseLabel
+			// 
+			this->postStimZeroPulseLabel->AutoSize = true;
+			this->postStimZeroPulseLabel->Location = System::Drawing::Point(87, 230);
+			this->postStimZeroPulseLabel->Name = L"postStimZeroPulseLabel";
+			this->postStimZeroPulseLabel->Size = System::Drawing::Size(124, 13);
+			this->postStimZeroPulseLabel->TabIndex = 47;
+			this->postStimZeroPulseLabel->Text = L"Post-Stimulus Zero Time:";
+			// 
+			// postStimZerlPulseUnitLabel
+			// 
+			this->postStimZerlPulseUnitLabel->AutoEllipsis = true;
+			this->postStimZerlPulseUnitLabel->AutoSize = true;
+			this->postStimZerlPulseUnitLabel->Location = System::Drawing::Point(300, 232);
+			this->postStimZerlPulseUnitLabel->Name = L"postStimZerlPulseUnitLabel";
+			this->postStimZerlPulseUnitLabel->Size = System::Drawing::Size(12, 13);
+			this->postStimZerlPulseUnitLabel->TabIndex = 48;
+			this->postStimZerlPulseUnitLabel->Text = L"s";
+			// 
 			// SetUpForm
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
@@ -1543,6 +1579,7 @@ private: System::Windows::Forms::Label^  postStimRecordTimeLabel;
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->cantileverSensitivityNumericUpDown))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->cantileverStiffnessNumericUpDown))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->cantileverFrequencyNumericUpDown))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->postStimZeroPulseNumericUpDown))->EndInit();
 			this->ResumeLayout(false);
 
 		}
@@ -1925,7 +1962,7 @@ private:
 		int scaleType = stimScaleTypeDomainUpDown->SelectedIndex;
 		double sineFreq = Decimal::ToDouble(stimSineFreqNumericUpDown->Value);
 		double sineBias = Decimal::ToDouble(stimSineBiasNumericUpDown->Value);
-
+		double zeroPulse = Decimal::ToDouble(postStimZeroPulseNumericUpDown->Value);
 
 		if(behaviorModeRadioButton->Checked){
 			contactTime = 100;
@@ -1937,7 +1974,7 @@ private:
 			sineBias = 0;
 		} 
 		
-		Stimulus stim(period, contactTime, noCycles, magnitude, scale, scaleType, sineFreq, sineBias);
+		Stimulus stim(period, contactTime, noCycles, magnitude, scale, scaleType, sineFreq, sineBias, zeroPulse);
 		
 		if (squareTypeRadioButton->Checked) {
 			stim.createSquare();
@@ -1950,7 +1987,7 @@ private:
 			stim.createFromYAML(context->marshal_as<string>(customStimFileTextBox->Text));
 		}
 
-		//stim.appendZeroPulse();
+		stim.appendZeroPulse(zeroPulse);
 
 		if (forceClampRadioButton->Checked)
 			stim.convertToVoltages(1/(Decimal::ToDouble(cantileverSensitivityNumericUpDown->Value) * Decimal::ToDouble(cantileverStiffnessNumericUpDown->Value) * 1000));

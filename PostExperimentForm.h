@@ -73,7 +73,6 @@ namespace BehaviorRig20 {
 			this->postExpNotesTextBox->Name = L"postExpNotesTextBox";
 			this->postExpNotesTextBox->Size = System::Drawing::Size(260, 119);
 			this->postExpNotesTextBox->TabIndex = 10;
-			this->postExpNotesTextBox->Text = L"post experiment notes test";
 			// 
 			// okButton
 			// 

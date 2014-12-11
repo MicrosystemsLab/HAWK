@@ -527,12 +527,13 @@ private: System::Void createCalibrationProfileButton_Click(System::Object^  send
 		int scaleType = 0;
 		double sineFreq = 0;
 		double sineBias = 0;
+		double zeroPulse = 2;
 
-		Stimulus stim(period, contactTime, noCycles, magnitude, scale, scaleType, sineFreq, sineBias);
+		Stimulus stim(period, contactTime, noCycles, magnitude, scale, scaleType, sineFreq, sineBias, zeroPulse );
 		
 		stim.createCalibrationWaveTable();
 				
-		stim.appendZeroPulse();
+		stim.appendZeroPulse(zeroPulse);
 
 		stim.convertToVoltages(1/ACTUATOR_SENSITIVITY);
 		
