@@ -1877,7 +1877,7 @@ private:
 		delete stimVoltages;
 
 		stim.totalPoints = waveTable.size();
-		stim.totalTime = stim.totalPoints/DELTA_T;
+		stim.totalTime = stim.totalPoints*DELTA_T; // convert to seconds
 
 		experiment->stim = stim;
 

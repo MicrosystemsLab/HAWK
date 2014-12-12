@@ -922,6 +922,10 @@ private:
 	 */
 	System::Void trackingBackgroundWorker_TrackWorm(System::Object^  sender, System::ComponentModel::DoWorkEventArgs^  e)
 	{
+		// Set up time out for stimulus application
+		std::clock_t start;
+		bool stimulusApplicationTimer  = false;
+
 		TICTOC::timer().tic("WholeWormTrackLoop");
 
 		toggleWormEnds = false;
@@ -991,22 +995,47 @@ private:
 			
 			data = worm.extractWormOutputData(stageMovement, stagePosition, cantilever, toggled, experiment->stimulusActive, experiment->stimulusNumber+1);
 			// based on current status of stimulus, do something with data, report status, etc.
+			// if stimulus is currently being applied:
 			if (experiment->stimulusActive == true){
-				//data = worm.extractWormOutputData(stageMovement, stagePosition, cantilever, toggled, experiment->stimulusActive, experiment->stimulusNumber);
+				// Need to create a timer for stimulus if in behavior mode:
+				if (experiment->experimentMode == "Behavior Mode"){
+					// check timer
+					// on first time through, tneed to start the timer
+					if (stimulusApplicationTimer == false){
+						stimulusApplicationTimer = true;
+						start = std::clock();
+					}
+					else {
+						// on all other times, check if timer is expired. if it is, toggle states.
+						if ((( std::clock() - start ) / (double) CLOCKS_PER_SEC) > experiment->stim.totalTime){
+							experiment->stimulusActive = false;
+							experiment->postStimulusRecording = true;
+							stimulusApplicationTimer = false;
+						}
+					}
+				}
+				// add data to the buffer
 				experiment->dataManager.wormDataBuffer.add(data);
+				// report to main thread current frame.
 				worker->ReportProgress(WRITE_FRAME);
 			}
-			//need to record frames until countdown is expired.
+			//after stimulus is applied, need to record frames until countdown is expired.
 			else if (experiment->postStimulusRecording == true && experiment->stimulusActive == false){
-				//data = worm.extractWormOutputData(stageMovement, stagePosition, cantilever, toggled, experiment->stimulusActive, experiment->stimulusNumber);
+				// add the data to the buffer
 				experiment->dataManager.wormDataBuffer.add(data);
+				// decrement this until expired to record post stimulus frames:
 				stimulusFinishedCountDown--;
+				// report to main thread current frame.
 				worker->ReportProgress(WRITE_FRAME);
-				// checks if recording 
+				// once the countdown falls to zero:
 				if (stimulusFinishedCountDown == 0) {
+					// reset counter
 					stimulusFinishedCountDown = experiment->postWaitingBufferSize*12; //reset countdown buffer, need to convert to frames, assumes 12 fps
+					// toggle experiment state:
 					experiment->postStimulusRecording = false;
+					//increment the stimulus number
 					experiment->stimulusNumber++;
+					// report that the stimulus is done.
 					worker->ReportProgress(STIM_DONE);
 				}
 			}
@@ -1099,9 +1128,6 @@ private:
 	{
 		BackgroundWorker^ worker = dynamic_cast<BackgroundWorker^>(sender);
 
-		std::clock_t start;
-		bool stimStarted = true;
-
 		int stimNum = 0;
 		while (true) {
 			
@@ -1121,27 +1147,14 @@ private:
 				comm->stimulusStarted = false;
 				experiment->stimulusActive = false;
 				experiment->postStimulusRecording = true;
-				//stimNum ++;
-
-				// need to append stimulus data to .yaml file
+				
+				// need to append fpga data to .yaml file, only if not in behavior mode:
 				int size = comm->piezoSignalData.size();
 				experiment->writefpgaDataToDisk( experiment->stimulusNumber+1, comm->piezoSignalData,  comm->actuatorPositionData, comm->actuatorCommandData, comm->desiredSignalData);
 				comm->messageReceivedCount = 0;
+				
 			} 
 			 
-
-			if(comm->stimulusStarted){
-				if(stimStarted == true){
-					start = std::clock();
-					stimStarted = false;
-				} else { // not sure if this works:
-					if (( std::clock() - start ) / (double) CLOCKS_PER_SEC > experiment->stim.totalTime){
-						experiment->stimulusActive = false;
-						experiment->postStimulusRecording = true;
-						stimStarted = true;
-					}
-				}
-			}
 
 			Threading::Thread::Sleep(100);
 		}
