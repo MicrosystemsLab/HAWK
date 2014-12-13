@@ -138,6 +138,8 @@ namespace BehaviorRig20 {
 	private: System::Windows::Forms::Button^  calibratePIDButton;
 	private: System::Windows::Forms::StatusStrip^  statusStrip1;
 	private: System::Windows::Forms::GroupBox^  calibrationToolsGroupBox;
+	private: System::Windows::Forms::Label^  stimulusCountIndicatorLabel;
+	private: System::Windows::Forms::Label^  stimulusCountLabel;
 
 	private: System::ComponentModel::IContainer^  components;
 #pragma endregion
@@ -190,6 +192,8 @@ namespace BehaviorRig20 {
 			this->moveStageLeftButton = (gcnew System::Windows::Forms::Button());
 			this->zaberBackgroundWorker = (gcnew System::ComponentModel::BackgroundWorker());
 			this->experimentGroupBox = (gcnew System::Windows::Forms::GroupBox());
+			this->stimulusCountIndicatorLabel = (gcnew System::Windows::Forms::Label());
+			this->stimulusCountLabel = (gcnew System::Windows::Forms::Label());
 			this->endStimulusButton = (gcnew System::Windows::Forms::Button());
 			this->applyStimButton = (gcnew System::Windows::Forms::Button());
 			this->exposureGroupBox = (gcnew System::Windows::Forms::GroupBox());
@@ -565,15 +569,35 @@ namespace BehaviorRig20 {
 			// 
 			// experimentGroupBox
 			// 
+			this->experimentGroupBox->Controls->Add(this->stimulusCountIndicatorLabel);
+			this->experimentGroupBox->Controls->Add(this->stimulusCountLabel);
 			this->experimentGroupBox->Controls->Add(this->endStimulusButton);
 			this->experimentGroupBox->Controls->Add(this->setUpExpButton);
 			this->experimentGroupBox->Controls->Add(this->applyStimButton);
 			this->experimentGroupBox->Location = System::Drawing::Point(12, 143);
 			this->experimentGroupBox->Name = L"experimentGroupBox";
-			this->experimentGroupBox->Size = System::Drawing::Size(109, 105);
+			this->experimentGroupBox->Size = System::Drawing::Size(109, 131);
 			this->experimentGroupBox->TabIndex = 31;
 			this->experimentGroupBox->TabStop = false;
 			this->experimentGroupBox->Text = L"Experiment";
+			// 
+			// stimulusCountIndicatorLabel
+			// 
+			this->stimulusCountIndicatorLabel->AutoSize = true;
+			this->stimulusCountIndicatorLabel->Location = System::Drawing::Point(86, 106);
+			this->stimulusCountIndicatorLabel->Name = L"stimulusCountIndicatorLabel";
+			this->stimulusCountIndicatorLabel->Size = System::Drawing::Size(13, 13);
+			this->stimulusCountIndicatorLabel->TabIndex = 38;
+			this->stimulusCountIndicatorLabel->Text = L"0";
+			// 
+			// stimulusCountLabel
+			// 
+			this->stimulusCountLabel->AutoSize = true;
+			this->stimulusCountLabel->Location = System::Drawing::Point(7, 106);
+			this->stimulusCountLabel->Name = L"stimulusCountLabel";
+			this->stimulusCountLabel->Size = System::Drawing::Size(80, 13);
+			this->stimulusCountLabel->TabIndex = 37;
+			this->stimulusCountLabel->Text = L"Stimulus Count:";
 			// 
 			// endStimulusButton
 			// 
@@ -600,7 +624,7 @@ namespace BehaviorRig20 {
 			// 
 			this->exposureGroupBox->Controls->Add(this->autoExposeRadioButton);
 			this->exposureGroupBox->Controls->Add(this->defaultExposeRadioButton);
-			this->exposureGroupBox->Location = System::Drawing::Point(12, 254);
+			this->exposureGroupBox->Location = System::Drawing::Point(12, 280);
 			this->exposureGroupBox->Name = L"exposureGroupBox";
 			this->exposureGroupBox->Size = System::Drawing::Size(109, 67);
 			this->exposureGroupBox->TabIndex = 32;
@@ -725,6 +749,7 @@ namespace BehaviorRig20 {
 			this->stageMovementGroupBox->ResumeLayout(false);
 			this->stageMovementGroupBox->PerformLayout();
 			this->experimentGroupBox->ResumeLayout(false);
+			this->experimentGroupBox->PerformLayout();
 			this->exposureGroupBox->ResumeLayout(false);
 			this->exposureGroupBox->PerformLayout();
 			this->calibrationToolsGroupBox->ResumeLayout(false);
@@ -770,6 +795,7 @@ private:
 				setCantileverPositionManually();
 			}
 			experiment->stimulusNumber = 0;
+			stimulusCountIndicatorLabel->Text = Convert::ToString(0);
 			experiment->experimentSetUp = true;
 			experiment->trackingReady = true;
 			toolStripStatusText->Text = "Experiment Set Up Complete";
@@ -993,7 +1019,7 @@ private:
 			//}
 
 			
-			data = worm.extractWormOutputData(stageMovement, stagePosition, cantilever, toggled, experiment->stimulusActive, experiment->stimulusNumber+1);
+			data = worm.extractWormOutputData(stageMovement, stagePosition, cantilever, toggled, experiment->stimulusActive, experiment->stimulusNumber);
 			// based on current status of stimulus, do something with data, report status, etc.
 			// if stimulus is currently being applied:
 			if (experiment->stimulusActive == true){
@@ -1033,8 +1059,6 @@ private:
 					stimulusFinishedCountDown = experiment->postWaitingBufferSize*12; //reset countdown buffer, need to convert to frames, assumes 12 fps
 					// toggle experiment state:
 					experiment->postStimulusRecording = false;
-					//increment the stimulus number
-					experiment->stimulusNumber++;
 					// report that the stimulus is done.
 					worker->ReportProgress(STIM_DONE);
 				}
@@ -1150,7 +1174,7 @@ private:
 				
 				// need to append fpga data to .yaml file, only if not in behavior mode:
 				int size = comm->piezoSignalData.size();
-				experiment->writefpgaDataToDisk( experiment->stimulusNumber+1, comm->piezoSignalData,  comm->actuatorPositionData, comm->actuatorCommandData, comm->desiredSignalData);
+				experiment->writefpgaDataToDisk( experiment->stimulusNumber, comm->piezoSignalData,  comm->actuatorPositionData, comm->actuatorCommandData, comm->desiredSignalData);
 				comm->messageReceivedCount = 0;
 				
 			} 
@@ -1296,6 +1320,8 @@ private:
 	{
 		applyStimButton->Enabled = false;
 		experiment->stimulusActive = true;
+		experiment->stimulusNumber++;
+		stimulusCountIndicatorLabel->Text = Convert::ToString(experiment->stimulusNumber);
 		int currSize = experiment->dataManager.wormDataBuffer.size();
 		comm->triggerStimulus();
 		for (int i = 0; i < currSize; i++) {
