@@ -75,7 +75,7 @@ void Experiment::writefpgaDataToDisk(int stimNum, vector<double> piezoSignalData
 
 void Experiment::endExperiment(void)
 {
-	dataManager.writeIntToDisk("Number Of Stimulus", stimulusNumber);
+	dataManager.writeIntToDisk("Number Of Stimulus", stimulusNumber-1);
 	dataManager.writeStringToDisk("Post Experiment Notes", postExpNotes);
 	dataManager.writeStringToDisk("Timing Data", TICTOC::timer().generateReport());
 

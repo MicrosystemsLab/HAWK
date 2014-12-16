@@ -219,6 +219,9 @@ private: System::Windows::Forms::NumericUpDown^  postStimZeroPulseNumericUpDown;
 			this->targetUnitLabel = (gcnew System::Windows::Forms::Label());
 			this->targetTrackBar = (gcnew System::Windows::Forms::TrackBar());
 			this->stimulusInfoGroupBox = (gcnew System::Windows::Forms::GroupBox());
+			this->postStimZerlPulseUnitLabel = (gcnew System::Windows::Forms::Label());
+			this->postStimZeroPulseLabel = (gcnew System::Windows::Forms::Label());
+			this->postStimZeroPulseNumericUpDown = (gcnew System::Windows::Forms::NumericUpDown());
 			this->stimSineBiasNumericUpDown = (gcnew System::Windows::Forms::NumericUpDown());
 			this->stimSineFreqNumericUpDown = (gcnew System::Windows::Forms::NumericUpDown());
 			this->stimScaleTypeDomainUpDown = (gcnew System::Windows::Forms::DomainUpDown());
@@ -320,15 +323,13 @@ private: System::Windows::Forms::NumericUpDown^  postStimZeroPulseNumericUpDown;
 			this->waferIDTextBox = (gcnew System::Windows::Forms::TextBox());
 			this->cantileverIDSearchButton = (gcnew System::Windows::Forms::Button());
 			this->saveStimFileDialog = (gcnew System::Windows::Forms::SaveFileDialog());
-			this->postStimZeroPulseNumericUpDown = (gcnew System::Windows::Forms::NumericUpDown());
-			this->postStimZeroPulseLabel = (gcnew System::Windows::Forms::Label());
-			this->postStimZerlPulseUnitLabel = (gcnew System::Windows::Forms::Label());
 			this->clampModeGroupBox->SuspendLayout();
 			this->targetGroupBox->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->targetWormPictureBox))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->targetNumericUpDown))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->targetTrackBar))->BeginInit();
 			this->stimulusInfoGroupBox->SuspendLayout();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->postStimZeroPulseNumericUpDown))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->stimSineBiasNumericUpDown))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->stimSineFreqNumericUpDown))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->stimScaleNumericUpDown))->BeginInit();
@@ -355,7 +356,6 @@ private: System::Windows::Forms::NumericUpDown^  postStimZeroPulseNumericUpDown;
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->cantileverSensitivityNumericUpDown))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->cantileverStiffnessNumericUpDown))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->cantileverFrequencyNumericUpDown))->BeginInit();
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->postStimZeroPulseNumericUpDown))->BeginInit();
 			this->SuspendLayout();
 			// 
 			// clampModeGroupBox
@@ -533,6 +533,32 @@ private: System::Windows::Forms::NumericUpDown^  postStimZeroPulseNumericUpDown;
 			this->stimulusInfoGroupBox->TabIndex = 3;
 			this->stimulusInfoGroupBox->TabStop = false;
 			this->stimulusInfoGroupBox->Text = L"Stimulus Information";
+			// 
+			// postStimZerlPulseUnitLabel
+			// 
+			this->postStimZerlPulseUnitLabel->AutoEllipsis = true;
+			this->postStimZerlPulseUnitLabel->AutoSize = true;
+			this->postStimZerlPulseUnitLabel->Location = System::Drawing::Point(300, 232);
+			this->postStimZerlPulseUnitLabel->Name = L"postStimZerlPulseUnitLabel";
+			this->postStimZerlPulseUnitLabel->Size = System::Drawing::Size(12, 13);
+			this->postStimZerlPulseUnitLabel->TabIndex = 48;
+			this->postStimZerlPulseUnitLabel->Text = L"s";
+			// 
+			// postStimZeroPulseLabel
+			// 
+			this->postStimZeroPulseLabel->AutoSize = true;
+			this->postStimZeroPulseLabel->Location = System::Drawing::Point(87, 230);
+			this->postStimZeroPulseLabel->Name = L"postStimZeroPulseLabel";
+			this->postStimZeroPulseLabel->Size = System::Drawing::Size(124, 13);
+			this->postStimZeroPulseLabel->TabIndex = 47;
+			this->postStimZeroPulseLabel->Text = L"Post-Stimulus Zero Time:";
+			// 
+			// postStimZeroPulseNumericUpDown
+			// 
+			this->postStimZeroPulseNumericUpDown->Location = System::Drawing::Point(211, 228);
+			this->postStimZeroPulseNumericUpDown->Name = L"postStimZeroPulseNumericUpDown";
+			this->postStimZeroPulseNumericUpDown->Size = System::Drawing::Size(85, 20);
+			this->postStimZeroPulseNumericUpDown->TabIndex = 46;
 			// 
 			// stimSineBiasNumericUpDown
 			// 
@@ -1400,7 +1426,6 @@ private: System::Windows::Forms::NumericUpDown^  postStimZeroPulseNumericUpDown;
 			this->deviceIDTextBox->Name = L"deviceIDTextBox";
 			this->deviceIDTextBox->Size = System::Drawing::Size(115, 20);
 			this->deviceIDTextBox->TabIndex = 18;
-			this->deviceIDTextBox->Text = L"1001";
 			// 
 			// cantileverSpecLabel
 			// 
@@ -1480,7 +1505,6 @@ private: System::Windows::Forms::NumericUpDown^  postStimZeroPulseNumericUpDown;
 			this->waferIDTextBox->Name = L"waferIDTextBox";
 			this->waferIDTextBox->Size = System::Drawing::Size(115, 20);
 			this->waferIDTextBox->TabIndex = 17;
-			this->waferIDTextBox->Text = L"EM10A";
 			// 
 			// cantileverIDSearchButton
 			// 
@@ -1495,32 +1519,6 @@ private: System::Windows::Forms::NumericUpDown^  postStimZeroPulseNumericUpDown;
 			// saveStimFileDialog
 			// 
 			this->saveStimFileDialog->InitialDirectory = L"C:\\Users\\HAWK\\Documents\\HAWKData";
-			// 
-			// postStimZeroPulseNumericUpDown
-			// 
-			this->postStimZeroPulseNumericUpDown->Location = System::Drawing::Point(211, 228);
-			this->postStimZeroPulseNumericUpDown->Name = L"postStimZeroPulseNumericUpDown";
-			this->postStimZeroPulseNumericUpDown->Size = System::Drawing::Size(85, 20);
-			this->postStimZeroPulseNumericUpDown->TabIndex = 46;
-			// 
-			// postStimZeroPulseLabel
-			// 
-			this->postStimZeroPulseLabel->AutoSize = true;
-			this->postStimZeroPulseLabel->Location = System::Drawing::Point(87, 230);
-			this->postStimZeroPulseLabel->Name = L"postStimZeroPulseLabel";
-			this->postStimZeroPulseLabel->Size = System::Drawing::Size(124, 13);
-			this->postStimZeroPulseLabel->TabIndex = 47;
-			this->postStimZeroPulseLabel->Text = L"Post-Stimulus Zero Time:";
-			// 
-			// postStimZerlPulseUnitLabel
-			// 
-			this->postStimZerlPulseUnitLabel->AutoEllipsis = true;
-			this->postStimZerlPulseUnitLabel->AutoSize = true;
-			this->postStimZerlPulseUnitLabel->Location = System::Drawing::Point(300, 232);
-			this->postStimZerlPulseUnitLabel->Name = L"postStimZerlPulseUnitLabel";
-			this->postStimZerlPulseUnitLabel->Size = System::Drawing::Size(12, 13);
-			this->postStimZerlPulseUnitLabel->TabIndex = 48;
-			this->postStimZerlPulseUnitLabel->Text = L"s";
 			// 
 			// SetUpForm
 			// 
@@ -1549,6 +1547,7 @@ private: System::Windows::Forms::NumericUpDown^  postStimZeroPulseNumericUpDown;
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->targetTrackBar))->EndInit();
 			this->stimulusInfoGroupBox->ResumeLayout(false);
 			this->stimulusInfoGroupBox->PerformLayout();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->postStimZeroPulseNumericUpDown))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->stimSineBiasNumericUpDown))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->stimSineFreqNumericUpDown))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->stimScaleNumericUpDown))->EndInit();
@@ -1579,7 +1578,6 @@ private: System::Windows::Forms::NumericUpDown^  postStimZeroPulseNumericUpDown;
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->cantileverSensitivityNumericUpDown))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->cantileverStiffnessNumericUpDown))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->cantileverFrequencyNumericUpDown))->EndInit();
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->postStimZeroPulseNumericUpDown))->EndInit();
 			this->ResumeLayout(false);
 
 		}

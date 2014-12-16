@@ -968,7 +968,7 @@ private:
 		Movement stageMovement;
 		WormOutputData data;
 		bool toggled = false;
-		experiment->stimulusNumber = 0;
+		experiment->stimulusNumber = 1;
 		int frameCount = 0;
 
 		int stimulusFinishedCountDown = experiment->waitingBufferSize*12; //convert to frames
@@ -1061,6 +1061,8 @@ private:
 					experiment->postStimulusRecording = false;
 					// report that the stimulus is done.
 					worker->ReportProgress(STIM_DONE);
+					// increment stimulus number
+					experiment->stimulusNumber++;
 				}
 			}
 			// if not recording, keep buffer filled with only the most recent frames.
@@ -1320,7 +1322,7 @@ private:
 	{
 		applyStimButton->Enabled = false;
 		experiment->stimulusActive = true;
-		experiment->stimulusNumber++;
+		
 		stimulusCountIndicatorLabel->Text = Convert::ToString(experiment->stimulusNumber);
 		int currSize = experiment->dataManager.wormDataBuffer.size();
 		comm->triggerStimulus();
