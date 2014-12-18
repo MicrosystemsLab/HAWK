@@ -1006,17 +1006,17 @@ private:
 			imageController->overlayCircle(worm.tail, 10);
 			imageController->overlayCircle(worm.target, 5);
 			
-			//if (experiment->stimulusActive == false){
+			if (experiment->stimulusActive == false){
 				//determine stage movement
 				stageMovement = determineStageMovement(worm.target, cantilever);
 				//move stage
 				TICTOC::timer().tic("MoveStage");
 				zaber->moveStage(stageMovement);
 				TICTOC::timer().toc("MoveStage");
-			//} else {
-			//	stageMovement.x = 0;
-			//	stageMovement.y = 0;
-			//}
+			} else {
+				stageMovement.x = 0;
+				stageMovement.y = 0;
+			}
 
 			
 			data = worm.extractWormOutputData(stageMovement, stagePosition, cantilever, toggled, experiment->stimulusActive, experiment->stimulusNumber);
