@@ -654,14 +654,14 @@ private: System::Void getDataButton_Click(System::Object^  sender, System::Event
 Stimulus createTestStimulus(double magnitude)
 	{
 		double contactTime = 100;
-		double period = 0.3;
+		double period = 0.1;
 		int noCycles = 1;
 		double scale = 0;
 		//double magnitude = 20;
 		int scaleType = 0;
 		double sineFreq = 0;
 		double sineBias = 0;
-		double zeroPulse = 2;
+		double zeroPulse = 1;
 
 		Stimulus stim(period, contactTime, noCycles, magnitude, scale, scaleType, sineFreq, sineBias, zeroPulse);
 		
