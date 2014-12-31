@@ -554,7 +554,7 @@ Stimulus createStimulus(void)
 private: System::Void testParametersButton_Click(System::Object^  sender, System::EventArgs^  e) {
 		double magnitude;
 		if (forceClampRadioButton->Checked){
-			magnitude = 0.3; // this is the voltage we want to clamp onto, not the force.
+			magnitude = 1; // this is the voltage we want to clamp onto, not the force.
 		}
 		else {
 			magnitude = 40; // 
@@ -655,7 +655,7 @@ Stimulus createTestStimulus(double magnitude)
 	{
 		double contactTime = 100;
 		double period = 0.1;
-		int noCycles = 1;
+		int noCycles = 2;
 		double scale = 0;
 		//double magnitude = 20;
 		int scaleType = 0;

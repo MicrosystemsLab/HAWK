@@ -72,7 +72,7 @@ public:
 	 * -------------------------
 	 * Writes the write_Actuate command with a 1 argument.
 	 */
-	void triggerStimulus(void);
+	bool triggerStimulus(void);
 
 	/* Function: cancelStimulus
 	 * ------------------------

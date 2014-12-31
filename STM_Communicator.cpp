@@ -7,9 +7,9 @@ using namespace System::Runtime::InteropServices;
 
 #pragma region Write Functions
 
-void STM_Communicator::triggerStimulus(void)
+bool STM_Communicator::triggerStimulus(void)
 {
-	if (connected) {
+	if ((connected) && (waveTablePresentParameter == 1)) {
 		messageReceivedCount = 0;
 		piezoSignalData.clear();
 		actuatorPositionData.clear();
@@ -25,7 +25,12 @@ void STM_Communicator::triggerStimulus(void)
 		CString command("write_Actuate");
 		STM.SendMsg(command, &msgData);
 
+		return true;
 
+
+	}
+	else {
+		return false;
 	}
 }
 
