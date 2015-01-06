@@ -67,20 +67,21 @@ namespace BehaviorRig20 {
 	private: System::Windows::Forms::DataVisualization::Charting::Chart^  stimulusProfileChart;
 	private: System::Windows::Forms::Button^  getCalibrationDataButton;
 	private: System::Windows::Forms::DataVisualization::Charting::Chart^  sensitivityChart;
-	private: System::Windows::Forms::NumericUpDown^  startAverageNumericUpDown;
-	private: System::Windows::Forms::NumericUpDown^  endAverageNumericUpDown;
-	private: System::Windows::Forms::Button^  takeAverageButton;
-	private: System::Windows::Forms::Label^  startAverageLabel;
-	private: System::Windows::Forms::Label^  endAverageLabel;
-	private: System::Windows::Forms::Label^  label3;
-	private: System::Windows::Forms::NumericUpDown^  averageNumericUpDown;
 
-	private: System::Windows::Forms::Label^  averageLabel;
+
+
+
+
+
+
+
+
 	private: System::Windows::Forms::TextBox^  cantileverIDTextBox;
 	private: System::Windows::Forms::Label^  cantileverIDLabel;
 	private: System::Windows::Forms::CheckBox^  recordDataCheckBox;
 	private: System::Windows::Forms::TextBox^  dataCommentsTextBox;
 	private: System::Windows::Forms::Label^  label1;
+	private: System::Windows::Forms::Label^  label2;
 
 
 
@@ -123,27 +124,17 @@ namespace BehaviorRig20 {
 			this->stimulusProfileChart = (gcnew System::Windows::Forms::DataVisualization::Charting::Chart());
 			this->getCalibrationDataButton = (gcnew System::Windows::Forms::Button());
 			this->sensitivityChart = (gcnew System::Windows::Forms::DataVisualization::Charting::Chart());
-			this->startAverageNumericUpDown = (gcnew System::Windows::Forms::NumericUpDown());
-			this->endAverageNumericUpDown = (gcnew System::Windows::Forms::NumericUpDown());
-			this->takeAverageButton = (gcnew System::Windows::Forms::Button());
-			this->startAverageLabel = (gcnew System::Windows::Forms::Label());
-			this->endAverageLabel = (gcnew System::Windows::Forms::Label());
-			this->label3 = (gcnew System::Windows::Forms::Label());
-			this->averageNumericUpDown = (gcnew System::Windows::Forms::NumericUpDown());
-			this->averageLabel = (gcnew System::Windows::Forms::Label());
 			this->cantileverIDTextBox = (gcnew System::Windows::Forms::TextBox());
 			this->cantileverIDLabel = (gcnew System::Windows::Forms::Label());
 			this->recordDataCheckBox = (gcnew System::Windows::Forms::CheckBox());
 			this->dataCommentsTextBox = (gcnew System::Windows::Forms::TextBox());
 			this->label1 = (gcnew System::Windows::Forms::Label());
+			this->label2 = (gcnew System::Windows::Forms::Label());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->maxProfileNumericUpDown))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->cantileverSignalChart))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->actuatorPositionChart))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->stimulusProfileChart))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->sensitivityChart))->BeginInit();
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->startAverageNumericUpDown))->BeginInit();
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->endAverageNumericUpDown))->BeginInit();
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->averageNumericUpDown))->BeginInit();
 			this->SuspendLayout();
 			// 
 			// cancelCalibrationButton
@@ -190,7 +181,7 @@ namespace BehaviorRig20 {
 			// 
 			this->maxProfileNumericUpDown->Location = System::Drawing::Point(853, 158);
 			this->maxProfileNumericUpDown->Name = L"maxProfileNumericUpDown";
-			this->maxProfileNumericUpDown->Size = System::Drawing::Size(156, 20);
+			this->maxProfileNumericUpDown->Size = System::Drawing::Size(129, 20);
 			this->maxProfileNumericUpDown->TabIndex = 4;
 			// 
 			// maxStimLabel
@@ -294,78 +285,6 @@ namespace BehaviorRig20 {
 			title4->Text = L"Sensitivity";
 			this->sensitivityChart->Titles->Add(title4);
 			// 
-			// startAverageNumericUpDown
-			// 
-			this->startAverageNumericUpDown->Location = System::Drawing::Point(889, 553);
-			this->startAverageNumericUpDown->Name = L"startAverageNumericUpDown";
-			this->startAverageNumericUpDown->Size = System::Drawing::Size(120, 20);
-			this->startAverageNumericUpDown->TabIndex = 11;
-			this->startAverageNumericUpDown->Value = System::Decimal(gcnew cli::array< System::Int32 >(4) {3, 0, 0, 0});
-			// 
-			// endAverageNumericUpDown
-			// 
-			this->endAverageNumericUpDown->Location = System::Drawing::Point(889, 579);
-			this->endAverageNumericUpDown->Name = L"endAverageNumericUpDown";
-			this->endAverageNumericUpDown->Size = System::Drawing::Size(120, 20);
-			this->endAverageNumericUpDown->TabIndex = 12;
-			this->endAverageNumericUpDown->Value = System::Decimal(gcnew cli::array< System::Int32 >(4) {7, 0, 0, 0});
-			// 
-			// takeAverageButton
-			// 
-			this->takeAverageButton->Enabled = false;
-			this->takeAverageButton->Location = System::Drawing::Point(934, 605);
-			this->takeAverageButton->Name = L"takeAverageButton";
-			this->takeAverageButton->Size = System::Drawing::Size(75, 23);
-			this->takeAverageButton->TabIndex = 13;
-			this->takeAverageButton->Text = L"Average";
-			this->takeAverageButton->UseVisualStyleBackColor = true;
-			this->takeAverageButton->Click += gcnew System::EventHandler(this, &CalibrateSensitivityForm::takeAverageButton_Click);
-			// 
-			// startAverageLabel
-			// 
-			this->startAverageLabel->AutoSize = true;
-			this->startAverageLabel->Location = System::Drawing::Point(854, 555);
-			this->startAverageLabel->Name = L"startAverageLabel";
-			this->startAverageLabel->Size = System::Drawing::Size(32, 13);
-			this->startAverageLabel->TabIndex = 14;
-			this->startAverageLabel->Text = L"Start:";
-			// 
-			// endAverageLabel
-			// 
-			this->endAverageLabel->AutoSize = true;
-			this->endAverageLabel->Location = System::Drawing::Point(854, 581);
-			this->endAverageLabel->Name = L"endAverageLabel";
-			this->endAverageLabel->Size = System::Drawing::Size(29, 13);
-			this->endAverageLabel->TabIndex = 15;
-			this->endAverageLabel->Text = L"End:";
-			// 
-			// label3
-			// 
-			this->label3->AutoSize = true;
-			this->label3->Location = System::Drawing::Point(838, 532);
-			this->label3->Name = L"label3";
-			this->label3->Size = System::Drawing::Size(75, 13);
-			this->label3->TabIndex = 16;
-			this->label3->Text = L"Take Average";
-			// 
-			// averageNumericUpDown
-			// 
-			this->averageNumericUpDown->DecimalPlaces = 3;
-			this->averageNumericUpDown->Location = System::Drawing::Point(889, 634);
-			this->averageNumericUpDown->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) {100000, 0, 0, 0});
-			this->averageNumericUpDown->Name = L"averageNumericUpDown";
-			this->averageNumericUpDown->Size = System::Drawing::Size(120, 20);
-			this->averageNumericUpDown->TabIndex = 17;
-			// 
-			// averageLabel
-			// 
-			this->averageLabel->AutoSize = true;
-			this->averageLabel->Location = System::Drawing::Point(836, 636);
-			this->averageLabel->Name = L"averageLabel";
-			this->averageLabel->Size = System::Drawing::Size(50, 13);
-			this->averageLabel->TabIndex = 18;
-			this->averageLabel->Text = L"Average:";
-			// 
 			// cantileverIDTextBox
 			// 
 			this->cantileverIDTextBox->Location = System::Drawing::Point(852, 119);
@@ -409,24 +328,26 @@ namespace BehaviorRig20 {
 			this->label1->TabIndex = 23;
 			this->label1->Text = L"Comments for output data:";
 			// 
+			// label2
+			// 
+			this->label2->AutoSize = true;
+			this->label2->Location = System::Drawing::Point(988, 160);
+			this->label2->Name = L"label2";
+			this->label2->Size = System::Drawing::Size(21, 13);
+			this->label2->TabIndex = 24;
+			this->label2->Text = L"um";
+			// 
 			// CalibrateSensitivityForm
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(1021, 707);
+			this->Controls->Add(this->label2);
 			this->Controls->Add(this->label1);
 			this->Controls->Add(this->dataCommentsTextBox);
 			this->Controls->Add(this->recordDataCheckBox);
 			this->Controls->Add(this->cantileverIDLabel);
 			this->Controls->Add(this->cantileverIDTextBox);
-			this->Controls->Add(this->averageLabel);
-			this->Controls->Add(this->averageNumericUpDown);
-			this->Controls->Add(this->label3);
-			this->Controls->Add(this->endAverageLabel);
-			this->Controls->Add(this->startAverageLabel);
-			this->Controls->Add(this->takeAverageButton);
-			this->Controls->Add(this->endAverageNumericUpDown);
-			this->Controls->Add(this->startAverageNumericUpDown);
 			this->Controls->Add(this->sensitivityChart);
 			this->Controls->Add(this->getCalibrationDataButton);
 			this->Controls->Add(this->stimulusProfileChart);
@@ -445,9 +366,6 @@ namespace BehaviorRig20 {
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->actuatorPositionChart))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->stimulusProfileChart))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->sensitivityChart))->EndInit();
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->startAverageNumericUpDown))->EndInit();
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->endAverageNumericUpDown))->EndInit();
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->averageNumericUpDown))->EndInit();
 			this->ResumeLayout(false);
 			this->PerformLayout();
 
@@ -586,32 +504,12 @@ private: System::Void getCalibrationDataButton_Click(System::Object^  sender, Sy
 				writeCalibrationDataToDisk( actuatorPositions,  cantileverSignal, cantileverID, commentsForData);
 			}
 
-			 double startTimeIndex = Decimal::ToDouble(startAverageNumericUpDown->Value)/DELTA_T;
-			 double endTimeIndex = Decimal::ToDouble(endAverageNumericUpDown->Value)/DELTA_T;
-			 double timeWidth =  (endTimeIndex - startTimeIndex);
-			 double sum = 0;
-			 double average = 0;
-
-			 for (int i = startTimeIndex; i<=endTimeIndex; i++){
-				sum = sensitivity[i] + sum;
-			 }
-			 average = sum/timeWidth;
-
-			 averageNumericUpDown->Value = Decimal(average);
-
+		 
 
 			 
 		 }
 
-private: System::Void takeAverageButton_Click(System::Object^  sender, System::EventArgs^  e) {
 
-			 double startTimeIndex = Decimal::ToDouble(startAverageNumericUpDown->Value); ///DELTA_T;
-			 double endTimeIndex = Decimal::ToDouble(endAverageNumericUpDown->Value); // /DELTA_T;
-			 double timeWidth = startTimeIndex - endTimeIndex;
-			
-
-
-		 }
 
 		 
 private: void writeCalibrationDataToDisk(vector<double> actuatorPositions, vector<double> cantileverSignal, string cantileverID, string commentsForData){
