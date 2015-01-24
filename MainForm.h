@@ -1013,7 +1013,15 @@ private:
 				TICTOC::timer().tic("MoveStage");
 				zaber->moveStage(stageMovement);
 				TICTOC::timer().toc("MoveStage");
-			} else {
+			} else if (experiment->stimulusActive == true && experiment->experimentMode == "Behavior Mode"){
+				//determine stage movement
+				stageMovement = determineStageMovement(worm.target, cantilever);
+				//move stage
+				TICTOC::timer().tic("MoveStage");
+				zaber->moveStage(stageMovement);
+				TICTOC::timer().toc("MoveStage");
+			}
+			else {
 				stageMovement.x = 0;
 				stageMovement.y = 0;
 			}
@@ -1176,6 +1184,7 @@ private:
 				
 				// need to append fpga data to .yaml file, only if not in behavior mode:
 				int size = comm->piezoSignalData.size();
+				Threading::Thread::Sleep(500);
 				experiment->writefpgaDataToDisk( experiment->stimulusNumber, comm->piezoSignalData,  comm->actuatorPositionData, comm->actuatorCommandData, comm->desiredSignalData);
 				comm->messageReceivedCount = 0;
 				
