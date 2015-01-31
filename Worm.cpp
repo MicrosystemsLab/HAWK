@@ -146,7 +146,7 @@ void Worm::segmentWorm(void)
 			if (segmentNumber <= 2) {
 				matchingIndex = boundCheck(matchingIndex - jump, numPoints - 1);
 			} else {
-				for (int i = 1; i <= 10; i++) {
+				for (int i = 1; i <= 30; i++) {
 					adjustedMatchingIndex = boundCheck(matchingIndex - i, numPoints - 1);
 					if (adjustedMatchingIndex > tailIndex || adjustedMatchingIndex < headIndex) {
 						valueToMinimize = pow((double)(wormContour[adjustedMatchingIndex].x - wormContour[currentIndex].x), 2) +
@@ -173,7 +173,7 @@ void Worm::segmentWorm(void)
 			if (segmentNumber <= 2) {
 				matchingIndex = boundCheck(matchingIndex + jump, numPoints - 1);
 			} else {
-				for (int i = 1; i <= 10; i++) {
+				for (int i = 1; i <= 30; i++) {
 					adjustedMatchingIndex = boundCheck(matchingIndex + i, numPoints - 1);
 					if (adjustedMatchingIndex > tailIndex || adjustedMatchingIndex < headIndex) {
 						valueToMinimize = pow((double)(wormContour[adjustedMatchingIndex].x - wormContour[currentIndex].x), 2) +
