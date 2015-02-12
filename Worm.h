@@ -35,6 +35,8 @@ struct WormOutputData {
 	cv::Point target;
 	cv::Point head;
 	cv::Point tail;
+	cv::Point targetSegment1;
+	cv::Point targetSegment2;
 	bool headTailToggled;
 	vector<vector<cv::Point> > contours;
 	int wormContourIndex;
@@ -57,6 +59,10 @@ public:
 	cv::Point tail;
 	//location point in image space of head
 	cv::Point head;
+	//Location of contour points for along the skeleton closest to the target, used for measuring width
+	cv::Point targetSegment1;
+	cv::Point targetSegment2;
+
 private:
 	//processed frame number
 	int frameNumber;

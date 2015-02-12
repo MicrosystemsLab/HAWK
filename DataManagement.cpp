@@ -213,6 +213,8 @@ void DataManager::appendWormFrameToDisk(WormOutputData data)
 	writePointToDisk("Target", data.target);
 	writePointToDisk("Head", data.head);
 	writePointToDisk("Tail", data.tail);
+	writePointToDisk("Target Segment 1", data.targetSegment1);
+	writePointToDisk("Target Segment 2", data.targetSegment2);
 	if (data.headTailToggled) {
 		writeIntToDisk("Toggled", 1);
 	} else {

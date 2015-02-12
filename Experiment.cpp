@@ -37,6 +37,8 @@ int Experiment::setUpDataOutput(void)
 		dataManager.writeDoubleToDisk("P Parameter", cantileverProperties.P_parameter);
 		dataManager.writeDoubleToDisk("I Parameter", cantileverProperties.I_parameter);
 		dataManager.writeDoubleToDisk("D Parameter", cantileverProperties.D_parameter);
+		dataManager.writePointToDisk("Cantilever Position", cantileverProperties.positionInImageSpace);
+		//dataManager.writeIntToDisk("Cantliever Position y", cantileverProperties.positionInImageSpace.y);
 		dataManager.endNode();
 
 		dataManager.startNode("Reported FPGA Parameters");

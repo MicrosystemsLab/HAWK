@@ -789,11 +789,24 @@ private:
 				Point cvCursorPoint = Point((int)((cursorPoint.X)/2 * IMAGE_RESIZE_SCALE/SCREEN_RESIZE_SCALE), (int)((cursorPoint.Y)/2 * IMAGE_RESIZE_SCALE/SCREEN_RESIZE_SCALE));
 				experiment->cantileverProperties.positionInImageSpace = cvCursorPoint;
 				
+				
+				int dataOutputError = experiment->setUpDataOutput();
+				if (dataOutputError == AVI_OPEN_ERROR) {
+					MessageBox::Show("There was an error creating a writable AVI file.");
+				} else if (dataOutputError == YAML_OPEN_ERROR) {
+					MessageBox::Show("There was an error creating a writable YAML file.");
+				}
+
 			}
 			else{
 				// ask user where the cantilever is in the image. 
 				setCantileverPositionManually();
 			}
+			
+			
+			
+			
+
 			experiment->stimulusNumber = 0;
 			stimulusCountIndicatorLabel->Text = Convert::ToString(0);
 			experiment->experimentSetUp = true;
@@ -1260,9 +1273,13 @@ private:
 		if (confirmResult ==  Windows::Forms::DialogResult::Yes) {
 			liveFeedPanel->MouseDown -= gcnew MouseEventHandler(this, &MainForm::liveFeedPanel_MouseDown);
 			experiment->cantileverProperties.positionInImageSpace = cvCursorPoint;
-			//toolStripStatusText->Text = "Experiment Set Up Complete";
-			//this->setUpExpButton->Enabled = true;
-			//this->startTrackButton->Enabled = true;
+			
+			int dataOutputError = experiment->setUpDataOutput();
+			if (dataOutputError == AVI_OPEN_ERROR) {
+				MessageBox::Show("There was an error creating a writable AVI file.");
+			} else if (dataOutputError == YAML_OPEN_ERROR) {
+				MessageBox::Show("There was an error creating a writable YAML file.");
+			}
 		}
 		imageController->clearOverlay();
 	}

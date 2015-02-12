@@ -69,6 +69,10 @@ Mat imageWithOutputOverlay(WormOutputData* data)
 	//PRINT TARGET
 	drawCross(&result, data->target, red);
 
+	//PRINT POINTS ON CONTOUR NEAR SEGMENT
+	circle(result, data->targetSegment1, 4, blue, 2, 8, 0);
+	circle(result, data->targetSegment2, 4, blue, 2, 8, 0);
+
 	//PRINT TAIL
 	circle(result, data->tail, 5, red, 2, 8, 0);
 
@@ -339,6 +343,11 @@ Point Worm::findTarget(double percentLength)
     Point nextPoint = skeleton[indexAlongSkeleton];
     Point prevPoint = skeleton[indexAlongSkeleton - 1];
     
+	// Save the points on either side of the contour that coorrespond to the segment closest to the target.
+	targetSegment1 = wormContour[segments[indexAlongSkeleton].first];
+	targetSegment2 = wormContour[segments[indexAlongSkeleton].second];
+
+	// Calculate location of point along the skeleton segment that correpsonds to the target.
     result.x = (int)(nextPoint.x - extraLength * ((nextPoint.x - prevPoint.x)/lastSegmentLength));
     result.y = (int)(nextPoint.y - extraLength * ((nextPoint.y - prevPoint.y)/lastSegmentLength));
     
@@ -392,6 +401,8 @@ WormOutputData Worm::extractWormOutputData(Movement stageMovement, Point2d stage
 	result.head = head;
 	result.tail = tail;
 	result.headTailToggled = toggled;
+	result.targetSegment1 = targetSegment1;
+	result.targetSegment2 = targetSegment2;
 
 	result.contours = contours;
 	result.wormContourIndex = wormContourIndex;

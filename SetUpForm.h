@@ -1620,15 +1620,15 @@ private:
 			MessageBox::Show(fpgaData);
 			
 
-			int dataOutputError = experiment->setUpDataOutput();
-			if (dataOutputError == AVI_OPEN_ERROR) {
-				MessageBox::Show("There was an error creating a writable AVI file.");
-			} else if (dataOutputError == YAML_OPEN_ERROR) {
-				MessageBox::Show("There was an error creating a writable YAML file.");
-			} else {
+			//int dataOutputError = experiment->setUpDataOutput();
+			//if (dataOutputError == AVI_OPEN_ERROR) {
+			//	MessageBox::Show("There was an error creating a writable AVI file.");
+			//} else if (dataOutputError == YAML_OPEN_ERROR) {
+			//	MessageBox::Show("There was an error creating a writable YAML file.");
+			//} else {
 				this->DialogResult = Windows::Forms::DialogResult::OK;
 				this->Close();
-			}
+			//}
 		}
 
 
