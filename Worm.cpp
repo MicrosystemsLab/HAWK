@@ -344,8 +344,16 @@ Point Worm::findTarget(double percentLength)
     Point prevPoint = skeleton[indexAlongSkeleton - 1];
     
 	// Save the points on either side of the contour that coorrespond to the segment closest to the target.
-	targetSegment1 = wormContour[segments[indexAlongSkeleton].first];
-	targetSegment2 = wormContour[segments[indexAlongSkeleton].second];
+	if (indexAlongSkeleton-1 <= segments.size()){
+		targetSegment1 = wormContour[segments[indexAlongSkeleton-1].first];
+		targetSegment2 = wormContour[segments[indexAlongSkeleton-1].second];
+	} else {
+		targetSegment1.x = 0;
+		targetSegment1.y = 0;
+		targetSegment2.x = 0;
+		targetSegment2.y = 0;
+	}
+
 
 	// Calculate location of point along the skeleton segment that correpsonds to the target.
     result.x = (int)(nextPoint.x - extraLength * ((nextPoint.x - prevPoint.x)/lastSegmentLength));

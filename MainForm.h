@@ -1195,11 +1195,15 @@ private:
 				experiment->stimulusActive = false;
 				experiment->postStimulusRecording = true;
 				
-				// need to append fpga data to .yaml file, only if not in behavior mode:
-				int size = comm->piezoSignalData.size();
-				Threading::Thread::Sleep(500);
-				experiment->writefpgaDataToDisk( experiment->stimulusNumber, comm->piezoSignalData,  comm->actuatorPositionData, comm->actuatorCommandData, comm->desiredSignalData);
-				comm->messageReceivedCount = 0;
+				if(experiment->experimentMode == "Behavior Mode"){
+				}
+				else{
+					// need to append fpga data to .yaml file, only if not in behavior mode:
+					int size = comm->piezoSignalData.size();
+					Threading::Thread::Sleep(500);
+					experiment->writefpgaDataToDisk( experiment->stimulusNumber, comm->piezoSignalData,  comm->actuatorPositionData, comm->actuatorCommandData, comm->desiredSignalData);
+					comm->messageReceivedCount = 0;
+				}
 				
 			} 
 			 
