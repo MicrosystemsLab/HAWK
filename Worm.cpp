@@ -130,7 +130,7 @@ void Worm::segmentWorm(void)
 	int segmentNumber = 0;
 	int jump = 5;
 	int numPoints = wormContour.size();
-
+	int searchRegion = 30;
 	int currentIndex = headIndex;
 	int endIndex = tailIndex;
 	int matchingIndex = headIndex;
@@ -147,10 +147,16 @@ void Worm::segmentWorm(void)
 			currentIndex += jump;
 
 			segmentNumber++;
+			// For the first two segments, just move the same distance along the worm:
 			if (segmentNumber <= 2) {
 				matchingIndex = boundCheck(matchingIndex - jump, numPoints - 1);
+			// For the segments within searchRegion of the tail, just move the same distance along the worm.
+			} else if(matchingIndex-searchRegion <= tailIndex){
+				matchingIndex  = boundCheck(matchingIndex - jump, numPoints-1);
+			// For the next segments, search over region searchRegion points long to find the point closest to current 
+			//index on the opposite side of the worm
 			} else {
-				for (int i = 1; i <= 30; i++) {
+				for (int i = 1; i <= searchRegion; i++) {
 					adjustedMatchingIndex = boundCheck(matchingIndex - i, numPoints - 1);
 					if (adjustedMatchingIndex > tailIndex || adjustedMatchingIndex < headIndex) {
 						valueToMinimize = pow((double)(wormContour[adjustedMatchingIndex].x - wormContour[currentIndex].x), 2) +
@@ -174,8 +180,13 @@ void Worm::segmentWorm(void)
 			currentIndex -= jump;
 
 			segmentNumber++;
+			// For the first two segments, just move the same distance along the worm:
 			if (segmentNumber <= 2) {
 				matchingIndex = boundCheck(matchingIndex + jump, numPoints - 1);
+			} else if(matchingIndex+searchRegion >= tailIndex){
+				matchingIndex  = boundCheck(matchingIndex + jump, numPoints-1);
+			// For the next segments, search over region searchRegion points long to find the point closest to current 
+			//index on the opposite side of the worm
 			} else {
 				for (int i = 1; i <= 30; i++) {
 					adjustedMatchingIndex = boundCheck(matchingIndex + i, numPoints - 1);
@@ -344,7 +355,7 @@ Point Worm::findTarget(double percentLength)
     Point prevPoint = skeleton[indexAlongSkeleton - 1];
     
 	// Save the points on either side of the contour that coorrespond to the segment closest to the target.
-	if (indexAlongSkeleton-1 <= segments.size()){
+	if (indexAlongSkeleton-1 < segments.size()){
 		targetSegment1 = wormContour[segments[indexAlongSkeleton-1].first];
 		targetSegment2 = wormContour[segments[indexAlongSkeleton-1].second];
 	} else {
