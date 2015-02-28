@@ -135,6 +135,9 @@ void Worm::segmentWorm(void)
 	int endIndex = tailIndex;
 	int matchingIndex = headIndex;
 
+	// Finds which index is great, head or tail. 
+	// If tail index is greater, direction is positive, indices increase as you move from head to tail.
+	// If head index is greater, direction is negative, indices decrease as you move from tail to head.
 	int direction = (endIndex - currentIndex)/abs(endIndex - currentIndex);
 
 	int adjustedMatchingIndex;
@@ -142,6 +145,7 @@ void Worm::segmentWorm(void)
 	double minValue;
 	int minValueIndex;
 
+	//direction is positive, indices increase as you move from head to tail.
 	if (direction > 0) {
 		while (currentIndex < endIndex - jump) {
 			currentIndex += jump;
@@ -151,7 +155,7 @@ void Worm::segmentWorm(void)
 			if (segmentNumber <= 2) {
 				matchingIndex = boundCheck(matchingIndex - jump, numPoints - 1);
 			// For the segments within searchRegion of the tail, just move the same distance along the worm.
-			} else if(matchingIndex-searchRegion <= tailIndex){
+			} else if(currentIndex+searchRegion >= tailIndex){
 				matchingIndex  = boundCheck(matchingIndex - jump, numPoints-1);
 			// For the next segments, search over region searchRegion points long to find the point closest to current 
 			//index on the opposite side of the worm
@@ -175,6 +179,7 @@ void Worm::segmentWorm(void)
 			}
 			segments.push_back(pair<int, int>(currentIndex, matchingIndex));
 		}
+	//direction is negative, indices decrease as you move from tail to head.
 	} else if (direction < 0) {
 		while (currentIndex > endIndex + jump) {
 			currentIndex -= jump;
@@ -183,7 +188,8 @@ void Worm::segmentWorm(void)
 			// For the first two segments, just move the same distance along the worm:
 			if (segmentNumber <= 2) {
 				matchingIndex = boundCheck(matchingIndex + jump, numPoints - 1);
-			} else if(matchingIndex+searchRegion >= tailIndex){
+			// For the segments within searchRegion of the tail, just move the same distance along the worm.
+			} else if(currentIndex - searchRegion <= tailIndex){
 				matchingIndex  = boundCheck(matchingIndex + jump, numPoints-1);
 			// For the next segments, search over region searchRegion points long to find the point closest to current 
 			//index on the opposite side of the worm

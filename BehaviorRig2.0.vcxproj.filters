@@ -19,14 +19,14 @@
     <None Include="app.ico">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="wormImage.png">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="raptorIcon.ico">
       <Filter>Resource Files</Filter>
     </None>
     <None Include="$this.Icon.ico">
       <Filter>Resource Files</Filter>
+    </None>
+    <None Include="wormImage.png">
+      <Filter>Source Files</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -184,6 +184,9 @@
       <Filter>Resource Files</Filter>
     </EmbeddedResource>
     <EmbeddedResource Include="CalibrateSensitivityForm.resx">
+      <Filter>Resource Files</Filter>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CalibratePIDParameters.resx">
       <Filter>Resource Files</Filter>
     </EmbeddedResource>
   </ItemGroup>
