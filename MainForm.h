@@ -1076,6 +1076,7 @@ private:
 				worker->ReportProgress(WRITE_FRAME);
 				// once the countdown falls to zero:
 				if (stimulusFinishedCountDown == 0) {
+					
 					// reset counter
 					stimulusFinishedCountDown = experiment->postWaitingBufferSize*12; //reset countdown buffer, need to convert to frames, assumes 12 fps
 					// toggle experiment state:
@@ -1128,6 +1129,11 @@ private:
 	{
 		int argument = safe_cast<int>(e->ProgressPercentage);
 		if (argument == STIM_DONE) {
+			if(experiment->experimentMode == "Behavior Mode"){
+			}
+			else{
+				experiment->writefpgaDataToDisk();
+			}
 			applyStimButton->Enabled = true;
 		} else if (argument == WRITE_FRAME) {
 			writeAFrameOfDataToDisk();
@@ -1201,7 +1207,7 @@ private:
 					// need to append fpga data to .yaml file, only if not in behavior mode:
 					int size = comm->piezoSignalData.size();
 					Threading::Thread::Sleep(500);
-					experiment->writefpgaDataToDisk( experiment->stimulusNumber, comm->piezoSignalData,  comm->actuatorPositionData, comm->actuatorCommandData, comm->desiredSignalData);
+					experiment->getfpgaData( experiment->stimulusNumber, comm->piezoSignalData,  comm->actuatorPositionData, comm->actuatorCommandData, comm->desiredSignalData);
 					comm->messageReceivedCount = 0;
 				}
 				
