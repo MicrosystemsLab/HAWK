@@ -155,7 +155,7 @@ void Worm::segmentWorm(void)
 			if (segmentNumber <= 2) {
 				matchingIndex = boundCheck(matchingIndex - jump, numPoints - 1);
 			// For the segments within searchRegion of the tail, just move the same distance along the worm.
-			} else if(currentIndex+searchRegion >= tailIndex){
+			} else if(currentIndex+searchRegion*0.5 >= tailIndex){
 				matchingIndex  = boundCheck(matchingIndex - jump, numPoints-1);
 			// For the next segments, search over region searchRegion points long to find the point closest to current 
 			//index on the opposite side of the worm
@@ -189,7 +189,7 @@ void Worm::segmentWorm(void)
 			if (segmentNumber <= 2) {
 				matchingIndex = boundCheck(matchingIndex + jump, numPoints - 1);
 			// For the segments within searchRegion of the tail, just move the same distance along the worm.
-			} else if(currentIndex - searchRegion <= tailIndex){
+			} else if(currentIndex - searchRegion*0.5 <= tailIndex){
 				matchingIndex  = boundCheck(matchingIndex + jump, numPoints-1);
 			// For the next segments, search over region searchRegion points long to find the point closest to current 
 			//index on the opposite side of the worm
