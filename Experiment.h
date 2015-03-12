@@ -94,11 +94,11 @@ public:
 	} reportedFPGAParameters;
 
 
-	int reportedStimNum;
-	vector<double> reportedPiezoSignalData; 
-	vector<double> reportedActuatorPositionData;
-	vector<double> reportedActuatorCommandData;
-	vector<double> reportedDesiredSignalData;
+	//int reportedStimNum;
+	//vector<double> reportedPiezoSignalData; 
+	//vector<double> reportedActuatorPositionData;
+	//vector<double> reportedActuatorCommandData;
+	//vector<double> reportedDesiredSignalData;
 
 
 //prototypes
@@ -124,14 +124,14 @@ public:
 	 * --------------------------
 	 * Get the data from the FPGA to be written to disk.
 	 */
-	void getfpgaData(int stimNum, vector<double> piezoSignalData, vector<double> actuatorPositionData, vector<double> actuatorCommandData, vector<double> desiredSignalData);
+	//void getfpgaData(int stimNum, vector<double> piezoSignalData, vector<double> actuatorPositionData, vector<double> actuatorCommandData, vector<double> desiredSignalData);
 
 	/* Function: write fpga data to disk
 	 * -------------------------------------------
 	 * writes the data from the fpga to the data writer in the data manager.
 	 */
-	//void writefpgaDataToDisk(int stimNum, vector<double> piezoSignalData, vector<double> actuatorPositionData, vector<double> actuatorCommandData, vector<double> desiredSignalData);
-	void writefpgaDataToDisk();
+	void writefpgaDataToDisk(int stimNum, vector<double> piezoSignalData, vector<double> actuatorPositionData, vector<double> actuatorCommandData, vector<double> desiredSignalData);
+	//void writefpgaDataToDisk();
 
 	/* Function: endExperiment
 	 * -----------------------

@@ -49,6 +49,13 @@ public:
 	double fifoMemoryFullParameter;  // should be false, if true, there is a problem with the FPGA, don't trust data
 	double actuatorMovingParameter;
 
+
+	int reportedStimNum;
+	vector<double> reportedPiezoSignalData; 
+	vector<double> reportedActuatorPositionData;
+	vector<double> reportedActuatorCommandData;
+	vector<double> reportedDesiredSignalData;
+
 private:
 	//a communication session with the force clamp
 	STMSession STM;
@@ -125,6 +132,12 @@ public:
 	 * select the clamp mode with an int (0: open loop, 1: displacement clamp, 2: force clamp)
 	 */
 	void sendClampMode(int clampMode);
+
+	/* Function: getfpgaData
+	 * --------------------------
+	 * Get the data from the FPGA to be written to disk.
+	 */
+	void getfpgaData(int stimNum, vector<double> piezoSignalData, vector<double> actuatorPositionData, vector<double> actuatorCommandData, vector<double> desiredSignalData);
 
 private:
 	/* Function: OnConnect

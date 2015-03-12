@@ -105,6 +105,8 @@ public:
 	 */
 	Worm(cv::Mat image, double targetLengthPercentage, cv::Point prevTail, int frame, SYSTEMTIME time);
 
+	cv::Point translateTail(cv::Point oldTail, double stageMovement_x, double stageMovement_y);
+
 	/* Function: extractWormOutputData
 	 * -------------------------------
 	 * Extracts all the data that needs to be output from the worm and returns it in the form of

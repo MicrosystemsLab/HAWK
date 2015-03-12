@@ -1104,11 +1104,13 @@ private:
 			stagePosition.y += stageMovement.y;
 
 			if (toggleWormEnds) {
-				prevTail = worm.head;
+				//prevTail = worm.head;
+				prevTail = worm.translateTail(worm.head, stageMovement.x, stageMovement.y);
 				toggleWormEnds = false;
 				toggled = true;
 			} else {
-				prevTail = worm.tail;
+				prevTail = worm.translateTail(worm.tail, stageMovement.x, stageMovement.y);
+				//prevTail = worm.tail;
 			}
 
 			TICTOC::timer().toc("SingleWormTrackLoop");
@@ -1132,7 +1134,7 @@ private:
 			if(experiment->experimentMode == "Behavior Mode"){
 			}
 			else{
-				experiment->writefpgaDataToDisk();
+				experiment->writefpgaDataToDisk(comm->reportedStimNum, comm->reportedPiezoSignalData, comm->reportedActuatorPositionData, comm->reportedActuatorCommandData, comm->reportedDesiredSignalData);
 			}
 			applyStimButton->Enabled = true;
 		} else if (argument == WRITE_FRAME) {
@@ -1207,7 +1209,7 @@ private:
 					// need to append fpga data to .yaml file, only if not in behavior mode:
 					int size = comm->piezoSignalData.size();
 					Threading::Thread::Sleep(500);
-					experiment->getfpgaData( experiment->stimulusNumber, comm->piezoSignalData,  comm->actuatorPositionData, comm->actuatorCommandData, comm->desiredSignalData);
+					comm->getfpgaData( experiment->stimulusNumber, comm->piezoSignalData,  comm->actuatorPositionData, comm->actuatorCommandData, comm->desiredSignalData);
 					comm->messageReceivedCount = 0;
 				}
 				
@@ -1349,7 +1351,7 @@ private:
 		toggleWormEnds = true;
 	}
 
-	/* Function: toggleHeadTailButton_Click
+	/* Function: applyStimButton_Click
 	 * ------------------------------------
 	 * The STM_Communicator triggers the stimulus. The global flag for an active stimulus is raised.
 	 * The prestimulus frames are written to disk.

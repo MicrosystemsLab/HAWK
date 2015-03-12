@@ -128,6 +128,8 @@ void  STM_Communicator::sendClampMode(int clampMode)
 
 #pragma region Read Functions
 
+
+
 /*read_Data: retrieve an array of double composed of four channels: Set Point (V), Actuation Command (V), Actuator Sensor (V), Piezoresistive Signal (V)
 
 read_FPGAStatus: retrieve a boolean about the status of the actuator (actuating:true, idle: false)
@@ -179,6 +181,19 @@ void STM_Communicator::OnNewData(CString MetaName, CByteArray *MsgData)
 	STMDispatch::OnNewData(MetaName, MsgData);
 }
 
+void STM_Communicator::getfpgaData(int stimNum, vector<double> piezoSignalData, vector<double> actuatorPositionData, vector<double> actuatorCommandData, vector<double> desiredSignalData){
+	reportedStimNum;
+	reportedPiezoSignalData.clear(); 
+	reportedActuatorPositionData.clear();
+	reportedActuatorCommandData.clear();
+	reportedDesiredSignalData.clear();
+
+	reportedStimNum = stimNum;
+	reportedPiezoSignalData = piezoSignalData; 
+	reportedActuatorPositionData = actuatorPositionData;
+	reportedActuatorCommandData = actuatorCommandData;
+	reportedDesiredSignalData = desiredSignalData;
+}
 #pragma endregion
 
 #pragma region Initialization and Open/Close Functions

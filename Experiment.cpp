@@ -70,24 +70,27 @@ void Experiment::writeFrameToDisk(WormOutputData data)
 	dataManager.appendWormFrameToDisk(data);
 }
 
-void Experiment::getfpgaData(int stimNum, vector<double> piezoSignalData, vector<double> actuatorPositionData, vector<double> actuatorCommandData, vector<double> desiredSignalData){
-	reportedStimNum;
-	reportedPiezoSignalData.clear(); 
-	reportedActuatorPositionData.clear();
-	reportedActuatorCommandData.clear();
-	reportedDesiredSignalData.clear();
+//void Experiment::getfpgaData(int stimNum, vector<double> piezoSignalData, vector<double> actuatorPositionData, vector<double> actuatorCommandData, vector<double> desiredSignalData){
+//	reportedStimNum;
+//	reportedPiezoSignalData.clear(); 
+//	reportedActuatorPositionData.clear();
+//	reportedActuatorCommandData.clear();
+//	reportedDesiredSignalData.clear();
 
-	reportedStimNum = stimNum;
-	reportedPiezoSignalData = piezoSignalData; 
-	reportedActuatorPositionData = actuatorPositionData;
-	reportedActuatorCommandData = actuatorCommandData;
-	reportedDesiredSignalData = desiredSignalData;
-}
+//	reportedStimNum = stimNum;
+//	reportedPiezoSignalData = piezoSignalData; 
+//	reportedActuatorPositionData = actuatorPositionData;
+//	reportedActuatorCommandData = actuatorCommandData;
+//	reportedDesiredSignalData = desiredSignalData;
+//}
 
-//void Experiment::writefpgaDataToDisk(int stimNum, vector<double> piezoSignalData, vector<double> actuatorPositionData, vector<double> actuatorCommandData, vector<double> desiredSignalData)
-void Experiment::writefpgaDataToDisk()
+void Experiment::writefpgaDataToDisk(int stimNum, vector<double> piezoSignalData, vector<double> actuatorPositionData, vector<double> actuatorCommandData, vector<double> desiredSignalData)
+//void Experiment::writefpgaDataToDisk()
 {
-	dataManager.writeStimulusDataToDisk(reportedStimNum, reportedPiezoSignalData, reportedActuatorPositionData, reportedActuatorCommandData,  reportedDesiredSignalData);
+	//dataManager.writeStimulusDataToDisk(reportedStimNum, reportedPiezoSignalData, reportedActuatorPositionData, reportedActuatorCommandData,  reportedDesiredSignalData);
+	dataManager.writeStimulusDataToDisk(stimNum,  piezoSignalData, actuatorPositionData, actuatorCommandData,  desiredSignalData);
+
+
 }
 
 void Experiment::endExperiment(void)
