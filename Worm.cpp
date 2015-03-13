@@ -16,7 +16,7 @@ using namespace std;
 #define THRESHOLDING_MAX_BINARY 225
 #define SMOOTHING_KSIZE 7
 #define SMOOTHING_SIGMA 5
-#define TAIL_HEAD_JUMP_THRESHOLD 10
+#define TAIL_HEAD_JUMP_THRESHOLD 30
 
 double Worm::pointDistance(Point a, Point b)
 {
