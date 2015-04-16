@@ -16,7 +16,7 @@ using namespace std;
 #define THRESHOLDING_MAX_BINARY 225
 #define SMOOTHING_KSIZE 7
 #define SMOOTHING_SIGMA 5
-#define TAIL_HEAD_JUMP_THRESHOLD 30
+#define TAIL_HEAD_JUMP_THRESHOLD 40
 
 double Worm::pointDistance(Point a, Point b)
 {
@@ -167,6 +167,7 @@ void Worm::findWormTail(Point prevTail)
 	double currPrevDist;
 	double currNextDist;
 	double sharpness;
+	Point centroid;
 
 	for (int i = 0; i < numPoints; i += 1) {
 		currPointIndex = boundCheck(i, numPoints - 1);
@@ -178,16 +179,26 @@ void Worm::findWormTail(Point prevTail)
 			prevPoint = wormContour[prevPointIndex];
 			nextPoint = wormContour[nextPointIndex];
 
-			prevNextDist = pointDistance(prevPoint, nextPoint);
-			currPrevDist = pointDistance(currPoint, prevPoint);
-			currNextDist = pointDistance(currPoint, nextPoint);
+			centroid.x = int( 0.333*(currPoint.x + prevPoint.x + nextPoint.x));
+			centroid.y = int( 0.333*(currPoint.y + prevPoint.y + nextPoint.y));
+			
+			//int value = images.threshold.ptr<uchar>(centroid.y)[centroid.x];
 
-			sharpness = 1 - (prevNextDist/(currPrevDist + currNextDist));
+			if (images.threshold.ptr<uchar>(centroid.y)[centroid.x] == 1){
+			
 
-			if (sharpness > maxSharpness) {
-				maxSharpness = sharpness;
-				maxSharpnessIndex = currPointIndex;
+				prevNextDist = pointDistance(prevPoint, nextPoint);
+				currPrevDist = pointDistance(currPoint, prevPoint);
+				currNextDist = pointDistance(currPoint, nextPoint);
+
+				sharpness = 1 - (prevNextDist/(currPrevDist + currNextDist));
+
+				if (sharpness > maxSharpness) {
+					maxSharpness = sharpness;
+					maxSharpnessIndex = currPointIndex;
+				}
 			}
+
 		}
 	}
 
@@ -218,6 +229,7 @@ void Worm::findWormHead(void)
 	double currPrevDist;
 	double currNextDist;
 	double sharpness;
+	Point centroid;
 
 	for (int i = minSearch; i < maxSearch - jump; i += jump) {
 		currPointIndex = boundCheck(i, numPoints - 1);
@@ -228,15 +240,21 @@ void Worm::findWormHead(void)
 		prevPoint = wormContour[prevPointIndex];
 		nextPoint = wormContour[nextPointIndex];
 		
-		prevNextDist = pointDistance(prevPoint, nextPoint);
-		currPrevDist = pointDistance(currPoint, prevPoint);
-		currNextDist = pointDistance(currPoint, nextPoint);
+		centroid.x = int( 0.333*(currPoint.x + prevPoint.x + nextPoint.x));
+		centroid.y = int( 0.333*(currPoint.y + prevPoint.y + nextPoint.y));
 
-		sharpness = 1 - (prevNextDist/(currPrevDist + currNextDist));
+		if (images.threshold.ptr<uchar>(centroid.y)[centroid.x] == 1){
 
-		if (sharpness > maxSharpness) {
-			maxSharpness = sharpness;
-			maxSharpnessIndex = currPointIndex;
+			prevNextDist = pointDistance(prevPoint, nextPoint);
+			currPrevDist = pointDistance(currPoint, prevPoint);
+			currNextDist = pointDistance(currPoint, nextPoint);
+
+			sharpness = 1 - (prevNextDist/(currPrevDist + currNextDist));
+
+			if (sharpness > maxSharpness) {
+				maxSharpness = sharpness;
+				maxSharpnessIndex = currPointIndex;
+			}
 		}
 	}
 
