@@ -87,6 +87,12 @@ namespace BehaviorRig20 {
 	private: System::Windows::Forms::CheckBox^  recordDataCheckBox;
 	private: System::Windows::Forms::TextBox^  dataCommentsTextBox;
 	private: System::Windows::Forms::Label^  label1;
+	private: System::Windows::Forms::NumericUpDown^  voltageNumericUpDown;
+	private: System::Windows::Forms::NumericUpDown^  durationNumericUpDown;
+	private: System::Windows::Forms::Label^  voltageLabel;
+	private: System::Windows::Forms::Label^  durationLabel;
+	private: System::Windows::Forms::Label^  voltageUnitLabel;
+	private: System::Windows::Forms::Label^  durationUnitLabel;
 
 
 
@@ -134,6 +140,12 @@ namespace BehaviorRig20 {
 			this->recordDataCheckBox = (gcnew System::Windows::Forms::CheckBox());
 			this->dataCommentsTextBox = (gcnew System::Windows::Forms::TextBox());
 			this->label1 = (gcnew System::Windows::Forms::Label());
+			this->voltageNumericUpDown = (gcnew System::Windows::Forms::NumericUpDown());
+			this->durationNumericUpDown = (gcnew System::Windows::Forms::NumericUpDown());
+			this->voltageLabel = (gcnew System::Windows::Forms::Label());
+			this->durationLabel = (gcnew System::Windows::Forms::Label());
+			this->voltageUnitLabel = (gcnew System::Windows::Forms::Label());
+			this->durationUnitLabel = (gcnew System::Windows::Forms::Label());
 			this->clampModeGroupBox->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->kuNumericUpDown))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->tuNumericUpDown))->BeginInit();
@@ -143,6 +155,8 @@ namespace BehaviorRig20 {
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->pParameterNumericUpDown))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->signalChart))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->pictureBox1))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->voltageNumericUpDown))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->durationNumericUpDown))->BeginInit();
 			this->SuspendLayout();
 			// 
 			// clampModeGroupBox
@@ -304,7 +318,7 @@ namespace BehaviorRig20 {
 			// 
 			// cancelCalibrationButton
 			// 
-			this->cancelCalibrationButton->Location = System::Drawing::Point(595, 166);
+			this->cancelCalibrationButton->Location = System::Drawing::Point(611, 214);
 			this->cancelCalibrationButton->Name = L"cancelCalibrationButton";
 			this->cancelCalibrationButton->Size = System::Drawing::Size(75, 23);
 			this->cancelCalibrationButton->TabIndex = 14;
@@ -314,7 +328,7 @@ namespace BehaviorRig20 {
 			// 
 			// finishCalibrationButton
 			// 
-			this->finishCalibrationButton->Location = System::Drawing::Point(514, 166);
+			this->finishCalibrationButton->Location = System::Drawing::Point(530, 214);
 			this->finishCalibrationButton->Name = L"finishCalibrationButton";
 			this->finishCalibrationButton->Size = System::Drawing::Size(75, 23);
 			this->finishCalibrationButton->TabIndex = 15;
@@ -324,11 +338,11 @@ namespace BehaviorRig20 {
 			// 
 			// testParametersButton
 			// 
-			this->testParametersButton->Location = System::Drawing::Point(263, 94);
+			this->testParametersButton->Location = System::Drawing::Point(434, 111);
 			this->testParametersButton->Name = L"testParametersButton";
 			this->testParametersButton->Size = System::Drawing::Size(130, 23);
 			this->testParametersButton->TabIndex = 16;
-			this->testParametersButton->Text = L"Test Parameters";
+			this->testParametersButton->Text = L"Apply Test Pulse";
 			this->testParametersButton->UseVisualStyleBackColor = true;
 			this->testParametersButton->Click += gcnew System::EventHandler(this, &CalibratePIDParameters::testParametersButton_Click);
 			// 
@@ -337,7 +351,7 @@ namespace BehaviorRig20 {
 			chartArea1->AxisX->Title = L"Time (s)";
 			chartArea1->Name = L"ChartArea1";
 			this->signalChart->ChartAreas->Add(chartArea1);
-			this->signalChart->Location = System::Drawing::Point(13, 201);
+			this->signalChart->Location = System::Drawing::Point(13, 243);
 			this->signalChart->Name = L"signalChart";
 			series1->ChartArea = L"ChartArea1";
 			series1->ChartType = System::Windows::Forms::DataVisualization::Charting::SeriesChartType::Line;
@@ -349,7 +363,7 @@ namespace BehaviorRig20 {
 			// 
 			// getDataButton
 			// 
-			this->getDataButton->Location = System::Drawing::Point(263, 121);
+			this->getDataButton->Location = System::Drawing::Point(434, 146);
 			this->getDataButton->Name = L"getDataButton";
 			this->getDataButton->Size = System::Drawing::Size(130, 23);
 			this->getDataButton->TabIndex = 18;
@@ -360,7 +374,7 @@ namespace BehaviorRig20 {
 			// pictureBox1
 			// 
 			this->pictureBox1->Image = (cli::safe_cast<System::Drawing::Image^  >(resources->GetObject(L"pictureBox1.Image")));
-			this->pictureBox1->Location = System::Drawing::Point(13, 355);
+			this->pictureBox1->Location = System::Drawing::Point(13, 397);
 			this->pictureBox1->Name = L"pictureBox1";
 			this->pictureBox1->Size = System::Drawing::Size(623, 143);
 			this->pictureBox1->TabIndex = 19;
@@ -386,7 +400,7 @@ namespace BehaviorRig20 {
 			// recordDataCheckBox
 			// 
 			this->recordDataCheckBox->AutoSize = true;
-			this->recordDataCheckBox->Location = System::Drawing::Point(399, 125);
+			this->recordDataCheckBox->Location = System::Drawing::Point(570, 148);
 			this->recordDataCheckBox->Name = L"recordDataCheckBox";
 			this->recordDataCheckBox->Size = System::Drawing::Size(87, 17);
 			this->recordDataCheckBox->TabIndex = 22;
@@ -395,26 +409,86 @@ namespace BehaviorRig20 {
 			// 
 			// dataCommentsTextBox
 			// 
-			this->dataCommentsTextBox->Location = System::Drawing::Point(263, 162);
+			this->dataCommentsTextBox->Location = System::Drawing::Point(147, 180);
 			this->dataCommentsTextBox->Multiline = true;
 			this->dataCommentsTextBox->Name = L"dataCommentsTextBox";
 			this->dataCommentsTextBox->Size = System::Drawing::Size(245, 33);
 			this->dataCommentsTextBox->TabIndex = 23;
+			this->dataCommentsTextBox->TextChanged += gcnew System::EventHandler(this, &CalibratePIDParameters::dataCommentsTextBox_TextChanged);
 			// 
 			// label1
 			// 
 			this->label1->AutoSize = true;
-			this->label1->Location = System::Drawing::Point(263, 147);
+			this->label1->Location = System::Drawing::Point(22, 180);
 			this->label1->Name = L"label1";
 			this->label1->Size = System::Drawing::Size(119, 13);
 			this->label1->TabIndex = 24;
 			this->label1->Text = L"Comments for Data File:";
 			// 
+			// voltageNumericUpDown
+			// 
+			this->voltageNumericUpDown->DecimalPlaces = 3;
+			this->voltageNumericUpDown->Location = System::Drawing::Point(253, 111);
+			this->voltageNumericUpDown->Name = L"voltageNumericUpDown";
+			this->voltageNumericUpDown->Size = System::Drawing::Size(120, 20);
+			this->voltageNumericUpDown->TabIndex = 25;
+			// 
+			// durationNumericUpDown
+			// 
+			this->durationNumericUpDown->DecimalPlaces = 3;
+			this->durationNumericUpDown->Location = System::Drawing::Point(253, 150);
+			this->durationNumericUpDown->Name = L"durationNumericUpDown";
+			this->durationNumericUpDown->Size = System::Drawing::Size(120, 20);
+			this->durationNumericUpDown->TabIndex = 26;
+			// 
+			// voltageLabel
+			// 
+			this->voltageLabel->AutoSize = true;
+			this->voltageLabel->Location = System::Drawing::Point(253, 92);
+			this->voltageLabel->Name = L"voltageLabel";
+			this->voltageLabel->Size = System::Drawing::Size(46, 13);
+			this->voltageLabel->TabIndex = 27;
+			this->voltageLabel->Text = L"Voltage:";
+			// 
+			// durationLabel
+			// 
+			this->durationLabel->AutoSize = true;
+			this->durationLabel->Location = System::Drawing::Point(253, 134);
+			this->durationLabel->Name = L"durationLabel";
+			this->durationLabel->Size = System::Drawing::Size(50, 13);
+			this->durationLabel->TabIndex = 28;
+			this->durationLabel->Text = L"Duration:";
+			// 
+			// voltageUnitLabel
+			// 
+			this->voltageUnitLabel->AutoSize = true;
+			this->voltageUnitLabel->Location = System::Drawing::Point(379, 113);
+			this->voltageUnitLabel->Name = L"voltageUnitLabel";
+			this->voltageUnitLabel->Size = System::Drawing::Size(14, 13);
+			this->voltageUnitLabel->TabIndex = 29;
+			this->voltageUnitLabel->Text = L"V";
+			// 
+			// durationUnitLabel
+			// 
+			this->durationUnitLabel->AutoEllipsis = true;
+			this->durationUnitLabel->AutoSize = true;
+			this->durationUnitLabel->Location = System::Drawing::Point(379, 152);
+			this->durationUnitLabel->Name = L"durationUnitLabel";
+			this->durationUnitLabel->Size = System::Drawing::Size(12, 13);
+			this->durationUnitLabel->TabIndex = 30;
+			this->durationUnitLabel->Text = L"s";
+			// 
 			// CalibratePIDParameters
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(698, 511);
+			this->ClientSize = System::Drawing::Size(698, 552);
+			this->Controls->Add(this->durationUnitLabel);
+			this->Controls->Add(this->voltageUnitLabel);
+			this->Controls->Add(this->durationLabel);
+			this->Controls->Add(this->voltageLabel);
+			this->Controls->Add(this->durationNumericUpDown);
+			this->Controls->Add(this->voltageNumericUpDown);
 			this->Controls->Add(this->label1);
 			this->Controls->Add(this->dataCommentsTextBox);
 			this->Controls->Add(this->recordDataCheckBox);
@@ -447,6 +521,8 @@ namespace BehaviorRig20 {
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->pParameterNumericUpDown))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->signalChart))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->pictureBox1))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->voltageNumericUpDown))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->durationNumericUpDown))->EndInit();
 			this->ResumeLayout(false);
 			this->PerformLayout();
 
@@ -554,12 +630,13 @@ Stimulus createStimulus(void)
 private: System::Void testParametersButton_Click(System::Object^  sender, System::EventArgs^  e) {
 		double magnitude;
 		if (forceClampRadioButton->Checked){
-			magnitude = 1; // this is the voltage we want to clamp onto, not the force.
+			magnitude = Decimal::ToDouble(voltageNumericUpDown->Value); // this is the voltage we want to clamp onto, not the force.
 		}
 		else {
 			magnitude = 40; // 
 		}
-		Stimulus stim = createTestStimulus(magnitude);
+		double duration = Decimal::ToDouble(durationNumericUpDown->Value);
+		Stimulus stim = createTestStimulus(magnitude,duration);
 		
 		//covert to an array of voltage doubles
 		int size = stim.waveTable.size();
@@ -651,19 +728,18 @@ private: System::Void getDataButton_Click(System::Object^  sender, System::Event
 
 	}
 
-Stimulus createTestStimulus(double magnitude)
+Stimulus createTestStimulus(double magnitude, double duration)
 	{
 		double contactTime = 100;
-		double period = 0.1;
-		int noCycles = 2;
+		//double period = 0.1;
+		int noCycles = 1;
 		double scale = 0;
-		//double magnitude = 20;
 		int scaleType = 0;
 		double sineFreq = 0;
 		double sineBias = 0;
 		double zeroPulse = 1;
 
-		Stimulus stim(period, contactTime, noCycles, magnitude, scale, scaleType, sineFreq, sineBias, zeroPulse);
+		Stimulus stim(duration, contactTime, noCycles, magnitude, scale, scaleType, sineFreq, sineBias, zeroPulse);
 		
 		//stim.prependZeroPulse(1000);
 
@@ -736,5 +812,7 @@ void writeCalibrationDataToDisk(vector<double> actuatorPositions, vector<double>
 
 			dataWriter.release();
 		}
+private: System::Void dataCommentsTextBox_TextChanged(System::Object^  sender, System::EventArgs^  e) {
+		 }
 };
 }
