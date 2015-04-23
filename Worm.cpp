@@ -18,33 +18,61 @@ using namespace std;
 #define SMOOTHING_SIGMA 5
 #define TAIL_HEAD_JUMP_THRESHOLD 40
 
+
+/* Function: pointDistance
+ * ----------------------------
+ * Calculates the distance between two points, a and b using the distance formula
+ */
 double Worm::pointDistance(Point a, Point b)
 {
- 	return sqrt(pow(double(a.x - b.x), 2) + pow(double(a.y - b.y), 2));
+ 	// Distance formula = sqrt((x2-x1)^2+(y2-y1)^2)
+    return sqrt(pow(double(a.x - b.x), 2) + pow(double(a.y - b.y), 2));
 }
-
+/* Function: boundCheck
+ * -----------------------------
+ * checks to make sure that the index argument is within the range of the possible indices
+ * returns the correct index if it is outside of the bounds
+ */
 int Worm::boundCheck(int currentIndex, int maxIndex)
 {
-	if (currentIndex < 0) {
+	// Index cannot be negative
+    if (currentIndex < 0) {
+        //Return the appropriate index at the end of the list.
         return maxIndex - abs(currentIndex);
+    // Index cannot be more than the total number of indices in the curvature
 	} else if (currentIndex > maxIndex) {
+        //Return the appropriate index at the beginning of the list.
         return currentIndex - maxIndex;
 	} else {
+        // If inside bounds, just return the argument index.
         return currentIndex;
 	}
 }
 
+/* Function: drawCross
+ * -------------------------------
+ * Uses OpenCV functions to draw a cross on an image at a specific point in a specific color. 
+ * It draws two diagonal lines to create the cross.
+ */
 void drawCross(Mat *image, Point point, Scalar color) {
 	line(*image, Point(point.x - 5, point.y + 5), Point(point.x + 5, point.y - 5), color, 2, 8, 0);
 	line(*image, Point(point.x + 5, point.y + 5), Point(point.x - 5, point.y - 5), color, 2, 8, 0);
 }
 
+/* Function: imageWithOutputOverlay
+ * -------------------------------
+ * Draws marks on the features of interest onto the image to be appended to the video stream
+ * Returns a new image with the overlays on top of it.
+ */
+
 Mat imageWithOutputOverlay(WormOutputData* data)
 {
 	Mat result;
-
+    
+    //Convert to color image
 	cvtColor(data->image, result, CV_GRAY2RGB);
 
+    //Create colors to for overlary
 	Scalar green(0,255,0);
 	Scalar red(0,0,225);
 	Scalar blue(225,0,0);
@@ -53,15 +81,19 @@ Mat imageWithOutputOverlay(WormOutputData* data)
 	circle(result, data->cantilever, 15, green, 2, 8, 0);
 
 	//PRINT SEGMENTS:
+    //Step through each segment and draw a line between the points that correspond between each point
+    // color is red.
 	for (unsigned int i = 0; i < data->segments.size(); i++) {
 		line(result, data->wormContour[data->segments[i].first], data->wormContour[data->segments[i].second], red, 1, 8, 0);
 	}
 
 	//PRINT CONTOURS
+    // Draw a line around the contour that corresponds to the worm.
 	vector<Vec4i> hierarchy;
 	drawContours(result, data->contours, data->wormContourIndex, blue, 1, 0, hierarchy, 0, Point(0,0));
 
 	//PRINT SKELETON
+    //Draw blue lines between each set of skeleton points.
 	for (unsigned int i = 0; i < data->skeleton.size() - 1; i++) {
 		line(result, data->skeleton[i], data->skeleton[i+1], blue, 1, 8, 0);
 	}
@@ -74,13 +106,14 @@ Mat imageWithOutputOverlay(WormOutputData* data)
 	circle(result, data->targetSegment2, 4, blue, 2, 8, 0);
 
 	//PRINT TAIL
+    // Tail has small red circle
 	circle(result, data->tail, 5, red, 2, 8, 0);
 
 	//PRINT HEAD
+    //Head has large red circle.
 	circle(result, data->head, 10, red, 2, 8, 0);
 
-	//PRINT FRAME NUMBER
-
+	//PRINT FRAME NUMBER, STIM NUMBER, STIM STATUS
 	char* frameText = new char[50];
 	if (data->stimulusActive == true)
 		sprintf(frameText, "Frame #%d, Stim #%d, ON", data->frameNumber,  data->stimulusNumber);
@@ -89,31 +122,60 @@ Mat imageWithOutputOverlay(WormOutputData* data)
 	putText(result, frameText, Point(50, 50), FONT_HERSHEY_SIMPLEX, 0.75, red, 2, 8, false);  
 	delete[] frameText;
 
+    // Return the image with the overlays:
 	return result;
 }
+/* Constructor: Worm
+ * ---------------------------------
+ * Constucts the worm structure for the current frame using the given experiment parameters.
+ * The image is the most recent image grabbed from the camera
+ * The target length percentage is the place on the worm we want to track
+ * The prevTrail is the point that corresponds to the tail in the previous frame
+ * frame is the current frame number for processing.
+ * time is the current time according the PC clock.
+ * reset is a boolean indicating to reset the tail search to the entire worm contour instead of the search area.
+ */
 
 Worm::Worm(Mat image, double targetLengthPercentage, Point prevTail, int frame, SYSTEMTIME time, bool reset)
 {
-	frameTime = time;
+	// Convert constructor arguments to worm constructor:
+    frameTime = time;
 	frameNumber = frame;
 	resetTailFinding = reset;
 	images.original = image;
+    
+    //Downsampe the image to a smaller scale for faster processing:
 	Size newSize = Size((int)(images.original.cols*IMAGE_RESIZE_SCALE), (int)(images.original.rows*IMAGE_RESIZE_SCALE));
 	resize(images.original, images.resized, newSize, 0, 0, INTER_LINEAR);
 
+    // Find the worm in the image using the previous tail location
 	findWorm(prevTail);
+    // Find the target on the worm spline:
 	target = findTarget(targetLengthPercentage);
 }
 
+/* Function: translateTail
+ * ----------------------------
+ * Translates the point determined to be the tail in the previous frame by the the amount the stage moved between frames.
+ * receives the previous point and the stage movement amount.
+ * returns the new, translated points.
+ */
+ 
+ 
 Point  Worm::translateTail(Point oldTail, double stageMovement_x, double stageMovement_y){
 
 	Point translatedTail;
-
+    //Shift point by stage movement:
 	translatedTail.x = oldTail.x + stageMovement_x*(PIXELS_PER_UM * IMAGE_RESIZE_SCALE);
 	translatedTail.y = oldTail.y + stageMovement_y*(PIXELS_PER_UM * IMAGE_RESIZE_SCALE);;
-
+    //Return new point:
 	return translatedTail;
 }
+
+/* Function: findWorm
+ * -----------------------------
+ * Highest level function that calls each step of the image processing in sequence.
+ */
 void Worm::findWorm(Point prevTail)
 {
 	//SMOOTH
@@ -133,30 +195,52 @@ void Worm::findWorm(Point prevTail)
 	//FIND SKELETON
 	findSkeleton();
 }
+/* Function: findWormConour
+ * -----------------------------
+ * From a list of contours in the image, finds the contour that is the longest to be the one corresponding to the worm.
+ */
 void Worm::findWormContour(void)
 {
 	int largestContourIndex;
-	int largestContourSize = 0;
+	int largestContourSize = 0; // Initialize at zero.
 	int thisContourSize;
+    // Interate through the contours, get the length of the contour.
 	for (unsigned int i = 0; i < contours.size(); i++) {
 		thisContourSize = contours[i].size();
+        //If this is the longest contour so far, remember the contour index it corresponds to, and the contour size.
 		if (thisContourSize > largestContourSize) {
 			largestContourIndex = i;
 			largestContourSize = thisContourSize;
 		}
 	}
+    // Assign the longest contour index and the contour itself
 	wormContourIndex = largestContourIndex;
 	wormContour = contours[largestContourIndex];
 }
-
+/* Function: findWormTail
+ * -----------------------------------------
+ * This function searches for the point along the worm contour that corresponds to the worm tail.
+ * The tail is found to be the sharpest point on the contour within the specified set of indices.
+ * Sharpness at the current point is calculated by looking at the distance between the current point and a point to the left, 
+ * the distance between the current point and a point to the right, and the distance between the two peripheral points.
+ * In all frames the we only look at points in which the curvature is convex relative to worm by looking at the centroid of all three 
+ * points of interest.
+ * In all frames but the first one or when the reset is engaged we only look inside a search region based on the location of the previous 
+ * tail point.
+ */
+ 
 void Worm::findWormTail(Point prevTail)
 {
-	int jump = 7;
-	int numPoints = wormContour.size();
+	// The number of contour indices to span in order to calculate sharpness.
+    int jump = 7;
+	// Number of points on the worm contour:
+    int numPoints = wormContour.size();
 
+    //Initialize sharpness
 	double maxSharpness = 0;
 	int maxSharpnessIndex;
 
+    //Initialize variables for points:
 	Point currPoint;
 	Point prevPoint;
 	Point nextPoint;
@@ -166,33 +250,41 @@ void Worm::findWormTail(Point prevTail)
 	double prevNextDist;
 	double currPrevDist;
 	double currNextDist;
+    //Sharpness measure variable:
 	double sharpness;
+    //Point to correspond to the centroid of between the three points for each sharpness calculation.
 	Point centroid;
 
+    // Iterate through all points on centroid:
 	for (int i = 0; i < numPoints; i += 1) {
-		currPointIndex = boundCheck(i, numPoints - 1);
+		// Check indices:
+        currPointIndex = boundCheck(i, numPoints - 1);
 		prevPointIndex = boundCheck(i - jump, numPoints - 1);
 		nextPointIndex = boundCheck(i + jump, numPoints - 1);
-
+        
+        //Get the current point coordinates:
 		currPoint = wormContour[currPointIndex];
+        
+        // For this point, check three things to decide if we should calculate sharpness. If yes to any, calculate sharpness:
+        // 1. Is this the first frame?
+        // 2. Has the user specified that the tail location is wrong and needs to be reset?
+        // 3. Is the point within the search region based on previous tail location?
 		if (frameNumber <= 2 || resetTailFinding == true || pointDistance(currPoint, prevTail) < TAIL_HEAD_JUMP_THRESHOLD ) {
-			prevPoint = wormContour[prevPointIndex];
+			// Get coordinates of points on either side of the current point.
+            prevPoint = wormContour[prevPointIndex];
 			nextPoint = wormContour[nextPointIndex];
-
+            // Calculate the centroid of the three point
 			centroid.x = int( 0.333*(currPoint.x + prevPoint.x + nextPoint.x));
 			centroid.y = int( 0.333*(currPoint.y + prevPoint.y + nextPoint.y));
-			
-			//int value = images.threshold.ptr<uchar>(centroid.y)[centroid.x];
-
+            // If the centroid correspond to a bright pixel, then it is "inside" the worm and this is a viable point:
 			if (images.threshold.ptr<uchar>(centroid.y)[centroid.x] == 1){
-			
-
-				prevNextDist = pointDistance(prevPoint, nextPoint);
+                //Calculate distances between points:
+                prevNextDist = pointDistance(prevPoint, nextPoint);
 				currPrevDist = pointDistance(currPoint, prevPoint);
 				currNextDist = pointDistance(currPoint, nextPoint);
-
+                //Calculate sharpness:
 				sharpness = 1 - (prevNextDist/(currPrevDist + currNextDist));
-
+                // Is this the sharpest one yet? If yes, save it.
 				if (sharpness > maxSharpness) {
 					maxSharpness = sharpness;
 					maxSharpnessIndex = currPointIndex;
@@ -201,24 +293,33 @@ void Worm::findWormTail(Point prevTail)
 
 		}
 	}
-
+    // Assign tail to be the sharpest point and save the index:
 	tail = wormContour[maxSharpnessIndex];
 	tailIndex = maxSharpnessIndex;
 }
-
+/* Function: findWormHead
+ * ------------------------------------------
+ * Find the point that corresponds to the head along the worm contour.
+ *
+ */
 void Worm::findWormHead(void)
 {
+    // The number of contour indices to span in order to calculate sharpness.
 	int jump = 7;
+    // Number of points on the worm contour:
 	int numPoints = wormContour.size();
 
+    // Set up head search area.
+    // The search area is the quarter of the worm contour that is opposite the tail:
 	int predictedHeadIndex = boundCheck(tailIndex - (int)numPoints/2, numPoints - 1);
-	int minSearch = predictedHeadIndex - (numPoints/8);
-	int maxSearch = predictedHeadIndex + (numPoints/8);
+	int minSearch = boundCheck(predictedHeadIndex - (numPoints/8), numPoints-1);
+	int maxSearch = boundCheck(predictedHeadIndex + (numPoints/8), numPoints-1);
 
-	//region specific
+	//Initialize sharpness
 	double maxSharpness = 0;
 	int maxSharpnessIndex;
-
+    
+    //Initialize variables for points:
 	Point currPoint;
 	Point prevPoint;
 	Point nextPoint;
@@ -228,40 +329,47 @@ void Worm::findWormHead(void)
 	double prevNextDist;
 	double currPrevDist;
 	double currNextDist;
+    //Sharpness measure variable:
 	double sharpness;
+    //Point to correspond to the centroid of between the three points for each sharpness calculation.
 	Point centroid;
 
+    //Iterate over the specified search area determined above:
 	for (int i = minSearch; i < maxSearch - jump; i += jump) {
-		currPointIndex = boundCheck(i, numPoints - 1);
+		// Check Indices:
+        currPointIndex = boundCheck(i, numPoints - 1);
 		prevPointIndex = boundCheck(i - jump, numPoints - 1);
 		nextPointIndex = boundCheck(i + jump, numPoints - 1);
-
+        // Get point coordinates:
 		currPoint = wormContour[currPointIndex];
 		prevPoint = wormContour[prevPointIndex];
 		nextPoint = wormContour[nextPointIndex];
-		
+		//Calculate centroid of three points:
 		centroid.x = int( 0.333*(currPoint.x + prevPoint.x + nextPoint.x));
 		centroid.y = int( 0.333*(currPoint.y + prevPoint.y + nextPoint.y));
-
+        // If the centroid correspond to a bright pixel, then it is "inside" the worm and this is a viable point:
 		if (images.threshold.ptr<uchar>(centroid.y)[centroid.x] == 1){
-
+            // Calculate distances for sharpness calculation:
 			prevNextDist = pointDistance(prevPoint, nextPoint);
 			currPrevDist = pointDistance(currPoint, prevPoint);
 			currNextDist = pointDistance(currPoint, nextPoint);
-
+            // Calculate sharpness:
 			sharpness = 1 - (prevNextDist/(currPrevDist + currNextDist));
-
+            // If this is the sharpest point so far, save it:
 			if (sharpness > maxSharpness) {
 				maxSharpness = sharpness;
 				maxSharpnessIndex = currPointIndex;
 			}
 		}
 	}
-
+    // Assign head to be the point worm contout with the highest sharpness and save the index:
 	head = wormContour[maxSharpnessIndex];
 	headIndex = maxSharpnessIndex;
 }
-
+/* Function: segmentWorm:
+ * ----------------------------------------
+ *
+ */
 void Worm::segmentWorm(void)
 {
 	int segmentNumber = 0;
