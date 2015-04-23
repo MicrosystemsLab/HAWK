@@ -117,19 +117,7 @@ public:
 	WormOutputData extractWormOutputData(Movement stageMovement, cv::Point2d stagePosition, cv::Point cantilever, bool toggled, bool stimulusActive, int stimulusNumber);
 private:
 
-	/* Function: pointDistance
-	 * -----------------------
-	 * Returns the absolute distance between two points. Uses the distance formula.
-	 */
-	double pointDistance(cv::Point a, cv::Point b);
-
-	/* Function: boundCheck
-	 * --------------------
-	 * Ensures that the currentIndex is within the range of 0 and the maxIndex.
-	 * If it is not it returns the correct value of the index, assuming the indexes
-	 * loop around (the index after maxIndex is 0).
-	 */
-	int boundCheck(int currentIndex, int maxIndex);
+	
 
 	/* Function: findWorm
 	 * ------------------
@@ -187,6 +175,20 @@ private:
 	 * the midpoint of the segment and adds it to the skeleton.
 	 */
 	void addMidpointToSkeleton(pair<int, int> segmentIndexes);
+    
+    /* Function: pointDistance
+     * -----------------------
+     * Returns the absolute distance between two points. Uses the distance formula.
+     */
+    double pointDistance(cv::Point a, cv::Point b);
+    
+    /* Function: boundCheck
+     * --------------------
+     * Ensures that the currentIndex is within the range of 0 and the maxIndex.
+     * If it is not it returns the correct value of the index, assuming the indexes
+     * loop around (the index after maxIndex is 0).
+     */
+    int boundCheck(int currentIndex, int maxIndex);
 };
 
 /* Function: imageWithOutputOverlay

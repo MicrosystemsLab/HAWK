@@ -19,35 +19,7 @@ using namespace std;
 #define TAIL_HEAD_JUMP_THRESHOLD 40
 
 
-/* Function: pointDistance
- * ----------------------------
- * Calculates the distance between two points, a and b using the distance formula
- */
-double Worm::pointDistance(Point a, Point b)
-{
- 	// Distance formula = sqrt((x2-x1)^2+(y2-y1)^2)
-    return sqrt(pow(double(a.x - b.x), 2) + pow(double(a.y - b.y), 2));
-}
-/* Function: boundCheck
- * -----------------------------
- * checks to make sure that the index argument is within the range of the possible indices
- * returns the correct index if it is outside of the bounds
- */
-int Worm::boundCheck(int currentIndex, int maxIndex)
-{
-	// Index cannot be negative
-    if (currentIndex < 0) {
-        //Return the appropriate index at the end of the list.
-        return maxIndex - abs(currentIndex);
-    // Index cannot be more than the total number of indices in the curvature
-	} else if (currentIndex > maxIndex) {
-        //Return the appropriate index at the beginning of the list.
-        return currentIndex - maxIndex;
-	} else {
-        // If inside bounds, just return the argument index.
-        return currentIndex;
-	}
-}
+
 
 /* Function: drawCross
  * -------------------------------
@@ -368,33 +340,39 @@ void Worm::findWormHead(void)
 }
 /* Function: segmentWorm:
  * ----------------------------------------
- *
+ * Finds segments along the body contour, starting at the head and moving towards the tail
+ * Segments are stored in a vector of integer pairs which correspond to the segment pair coordinates.
  */
 void Worm::segmentWorm(void)
 {
-	int segmentNumber = 0;
-	int jump = 5;
-	int numPoints = wormContour.size();
-	int searchRegion = 30;
+	//Variables for segmentiation:
+    int segmentNumber = 0; //Counts the number of segments
+    int jump = 5; // The number of points along the contour to move between segments
+	int numPoints = wormContour.size(); // The number of points on the contour
+	int searchRegion = 30; // The number of points to search over on the opposite side of the worm.
+    
+    // Initialization:
 	int currentIndex = headIndex;
 	int endIndex = tailIndex;
 	int matchingIndex = headIndex;
-
-	// Finds which index is great, head or tail. 
+    int adjustedMatchingIndex;
+    // variables for minimization:
+    double valueToMinimize;
+    double minValue;
+    int minValueIndex;
+    
+	// Finds which index is greater, head or tail.
 	// If tail index is greater, direction is positive, indices increase as you move from head to tail.
 	// If head index is greater, direction is negative, indices decrease as you move from tail to head.
 	int direction = (endIndex - currentIndex)/abs(endIndex - currentIndex);
 
-	int adjustedMatchingIndex;
-	double valueToMinimize;
-	double minValue;
-	int minValueIndex;
 
 	//direction is positive, indices increase as you move from head to tail.
 	if (direction > 0) {
 		while (currentIndex < endIndex - jump) {
-			currentIndex += jump;
-
+			// Move "jump" points down the worm away from the head.
+            currentIndex += jump;
+            // increment segment counter
 			segmentNumber++;
 			// For the first two segments, just move the same distance along the worm:
 			if (segmentNumber <= 2) {
@@ -428,8 +406,9 @@ void Worm::segmentWorm(void)
 	//direction is negative, indices decrease as you move from tail to head.
 	} else if (direction < 0) {
 		while (currentIndex > endIndex + jump) {
+            // Move "jump" points down the worm away from the head.
 			currentIndex -= jump;
-
+            // increment segment counter
 			segmentNumber++;
 			// For the first two segments, just move the same distance along the worm:
 			if (segmentNumber <= 2) {
@@ -457,10 +436,16 @@ void Worm::segmentWorm(void)
 				}
 				matchingIndex = minValueIndex;
 			}
+            // Save segment to segment vector
 			segments.push_back(pair<int, int>(currentIndex, matchingIndex));
 		}
 	}
 }
+/* Function: findSkeleton
+ * ----------------------------------------
+ * Constructs a list of points that correspond to the skeleton. The points are the head, the midpoints 
+ * of the segments and the tail, in the order.
+ */
 
 void Worm::findSkeleton(void)
 {
@@ -471,10 +456,35 @@ void Worm::findSkeleton(void)
     for(unsigned int i = 0; i < segments.size(); i++) {
 		addMidpointToSkeleton(segments[i]);
 	}
-
     //Add tail to skeleton
     skeleton.push_back(tail);
 }
+
+/* Function: addMidpointToSkeleton
+ * -----------------------------------
+ * Calculates the midpoint of the current segment and adds it to the skeleton
+ */
+
+void Worm::addMidpointToSkeleton(pair<int, int> segmentIndexes)
+{
+    //extract points
+    Point point1 = wormContour[segmentIndexes.first];
+    Point point2 = wormContour[segmentIndexes.second];
+    
+    //compute midpoint
+    Point midpoint;
+    midpoint.x = (point1.x + point2.x)/2;
+    midpoint.y = (point1.y + point2.y)/2;
+    
+    //add midpoint to skeleton
+    skeleton.push_back(midpoint);
+}
+
+/* Function: findTarget
+ * ----------------------------------------
+ * Finds the point on the skeleton that corresponds to the target, which is defined as a percentage down the body length.
+ * Accepts the percent length as an argument and returns the point that corresponds to the target.
+ */
 Point Worm::findTarget(double percentLength)
 {
     Point result;
@@ -503,7 +513,6 @@ Point Worm::findTarget(double percentLength)
     
     //find target
     double extraLength = lengthAlongSkeleton - targetLength;
-    
     double lastSegmentLength = skeletonDistances[indexAlongSkeleton - 1];
     Point nextPoint = skeleton[indexAlongSkeleton];
     Point prevPoint = skeleton[indexAlongSkeleton - 1];
@@ -518,8 +527,6 @@ Point Worm::findTarget(double percentLength)
 		targetSegment2.x = 0;
 		targetSegment2.y = 0;
 	}
-
-
 	// Calculate location of point along the skeleton segment that correpsonds to the target.
     result.x = (int)(nextPoint.x - extraLength * ((nextPoint.x - prevPoint.x)/lastSegmentLength));
     result.y = (int)(nextPoint.y - extraLength * ((nextPoint.y - prevPoint.y)/lastSegmentLength));
@@ -527,21 +534,11 @@ Point Worm::findTarget(double percentLength)
     return result;
 }
 
-void Worm::addMidpointToSkeleton(pair<int, int> segmentIndexes)
-{
-    //extract points
-    Point point1 = wormContour[segmentIndexes.first];
-    Point point2 = wormContour[segmentIndexes.second];
-    
-    //compute midpoint
-    Point midpoint;
-    midpoint.x = (point1.x + point2.x)/2;
-    midpoint.y = (point1.y + point2.y)/2;
-    
-    //add midpoint to skeleton
-    skeleton.push_back(midpoint);
-}
 
+/* Function: extractWormOutputData
+ * -----------------------------------
+ * Organizes the parameters of the worm to be written out as data.
+ */
 
 
 WormOutputData Worm::extractWormOutputData(Movement stageMovement, Point2d stagePosition, Point cantilever, bool toggled, bool stimulusActive, int stimulusNumber)
@@ -572,4 +569,37 @@ WormOutputData Worm::extractWormOutputData(Movement stageMovement, Point2d stage
 	result.skeleton = skeleton;
 	
 	return result;
+}
+
+/////// Lowest Level Functions:
+
+/* Function: pointDistance
+ * ----------------------------
+ * Returns the absolute distance between two points. Uses the distance formula.
+ */
+double Worm::pointDistance(Point a, Point b)
+{
+    // Distance formula = sqrt((x2-x1)^2+(y2-y1)^2)
+    return sqrt(pow(double(a.x - b.x), 2) + pow(double(a.y - b.y), 2));
+}
+/* Function: boundCheck
+ * -----------------------------
+ * Ensures that the currentIndex is within the range of 0 and the maxIndex.
+ * If it is not it returns the correct value of the index, assuming the indexes
+ * loop around (the index after maxIndex is 0).
+ */
+int Worm::boundCheck(int currentIndex, int maxIndex)
+{
+    // Index cannot be negative
+    if (currentIndex < 0) {
+        //Return the appropriate index at the end of the list.
+        return maxIndex - abs(currentIndex);
+        // Index cannot be more than the total number of indices in the curvature
+    } else if (currentIndex > maxIndex) {
+        //Return the appropriate index at the beginning of the list.
+        return currentIndex - maxIndex;
+    } else {
+        // If inside bounds, just return the argument index.
+        return currentIndex;
+    }
 }
