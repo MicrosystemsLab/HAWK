@@ -68,6 +68,8 @@ private:
 	int frameNumber;
 	//time of frame capture
 	SYSTEMTIME frameTime;
+	//boolean flags whether or not to use the search radius to find tail
+	bool resetTailFinding;
 	//all the contours in the image
 	vector<vector<cv::Point> > contours;
 	//the index corresponding to the worm's contour in the contours vector
@@ -103,7 +105,7 @@ public:
 	 * length along the worm to target, 3rd parameter is the tail location from the previously
 	 * processed worm (used for tracking), 4th and 5th parameters are frame info.
 	 */
-	Worm(cv::Mat image, double targetLengthPercentage, cv::Point prevTail, int frame, SYSTEMTIME time);
+	Worm(cv::Mat image, double targetLengthPercentage, cv::Point prevTail, int frame, SYSTEMTIME time, bool reset);
 
 	cv::Point translateTail(cv::Point oldTail, double stageMovement_x, double stageMovement_y);
 

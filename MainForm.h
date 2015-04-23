@@ -85,6 +85,7 @@ namespace BehaviorRig20 {
 	private: ImageController* imageController;
 	private: STM_Communicator* comm;
 	private: bool toggleWormEnds;
+	private: bool reset;
 	//private: bool stimulusActive;
 	//private: bool stimulusFinished;
 	//private: int stimulusNumber;
@@ -140,6 +141,8 @@ namespace BehaviorRig20 {
 	private: System::Windows::Forms::GroupBox^  calibrationToolsGroupBox;
 	private: System::Windows::Forms::Label^  stimulusCountIndicatorLabel;
 	private: System::Windows::Forms::Label^  stimulusCountLabel;
+	private: System::Windows::Forms::Button^  resetTailButton;
+
 
 	private: System::ComponentModel::IContainer^  components;
 #pragma endregion
@@ -162,6 +165,7 @@ namespace BehaviorRig20 {
 			this->startTrackButton = (gcnew System::Windows::Forms::Button());
 			this->stopTrackButton = (gcnew System::Windows::Forms::Button());
 			this->trackingGroupBox = (gcnew System::Windows::Forms::GroupBox());
+			this->resetTailButton = (gcnew System::Windows::Forms::Button());
 			this->toggleHeadTailButton = (gcnew System::Windows::Forms::Button());
 			this->trackingBackgroundWorker = (gcnew System::ComponentModel::BackgroundWorker());
 			this->liveFeedPanel = (gcnew System::Windows::Forms::Panel());
@@ -251,15 +255,26 @@ namespace BehaviorRig20 {
 			// 
 			// trackingGroupBox
 			// 
+			this->trackingGroupBox->Controls->Add(this->resetTailButton);
 			this->trackingGroupBox->Controls->Add(this->toggleHeadTailButton);
 			this->trackingGroupBox->Controls->Add(this->startTrackButton);
 			this->trackingGroupBox->Controls->Add(this->stopTrackButton);
 			this->trackingGroupBox->Location = System::Drawing::Point(12, 12);
 			this->trackingGroupBox->Name = L"trackingGroupBox";
-			this->trackingGroupBox->Size = System::Drawing::Size(109, 125);
+			this->trackingGroupBox->Size = System::Drawing::Size(109, 154);
 			this->trackingGroupBox->TabIndex = 11;
 			this->trackingGroupBox->TabStop = false;
 			this->trackingGroupBox->Text = L"Tracking";
+			// 
+			// resetTailButton
+			// 
+			this->resetTailButton->Location = System::Drawing::Point(6, 119);
+			this->resetTailButton->Name = L"resetTailButton";
+			this->resetTailButton->Size = System::Drawing::Size(96, 23);
+			this->resetTailButton->TabIndex = 12;
+			this->resetTailButton->Text = L"Reset Tail";
+			this->resetTailButton->UseVisualStyleBackColor = true;
+			this->resetTailButton->Click += gcnew System::EventHandler(this, &MainForm::resetTailButton_Click);
 			// 
 			// toggleHeadTailButton
 			// 
@@ -574,7 +589,7 @@ namespace BehaviorRig20 {
 			this->experimentGroupBox->Controls->Add(this->endStimulusButton);
 			this->experimentGroupBox->Controls->Add(this->setUpExpButton);
 			this->experimentGroupBox->Controls->Add(this->applyStimButton);
-			this->experimentGroupBox->Location = System::Drawing::Point(12, 143);
+			this->experimentGroupBox->Location = System::Drawing::Point(12, 172);
 			this->experimentGroupBox->Name = L"experimentGroupBox";
 			this->experimentGroupBox->Size = System::Drawing::Size(109, 131);
 			this->experimentGroupBox->TabIndex = 31;
@@ -624,7 +639,7 @@ namespace BehaviorRig20 {
 			// 
 			this->exposureGroupBox->Controls->Add(this->autoExposeRadioButton);
 			this->exposureGroupBox->Controls->Add(this->defaultExposeRadioButton);
-			this->exposureGroupBox->Location = System::Drawing::Point(12, 280);
+			this->exposureGroupBox->Location = System::Drawing::Point(12, 309);
 			this->exposureGroupBox->Name = L"exposureGroupBox";
 			this->exposureGroupBox->Size = System::Drawing::Size(109, 67);
 			this->exposureGroupBox->TabIndex = 32;
@@ -961,13 +976,21 @@ private:
 	 */
 	System::Void trackingBackgroundWorker_TrackWorm(System::Object^  sender, System::ComponentModel::DoWorkEventArgs^  e)
 	{
-		// Set up time out for stimulus application
+		// Set up time out for stimulus application or behavior mode
 		std::clock_t start;
 		bool stimulusApplicationTimer  = false;
 
 		TICTOC::timer().tic("WholeWormTrackLoop");
 
+		//flag for data to indicate if there was a toggle in this frame.
+		bool toggled = false;
+		//flag to switch head and tail 
 		toggleWormEnds = false;
+		reset = false;
+		//Keeps track of stimulus status in previus frame so that we can act on the change.
+		bool previousFrameStimulusActive = false;
+
+		//Initialize experiment states.
 		experiment->stimulusActive = false;
 		experiment->postStimulusRecording = false;
 		experiment->trackingActive = true;
@@ -980,7 +1003,8 @@ private:
 		SYSTEMTIME time;
 		Movement stageMovement;
 		WormOutputData data;
-		bool toggled = false;
+		
+
 		experiment->stimulusNumber = 1;
 		int frameCount = 0;
 
@@ -1012,20 +1036,27 @@ private:
 			//find worm
 			GetLocalTime(&time);
 			TICTOC::timer().tic("FindWorm");
-			Worm worm(image, targetLocation, prevTail, frameCount, time);
+			Worm worm(image, targetLocation, prevTail, frameCount, time, reset);
 			TICTOC::timer().toc("FindWorm");
 			//overlay key points
 			imageController->overlayCircle(worm.head, 20);
 			imageController->overlayCircle(worm.tail, 10);
 			imageController->overlayCircle(worm.target, 5);
 			
+			//Checks stimulus state for stage movement determination:
 			if (experiment->stimulusActive == false){
+				if(previousFrameStimulusActive == true){
+					//move zaber up then down
+					zaber->moveActuator(-100);
+					zaber->moveActuator(100);
+				}
 				//determine stage movement
 				stageMovement = determineStageMovement(worm.target, cantilever);
 				//move stage
 				TICTOC::timer().tic("MoveStage");
 				zaber->moveStage(stageMovement);
 				TICTOC::timer().toc("MoveStage");
+				previousFrameStimulusActive = false;
 			} else if (experiment->stimulusActive == true && experiment->experimentMode == "Behavior Mode"){
 				//determine stage movement
 				stageMovement = determineStageMovement(worm.target, cantilever);
@@ -1033,13 +1064,15 @@ private:
 				TICTOC::timer().tic("MoveStage");
 				zaber->moveStage(stageMovement);
 				TICTOC::timer().toc("MoveStage");
+				previousFrameStimulusActive = false;
 			}
 			else {
 				stageMovement.x = 0;
 				stageMovement.y = 0;
+				previousFrameStimulusActive = true;
 			}
 
-			
+			//Manage data:
 			data = worm.extractWormOutputData(stageMovement, stagePosition, cantilever, toggled, experiment->stimulusActive, experiment->stimulusNumber);
 			// based on current status of stimulus, do something with data, report status, etc.
 			// if stimulus is currently being applied:
@@ -1104,15 +1137,15 @@ private:
 			stagePosition.y += stageMovement.y;
 
 			if (toggleWormEnds) {
-				//prevTail = worm.head;
 				prevTail = worm.translateTail(worm.head, stageMovement.x, stageMovement.y);
 				toggleWormEnds = false;
 				toggled = true;
 			} else {
 				prevTail = worm.translateTail(worm.tail, stageMovement.x, stageMovement.y);
-				//prevTail = worm.tail;
 			}
 
+			reset = false;
+			
 			TICTOC::timer().toc("SingleWormTrackLoop");
 		}
 		imageController->clearOverlay();
@@ -1350,6 +1383,14 @@ private:
 	{
 		toggleWormEnds = true;
 	}
+	
+		/* Function: resetTailButton_Click
+	 * ------------------------------------
+	 * The global flag for a tail finding reset it toggle.
+	  */
+	private: System::Void resetTailButton_Click(System::Object^  sender, System::EventArgs^  e) {
+		 reset = true;
+	}
 
 	/* Function: applyStimButton_Click
 	 * ------------------------------------
@@ -1378,8 +1419,6 @@ private:
 	{
 		comm->cancelStimulus();
 		comm->stimulusCompleted = true;
-		//experiment->stimulusActive = false;
-		//experiment->postStimulusRecording = true;
 	}
 
 	/* Function: writeAFrameOfDataToDisk
@@ -1503,9 +1542,7 @@ private:
 		zaberBackgroundWorker->CancelAsync();
 	}
 
-
-
-
+	
 	/* Function: moveActuatorButton_Click
 	 * ----------------------------------
 	 * The zaber controller moves the z actuator to whatever position is in the
@@ -1616,6 +1653,7 @@ private: System::Void setScanPositionButton_Click(System::Object^  sender, Syste
 private: System::Void setHoverPositionButton_Click(System::Object^  sender, System::EventArgs^  e) {
 			 zaber->hoverPosition = Decimal::ToInt32(actuatorPositionNumericUpDown->Value);
 		 }
+
 
 
 };

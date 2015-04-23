@@ -92,11 +92,11 @@ Mat imageWithOutputOverlay(WormOutputData* data)
 	return result;
 }
 
-Worm::Worm(Mat image, double targetLengthPercentage, Point prevTail, int frame, SYSTEMTIME time)
+Worm::Worm(Mat image, double targetLengthPercentage, Point prevTail, int frame, SYSTEMTIME time, bool reset)
 {
 	frameTime = time;
 	frameNumber = frame;
-
+	resetTailFinding = reset;
 	images.original = image;
 	Size newSize = Size((int)(images.original.cols*IMAGE_RESIZE_SCALE), (int)(images.original.rows*IMAGE_RESIZE_SCALE));
 	resize(images.original, images.resized, newSize, 0, 0, INTER_LINEAR);
@@ -175,7 +175,7 @@ void Worm::findWormTail(Point prevTail)
 		nextPointIndex = boundCheck(i + jump, numPoints - 1);
 
 		currPoint = wormContour[currPointIndex];
-		if (frameNumber <= 2 || pointDistance(currPoint, prevTail) < TAIL_HEAD_JUMP_THRESHOLD) {
+		if (frameNumber <= 2 || resetTailFinding == true || pointDistance(currPoint, prevTail) < TAIL_HEAD_JUMP_THRESHOLD ) {
 			prevPoint = wormContour[prevPointIndex];
 			nextPoint = wormContour[nextPointIndex];
 

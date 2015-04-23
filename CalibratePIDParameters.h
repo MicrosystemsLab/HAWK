@@ -613,8 +613,6 @@ Stimulus createStimulus(void)
 		double zeroPulse = 2;
 
 		Stimulus stim(period, contactTime, noCycles, magnitude, scale, scaleType, sineFreq, sineBias, zeroPulse);
-		
-		
 
 		stim.createCalibrationWaveTable();
 				
@@ -694,9 +692,10 @@ private: System::Void getDataButton_Click(System::Object^  sender, System::Event
 		//gather data, write to plots:
 		signalChart->Series["Signal"]->Points->Clear();
 		
-		vector<double> actuatorSignal = comm->actuatorPositionData;
+		vector<double> actuatorPositionSignal = comm->actuatorPositionData;
 		vector<double> cantileverSignal = comm->piezoSignalData;
 		vector<double> actuatorCommandSignal = comm->actuatorCommandData;
+		vector<double> desiredSignal = comm->desiredSignalData;
 		
 		if (recordDataCheckBox->Checked){
 			marshal_context^ context = gcnew marshal_context();
@@ -706,7 +705,7 @@ private: System::Void getDataButton_Click(System::Object^  sender, System::Event
 			PIDParameters.push_back(Decimal::ToDouble(pParameterNumericUpDown->Value));
 			PIDParameters.push_back(Decimal::ToDouble(iParameterNumericUpDown->Value));
 			PIDParameters.push_back(Decimal::ToDouble(dParameterNumericUpDown->Value)); 
-			writeCalibrationDataToDisk( actuatorCommandSignal,  cantileverSignal, cantileverID, commentsForData, PIDParameters);
+			writeCalibrationDataToDisk( actuatorPositionSignal,  cantileverSignal,  actuatorCommandSignal, desiredSignal,  cantileverID,  commentsForData, PIDParameters);
 			PIDParameters.clear();
 		}
 
@@ -758,7 +757,7 @@ Stimulus createTestStimulus(double magnitude, double duration)
 	}
 
 
-void writeCalibrationDataToDisk(vector<double> actuatorPositions, vector<double> cantileverSignal, string cantileverID, string commentsForData, vector<double> PIDParameters){
+void writeCalibrationDataToDisk(vector<double> actuatorPositions, vector<double> cantileverSignal,  vector<double> actuatorCommandSignal, vector<double> desiredSignal, string cantileverID, string commentsForData, vector<double> PIDParameters){
 			cv::FileStorage dataWriter;
 			 
 			 SYSTEMTIME now;
@@ -791,7 +790,7 @@ void writeCalibrationDataToDisk(vector<double> actuatorPositions, vector<double>
 			string nodeTitle;
 			char* title = new char[50];
 			//Write actuator position:
-			dataWriter << "Actuator Command Signal" << "{";
+			dataWriter << "Actuator Position Signal" << "{";
 			//print rest of data
 			for (unsigned int i = 0; i < actuatorPositions.size(); i++) {
 				sprintf(title, "Point %d", i);
@@ -806,6 +805,24 @@ void writeCalibrationDataToDisk(vector<double> actuatorPositions, vector<double>
 				sprintf(title, "Point %d", i);
 				nodeTitle = string(title);
 				dataWriter << nodeTitle <<  cantileverSignal[i];
+			}
+			dataWriter << "}";
+			//Write Actuator Commands:
+			dataWriter << "Actuator Command Signal" << "{";
+			//print rest of data
+			for (unsigned int i = 0; i < actuatorCommandSignal.size(); i++) {
+				sprintf(title, "Point %d", i);
+				nodeTitle = string(title);
+				dataWriter << nodeTitle <<  actuatorCommandSignal[i];
+			}
+			dataWriter << "}";
+			//Write desired signal
+			dataWriter << "Desired Signal" << "{";
+			//print rest of data
+			for (unsigned int i = 0; i < desiredSignal.size(); i++) {
+				sprintf(title, "Point %d", i);
+				nodeTitle = string(title);
+				dataWriter << nodeTitle <<  desiredSignal[i];
 			}
 			dataWriter << "}";
 
