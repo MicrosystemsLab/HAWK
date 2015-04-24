@@ -37,62 +37,78 @@ void drawCross(Mat *image, Point point, Scalar color) {
  * Returns a new image with the overlays on top of it.
  */
 
-Mat imageWithOutputOverlay(WormOutputData* data)
+Mat imageWithOutputOverlay(WormOutputData* data, bool allOverlays)
 {
 	Mat result;
+	//bool allOverLays = true;
     
-    //Convert to color image
-	cvtColor(data->image, result, CV_GRAY2RGB);
+		//Convert to color image
+		cvtColor(data->image, result, CV_GRAY2RGB);
 
-    //Create colors to for overlary
-	Scalar green(0,255,0);
-	Scalar red(0,0,225);
-	Scalar blue(225,0,0);
+		//Create colors to for overlary
+		Scalar green(0,255,0);
+		Scalar red(0,0,225);
+		Scalar blue(225,0,0);
+		Scalar white(225,225,255);
+	
+	if (allOverlays == true){
+		//Print CANTILEVER
+		circle(result, data->cantilever, 15, green, 2, 8, 0);
 
-	//Print CANTILEVER
-	circle(result, data->cantilever, 15, green, 2, 8, 0);
+		//PRINT SEGMENTS:
+		//Step through each segment and draw a line between the points that correspond between each point
+		// color is red.
+		for (unsigned int i = 0; i < data->segments.size(); i++) {
+			line(result, data->wormContour[data->segments[i].first], data->wormContour[data->segments[i].second], red, 1, 8, 0);
+		}
 
-	//PRINT SEGMENTS:
-    //Step through each segment and draw a line between the points that correspond between each point
-    // color is red.
-	for (unsigned int i = 0; i < data->segments.size(); i++) {
-		line(result, data->wormContour[data->segments[i].first], data->wormContour[data->segments[i].second], red, 1, 8, 0);
+		//PRINT CONTOURS
+		// Draw a line around the contour that corresponds to the worm.
+		vector<Vec4i> hierarchy;
+		drawContours(result, data->contours, data->wormContourIndex, blue, 1, 0, hierarchy, 0, Point(0,0));
+
+		//PRINT SKELETON
+		//Draw blue lines between each set of skeleton points.
+		for (unsigned int i = 0; i < data->skeleton.size() - 1; i++) {
+			line(result, data->skeleton[i], data->skeleton[i+1], blue, 1, 8, 0);
+		}
+
+		//PRINT TARGET
+		drawCross(&result, data->target, red);
+
+		//PRINT POINTS ON CONTOUR NEAR SEGMENT
+		circle(result, data->targetSegment1, 4, blue, 2, 8, 0);
+		circle(result, data->targetSegment2, 4, blue, 2, 8, 0);
+
+		//PRINT TAIL
+		// Tail has small red circle
+		circle(result, data->tail, 5, red, 2, 8, 0);
+
+		//PRINT HEAD
+		//Head has large red circle.
+		circle(result, data->head, 10, red, 2, 8, 0);
+
+		//PRINT FRAME NUMBER, STIM NUMBER, STIM STATUS
+		char* frameText = new char[50];
+		if (data->stimulusActive == true)
+			sprintf(frameText, "Frame #%d, Stim #%d, ON", data->frameNumber,  data->stimulusNumber);
+		else 
+			sprintf(frameText, "Frame #%d, Stim #%d, OFF", data->frameNumber,  data->stimulusNumber);
+		putText(result, frameText, Point(25, 25), FONT_HERSHEY_SIMPLEX, 0.5, red, 2, 8, false);  
+		delete[] frameText;
 	}
-
-	//PRINT CONTOURS
-    // Draw a line around the contour that corresponds to the worm.
-	vector<Vec4i> hierarchy;
-	drawContours(result, data->contours, data->wormContourIndex, blue, 1, 0, hierarchy, 0, Point(0,0));
-
-	//PRINT SKELETON
-    //Draw blue lines between each set of skeleton points.
-	for (unsigned int i = 0; i < data->skeleton.size() - 1; i++) {
-		line(result, data->skeleton[i], data->skeleton[i+1], blue, 1, 8, 0);
+	else {
+		//result = data->image;
+		//Scalar bright(225);
+		//PRINT FRAME NUMBER, STIM NUMBER, STIM STATUS
+		char* frameText = new char[50];
+		if (data->stimulusActive == true)
+			sprintf(frameText, "Frame #%d, Stim #%d, ON", data->frameNumber,  data->stimulusNumber);
+		else 
+			sprintf(frameText, "Frame #%d, Stim #%d, OFF", data->frameNumber,  data->stimulusNumber);
+		putText(result, frameText, Point(25, 25), FONT_HERSHEY_SIMPLEX, 0.5, white, 2, 8, false);  
+		delete[] frameText;
 	}
-
-	//PRINT TARGET
-	drawCross(&result, data->target, red);
-
-	//PRINT POINTS ON CONTOUR NEAR SEGMENT
-	circle(result, data->targetSegment1, 4, blue, 2, 8, 0);
-	circle(result, data->targetSegment2, 4, blue, 2, 8, 0);
-
-	//PRINT TAIL
-    // Tail has small red circle
-	circle(result, data->tail, 5, red, 2, 8, 0);
-
-	//PRINT HEAD
-    //Head has large red circle.
-	circle(result, data->head, 10, red, 2, 8, 0);
-
-	//PRINT FRAME NUMBER, STIM NUMBER, STIM STATUS
-	char* frameText = new char[50];
-	if (data->stimulusActive == true)
-		sprintf(frameText, "Frame #%d, Stim #%d, ON", data->frameNumber,  data->stimulusNumber);
-	else 
-		sprintf(frameText, "Frame #%d, Stim #%d, OFF", data->frameNumber,  data->stimulusNumber);
-	putText(result, frameText, Point(50, 50), FONT_HERSHEY_SIMPLEX, 0.75, red, 2, 8, false);  
-	delete[] frameText;
 
     // Return the image with the overlays:
 	return result;

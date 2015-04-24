@@ -45,6 +45,8 @@ public:
 	string postExpNotes;
 	//the DataManager for this experiment
 	DataManager dataManager;
+	// Decide whether or not to print the overlays on the worm in the output video. true = yes, print overlays
+	bool printOverlays;
 	// amount of time to record frames (converts to the number of frames to have in the dataManager's buffer) before stimulus is applied
 	int waitingBufferSize;
 	// amount of time to record frames (converts to the number of frames) to record after stimulus is applied
@@ -94,11 +96,6 @@ public:
 	} reportedFPGAParameters;
 
 
-	//int reportedStimNum;
-	//vector<double> reportedPiezoSignalData; 
-	//vector<double> reportedActuatorPositionData;
-	//vector<double> reportedActuatorCommandData;
-	//vector<double> reportedDesiredSignalData;
 
 
 //prototypes

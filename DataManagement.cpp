@@ -190,10 +190,10 @@ int DataManager::setUpDataWriters(string directory, string filename)
 	return 0;
 }
 
-void DataManager::appendWormFrameToDisk(WormOutputData data)
+void DataManager::appendWormFrameToDisk(WormOutputData data, bool printOverlays)
 {
 	//write to AVI
-	videoWriter << imageWithOutputOverlay(&data);
+	videoWriter << imageWithOutputOverlay(&data, printOverlays);
 
 	//write to YAML
 	startNode(wormTitle(writtenWormNumber++));

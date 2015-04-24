@@ -183,6 +183,7 @@ private: System::Windows::Forms::Label^  postStimRecordTimeLabel;
 private: System::Windows::Forms::Label^  postStimZerlPulseUnitLabel;
 private: System::Windows::Forms::Label^  postStimZeroPulseLabel;
 private: System::Windows::Forms::NumericUpDown^  postStimZeroPulseNumericUpDown;
+private: System::Windows::Forms::CheckBox^  addOverlaysCheckBox;
 
 
 
@@ -323,6 +324,7 @@ private: System::Windows::Forms::NumericUpDown^  postStimZeroPulseNumericUpDown;
 			this->waferIDTextBox = (gcnew System::Windows::Forms::TextBox());
 			this->cantileverIDSearchButton = (gcnew System::Windows::Forms::Button());
 			this->saveStimFileDialog = (gcnew System::Windows::Forms::SaveFileDialog());
+			this->addOverlaysCheckBox = (gcnew System::Windows::Forms::CheckBox());
 			this->clampModeGroupBox->SuspendLayout();
 			this->targetGroupBox->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->targetWormPictureBox))->BeginInit();
@@ -364,7 +366,7 @@ private: System::Windows::Forms::NumericUpDown^  postStimZeroPulseNumericUpDown;
 			this->clampModeGroupBox->Controls->Add(this->openLoopClampRadioButton);
 			this->clampModeGroupBox->Controls->Add(this->dispClampRadioButton);
 			this->clampModeGroupBox->Controls->Add(this->forceClampRadioButton);
-			this->clampModeGroupBox->Location = System::Drawing::Point(334, 12);
+			this->clampModeGroupBox->Location = System::Drawing::Point(334, 96);
 			this->clampModeGroupBox->Name = L"clampModeGroupBox";
 			this->clampModeGroupBox->Size = System::Drawing::Size(133, 112);
 			this->clampModeGroupBox->TabIndex = 12;
@@ -424,7 +426,7 @@ private: System::Windows::Forms::NumericUpDown^  postStimZeroPulseNumericUpDown;
 			this->targetGroupBox->Controls->Add(this->targetUnitLabel);
 			this->targetGroupBox->Controls->Add(this->targetTrackBar);
 			this->targetGroupBox->Enabled = false;
-			this->targetGroupBox->Location = System::Drawing::Point(334, 130);
+			this->targetGroupBox->Location = System::Drawing::Point(334, 211);
 			this->targetGroupBox->Name = L"targetGroupBox";
 			this->targetGroupBox->Size = System::Drawing::Size(133, 284);
 			this->targetGroupBox->TabIndex = 2;
@@ -889,18 +891,19 @@ private: System::Windows::Forms::NumericUpDown^  postStimZeroPulseNumericUpDown;
 			// 
 			// dataOutputGroupBox
 			// 
+			this->dataOutputGroupBox->Controls->Add(this->addOverlaysCheckBox);
 			this->dataOutputGroupBox->Controls->Add(this->outputLocationBrowseButton);
 			this->dataOutputGroupBox->Controls->Add(this->outputLocationTextBox);
-			this->dataOutputGroupBox->Location = System::Drawing::Point(473, 12);
+			this->dataOutputGroupBox->Location = System::Drawing::Point(334, 12);
 			this->dataOutputGroupBox->Name = L"dataOutputGroupBox";
-			this->dataOutputGroupBox->Size = System::Drawing::Size(316, 84);
+			this->dataOutputGroupBox->Size = System::Drawing::Size(455, 78);
 			this->dataOutputGroupBox->TabIndex = 6;
 			this->dataOutputGroupBox->TabStop = false;
 			this->dataOutputGroupBox->Text = L"Data Output Location";
 			// 
 			// outputLocationBrowseButton
 			// 
-			this->outputLocationBrowseButton->Location = System::Drawing::Point(248, 55);
+			this->outputLocationBrowseButton->Location = System::Drawing::Point(387, 16);
 			this->outputLocationBrowseButton->Name = L"outputLocationBrowseButton";
 			this->outputLocationBrowseButton->Size = System::Drawing::Size(55, 23);
 			this->outputLocationBrowseButton->TabIndex = 16;
@@ -910,9 +913,9 @@ private: System::Windows::Forms::NumericUpDown^  postStimZeroPulseNumericUpDown;
 			// 
 			// outputLocationTextBox
 			// 
-			this->outputLocationTextBox->Location = System::Drawing::Point(6, 30);
+			this->outputLocationTextBox->Location = System::Drawing::Point(7, 19);
 			this->outputLocationTextBox->Name = L"outputLocationTextBox";
-			this->outputLocationTextBox->Size = System::Drawing::Size(297, 20);
+			this->outputLocationTextBox->Size = System::Drawing::Size(374, 20);
 			this->outputLocationTextBox->TabIndex = 15;
 			this->outputLocationTextBox->Text = L"C:\\\\Users\\\\HAWK\\\\Documents\\\\HAWKData";
 			// 
@@ -1299,9 +1302,9 @@ private: System::Windows::Forms::NumericUpDown^  postStimZeroPulseNumericUpDown;
 			this->cantileverGroupBox->Controls->Add(this->waferIDTextBox);
 			this->cantileverGroupBox->Controls->Add(this->cantileverIDSearchButton);
 			this->cantileverGroupBox->Enabled = false;
-			this->cantileverGroupBox->Location = System::Drawing::Point(473, 101);
+			this->cantileverGroupBox->Location = System::Drawing::Point(473, 96);
 			this->cantileverGroupBox->Name = L"cantileverGroupBox";
-			this->cantileverGroupBox->Size = System::Drawing::Size(316, 222);
+			this->cantileverGroupBox->Size = System::Drawing::Size(316, 227);
 			this->cantileverGroupBox->TabIndex = 10;
 			this->cantileverGroupBox->TabStop = false;
 			this->cantileverGroupBox->Text = L"Cantilever Information";
@@ -1519,6 +1522,18 @@ private: System::Windows::Forms::NumericUpDown^  postStimZeroPulseNumericUpDown;
 			// saveStimFileDialog
 			// 
 			this->saveStimFileDialog->InitialDirectory = L"C:\\Users\\HAWK\\Documents\\HAWKData";
+			// 
+			// addOverlaysCheckBox
+			// 
+			this->addOverlaysCheckBox->AutoSize = true;
+			this->addOverlaysCheckBox->Checked = true;
+			this->addOverlaysCheckBox->CheckState = System::Windows::Forms::CheckState::Checked;
+			this->addOverlaysCheckBox->Location = System::Drawing::Point(7, 49);
+			this->addOverlaysCheckBox->Name = L"addOverlaysCheckBox";
+			this->addOverlaysCheckBox->Size = System::Drawing::Size(197, 17);
+			this->addOverlaysCheckBox->TabIndex = 17;
+			this->addOverlaysCheckBox->Text = L"Add Worm Overlays to Output Video";
+			this->addOverlaysCheckBox->UseVisualStyleBackColor = true;
 			// 
 			// SetUpForm
 			// 
@@ -1760,6 +1775,11 @@ private:
 			experiment->experimentMode = std::string("Open Loop");
 		else 
 			experiment->experimentMode = std::string("Behavior Mode");
+
+		if (addOverlaysCheckBox->Checked)
+			experiment->printOverlays = true;
+		else
+			experiment->printOverlays = false;
 
 		experiment->reportedFPGAParameters.P_Parameter = comm->P_Parameter;
 		experiment->reportedFPGAParameters.I_Parameter = comm->I_Parameter;

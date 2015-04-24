@@ -59,7 +59,7 @@ public:
 	 * Writes a frame of video to disk and then writes the worm data to the
 	 * YAML file.
 	 */
-	void appendWormFrameToDisk(WormOutputData data);
+	void appendWormFrameToDisk(WormOutputData data, bool printOverlays);
 
 
 

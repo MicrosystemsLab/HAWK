@@ -67,30 +67,13 @@ int Experiment::setUpDataOutput(void)
 
 void Experiment::writeFrameToDisk(WormOutputData data)
 {
-	dataManager.appendWormFrameToDisk(data);
+	dataManager.appendWormFrameToDisk(data, printOverlays);
 }
 
-//void Experiment::getfpgaData(int stimNum, vector<double> piezoSignalData, vector<double> actuatorPositionData, vector<double> actuatorCommandData, vector<double> desiredSignalData){
-//	reportedStimNum;
-//	reportedPiezoSignalData.clear(); 
-//	reportedActuatorPositionData.clear();
-//	reportedActuatorCommandData.clear();
-//	reportedDesiredSignalData.clear();
-
-//	reportedStimNum = stimNum;
-//	reportedPiezoSignalData = piezoSignalData; 
-//	reportedActuatorPositionData = actuatorPositionData;
-//	reportedActuatorCommandData = actuatorCommandData;
-//	reportedDesiredSignalData = desiredSignalData;
-//}
 
 void Experiment::writefpgaDataToDisk(int stimNum, vector<double> piezoSignalData, vector<double> actuatorPositionData, vector<double> actuatorCommandData, vector<double> desiredSignalData)
-//void Experiment::writefpgaDataToDisk()
 {
-	//dataManager.writeStimulusDataToDisk(reportedStimNum, reportedPiezoSignalData, reportedActuatorPositionData, reportedActuatorCommandData,  reportedDesiredSignalData);
 	dataManager.writeStimulusDataToDisk(stimNum,  piezoSignalData, actuatorPositionData, actuatorCommandData,  desiredSignalData);
-
-
 }
 
 void Experiment::endExperiment(void)

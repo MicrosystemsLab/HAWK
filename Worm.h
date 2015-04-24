@@ -195,7 +195,7 @@ private:
  * --------------------------------
  * Returns an the image from data paramter with overlays for all the important worm parts.
  */
-cv::Mat imageWithOutputOverlay(WormOutputData* data);
+cv::Mat imageWithOutputOverlay(WormOutputData* data, bool allOverLays);
 
 /* Function: drawCross
  * -------------------
