@@ -138,8 +138,8 @@ Point  Worm::translateTail(Point oldTail, double stageMovement_x, double stageMo
 
 	Point translatedTail;
     //Shift point by stage movement:
-	translatedTail.x = oldTail.x + stageMovement_x*(PIXELS_PER_UM * IMAGE_RESIZE_SCALE);
-	translatedTail.y = oldTail.y + stageMovement_y*(PIXELS_PER_UM * IMAGE_RESIZE_SCALE);;
+	translatedTail.x = oldTail.x + (int)stageMovement_x*(PIXELS_PER_UM * IMAGE_RESIZE_SCALE);
+	translatedTail.y = oldTail.y + (int)stageMovement_y*(PIXELS_PER_UM * IMAGE_RESIZE_SCALE);;
     //Return new point:
 	return translatedTail;
 }
@@ -284,8 +284,8 @@ void Worm::findWormHead(void)
     // Set up head search area.
     // The search area is the quarter of the worm contour that is opposite the tail:
 	int predictedHeadIndex = boundCheck(tailIndex - (int)numPoints/2, numPoints - 1);
-	int minSearch = boundCheck(predictedHeadIndex - (numPoints/8), numPoints-1);
-	int maxSearch = boundCheck(predictedHeadIndex + (numPoints/8), numPoints-1);
+	int minSearch = predictedHeadIndex - (numPoints/6);
+	int maxSearch = predictedHeadIndex + (numPoints/6);
 
 	//Initialize sharpness
 	double maxSharpness = 0;

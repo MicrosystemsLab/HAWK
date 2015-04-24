@@ -142,6 +142,7 @@ namespace BehaviorRig20 {
 	private: System::Windows::Forms::Label^  stimulusCountIndicatorLabel;
 	private: System::Windows::Forms::Label^  stimulusCountLabel;
 	private: System::Windows::Forms::Button^  resetTailButton;
+	private: System::Windows::Forms::Button^  snapLiveImageButton;
 
 
 	private: System::ComponentModel::IContainer^  components;
@@ -210,6 +211,7 @@ namespace BehaviorRig20 {
 			this->calibrateCantileverButton = (gcnew System::Windows::Forms::Button());
 			this->calibratePIDButton = (gcnew System::Windows::Forms::Button());
 			this->calibrationToolsGroupBox = (gcnew System::Windows::Forms::GroupBox());
+			this->snapLiveImageButton = (gcnew System::Windows::Forms::Button());
 			this->trackingGroupBox->SuspendLayout();
 			this->liveFeedPanel->SuspendLayout();
 			this->statusStrip->SuspendLayout();
@@ -268,6 +270,7 @@ namespace BehaviorRig20 {
 			// 
 			// resetTailButton
 			// 
+			this->resetTailButton->Enabled = false;
 			this->resetTailButton->Location = System::Drawing::Point(6, 119);
 			this->resetTailButton->Name = L"resetTailButton";
 			this->resetTailButton->Size = System::Drawing::Size(96, 23);
@@ -730,11 +733,22 @@ namespace BehaviorRig20 {
 			this->calibrationToolsGroupBox->TabStop = false;
 			this->calibrationToolsGroupBox->Text = L"Calibration Tools";
 			// 
+			// snapLiveImageButton
+			// 
+			this->snapLiveImageButton->Location = System::Drawing::Point(13, 382);
+			this->snapLiveImageButton->Name = L"snapLiveImageButton";
+			this->snapLiveImageButton->Size = System::Drawing::Size(108, 23);
+			this->snapLiveImageButton->TabIndex = 39;
+			this->snapLiveImageButton->Text = L"Snap Live";
+			this->snapLiveImageButton->UseVisualStyleBackColor = true;
+			this->snapLiveImageButton->Click += gcnew System::EventHandler(this, &MainForm::snapLiveImageButton_Click);
+			// 
 			// MainForm
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(1041, 619);
+			this->Controls->Add(this->snapLiveImageButton);
 			this->Controls->Add(this->fpgaConnectionLabel);
 			this->Controls->Add(this->fpgaConnectionIndicationPanel);
 			this->Controls->Add(this->exposureGroupBox);
@@ -877,8 +891,10 @@ private:
 
 			this->applyStimButton->Enabled = true;
 			this->toggleHeadTailButton->Enabled = true;
+			this->resetTailButton->Enabled = true;
 			this->stopTrackButton->Enabled = true;
 			this->setUpExpButton->Enabled = false;
+			this->snapLiveImageButton->Enabled = false;
 		}
 		else {
 			MessageBox::Show("Tracking not ready");
@@ -893,6 +909,7 @@ private:
 	System::Void stopTrackButton_Click(System::Object^  sender, System::EventArgs^  e)
 	{
 		trackingBackgroundWorker->CancelAsync();
+		
 	}
 
 	/* Function: zaberBackgroundWorker_MoveStage
@@ -1047,8 +1064,8 @@ private:
 			if (experiment->stimulusActive == false){
 				if(previousFrameStimulusActive == true){
 					//move zaber up then down
-					zaber->moveActuator(-100);
-					zaber->moveActuator(100);
+					zaber->moveActuator(-150);
+					zaber->moveActuator(150);
 				}
 				//determine stage movement
 				stageMovement = determineStageMovement(worm.target, cantilever);
@@ -1187,6 +1204,8 @@ private:
 	{
 		this->toggleHeadTailButton->Enabled = false;
 		this->stopTrackButton->Enabled = false;
+		this->resetTailButton->Enabled = false;
+		this->snapLiveImageButton->Enabled = true;
 
 		if (e->Error) {
 			MessageBox::Show(e->Error->Message->ToString());
@@ -1656,6 +1675,23 @@ private: System::Void setHoverPositionButton_Click(System::Object^  sender, Syst
 
 
 
+private: System::Void snapLiveImageButton_Click(System::Object^  sender, System::EventArgs^  e) {
+			 cv::Mat image = imageController->getImage();
+
+			 SYSTEMTIME now;
+			 GetLocalTime(&now);
+			 string date; 
+
+			char* cTime = new char[50];
+			sprintf(cTime, "%04d_%02d_%02d__%02d_%02d_%02d__", now.wYear, now.wMonth, now.wDay, now.wHour, now.wMinute, now.wSecond);
+			date = string(cTime);
+			delete cTime;
+		
+			string directory = string("C:\\Users\\HAWK\\Documents\\HAWKSnappedImages");
+			string filename = directory + string("\\\\SnappedImage__") + date + string(".bmp");
+			imwrite(filename, image);
+
+		 }
 };
 }
 
