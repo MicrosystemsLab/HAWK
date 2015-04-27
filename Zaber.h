@@ -85,6 +85,10 @@ public:
 	 */
 	void waitForStaticStage(void);
 
+	void waitForStaticActuator(void);
+
+	int requestZaberActuatorStatus(void);
+
 	/* Function: moveStage
 	 * -------------------
 	 * Takes a Movement as a parameter and directs the stage to move by that much.

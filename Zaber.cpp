@@ -122,7 +122,13 @@ void Zaber::moveActuatorHome(void)
 	data = 0;
 	sendCommand();
 }
-
+void Zaber::waitForStaticActuator(void)
+{
+	while (true) { //wait for zaber to stabilize
+		int zaberStatus = requestZaberActuatorStatus();
+		if (zaberStatus == 0) break;
+	}
+}
 void Zaber::waitForStaticStage(void)
 {
 	while (true) { //wait for zaber to stabilize
@@ -150,6 +156,19 @@ int Zaber::requestZaberStatus(void)
 		return 2; //y-axis is moving
 	}
 	return 0; //zaber is stable
+}
+
+int Zaber::requestZaberActuatorStatus(void)
+{
+	device = 3;
+	command = CMD_RETURN_STATUS;
+	data = 0;
+	sendCommand();
+	waitForReply(device,command);
+	if (data !=0) {
+		return 1; //x-axis is moving
+	}
+	return 0;
 }
 
 Point2d Zaber::getStagePosition(void)

@@ -1064,8 +1064,10 @@ private:
 			if (experiment->stimulusActive == false){
 				if(previousFrameStimulusActive == true){
 					//move zaber up then down
-					zaber->moveActuator(-150);
-					zaber->moveActuator(150);
+					zaber->moveActuator(-200);
+					//zaber->waitForStaticActuator();
+					zaber->moveActuator(200);
+					//zaber->waitForStaticActuator();
 				}
 				//determine stage movement
 				stageMovement = determineStageMovement(worm.target, cantilever);
