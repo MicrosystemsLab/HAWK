@@ -258,6 +258,7 @@ private: System::Windows::Forms::CheckBox^  addOverlaysCheckBox;
 			this->stimulusSignalGroupBox = (gcnew System::Windows::Forms::GroupBox());
 			this->stimulusSignalChart = (gcnew System::Windows::Forms::DataVisualization::Charting::Chart());
 			this->dataOutputGroupBox = (gcnew System::Windows::Forms::GroupBox());
+			this->addOverlaysCheckBox = (gcnew System::Windows::Forms::CheckBox());
 			this->outputLocationBrowseButton = (gcnew System::Windows::Forms::Button());
 			this->outputLocationTextBox = (gcnew System::Windows::Forms::TextBox());
 			this->cancelSetupButton = (gcnew System::Windows::Forms::Button());
@@ -324,7 +325,6 @@ private: System::Windows::Forms::CheckBox^  addOverlaysCheckBox;
 			this->waferIDTextBox = (gcnew System::Windows::Forms::TextBox());
 			this->cantileverIDSearchButton = (gcnew System::Windows::Forms::Button());
 			this->saveStimFileDialog = (gcnew System::Windows::Forms::SaveFileDialog());
-			this->addOverlaysCheckBox = (gcnew System::Windows::Forms::CheckBox());
 			this->clampModeGroupBox->SuspendLayout();
 			this->targetGroupBox->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->targetWormPictureBox))->BeginInit();
@@ -604,7 +604,7 @@ private: System::Windows::Forms::CheckBox^  addOverlaysCheckBox;
 			// 
 			this->stimMagnitudeNumericUpDown->DecimalPlaces = 2;
 			this->stimMagnitudeNumericUpDown->Location = System::Drawing::Point(211, 97);
-			this->stimMagnitudeNumericUpDown->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) {10000, 0, 0, 0});
+			this->stimMagnitudeNumericUpDown->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) {100000, 0, 0, 0});
 			this->stimMagnitudeNumericUpDown->Name = L"stimMagnitudeNumericUpDown";
 			this->stimMagnitudeNumericUpDown->Size = System::Drawing::Size(85, 20);
 			this->stimMagnitudeNumericUpDown->TabIndex = 30;
@@ -900,6 +900,16 @@ private: System::Windows::Forms::CheckBox^  addOverlaysCheckBox;
 			this->dataOutputGroupBox->TabIndex = 6;
 			this->dataOutputGroupBox->TabStop = false;
 			this->dataOutputGroupBox->Text = L"Data Output Location";
+			// 
+			// addOverlaysCheckBox
+			// 
+			this->addOverlaysCheckBox->AutoSize = true;
+			this->addOverlaysCheckBox->Location = System::Drawing::Point(7, 49);
+			this->addOverlaysCheckBox->Name = L"addOverlaysCheckBox";
+			this->addOverlaysCheckBox->Size = System::Drawing::Size(197, 17);
+			this->addOverlaysCheckBox->TabIndex = 17;
+			this->addOverlaysCheckBox->Text = L"Add Worm Overlays to Output Video";
+			this->addOverlaysCheckBox->UseVisualStyleBackColor = true;
 			// 
 			// outputLocationBrowseButton
 			// 
@@ -1522,18 +1532,6 @@ private: System::Windows::Forms::CheckBox^  addOverlaysCheckBox;
 			// saveStimFileDialog
 			// 
 			this->saveStimFileDialog->InitialDirectory = L"C:\\Users\\HAWK\\Documents\\HAWKData";
-			// 
-			// addOverlaysCheckBox
-			// 
-			this->addOverlaysCheckBox->AutoSize = true;
-			this->addOverlaysCheckBox->Checked = true;
-			this->addOverlaysCheckBox->CheckState = System::Windows::Forms::CheckState::Checked;
-			this->addOverlaysCheckBox->Location = System::Drawing::Point(7, 49);
-			this->addOverlaysCheckBox->Name = L"addOverlaysCheckBox";
-			this->addOverlaysCheckBox->Size = System::Drawing::Size(197, 17);
-			this->addOverlaysCheckBox->TabIndex = 17;
-			this->addOverlaysCheckBox->Text = L"Add Worm Overlays to Output Video";
-			this->addOverlaysCheckBox->UseVisualStyleBackColor = true;
 			// 
 			// SetUpForm
 			// 

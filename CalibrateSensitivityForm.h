@@ -470,38 +470,39 @@ private: System::Void getCalibrationDataButton_Click(System::Object^  sender, Sy
 			actuatorPositionChart->Series["Actuator"]->Points->Clear();
 			cantileverSignalChart->Series["Cantilever"]->Points->Clear();
 			sensitivityChart->Series["Sensitivity"]->Points->Clear();
-			vector<double> actuatorSignal = comm->actuatorPositionData;
+			vector<double> actuatorSensorSignal = comm->actuatorPositionData;
 			vector<double> cantileverSignal = comm->piezoSignalData;
-			vector<double> actuatorPositions;
+			//vector<double> actuatorCommandSignal;
 			vector<double> sensitivity;
 			sensitivity.clear();
-			int sizeActuator = actuatorSignal.size();
+			int sizeActuator = actuatorSensorSignal.size();
 			int sizeCantilever = cantileverSignal.size();
 
 			//plot on chart
 			for (int i = 0; i < sizeActuator; i++) {
-				double value = actuatorSignal[i];
-				actuatorPositions.push_back(value*ACTUATOR_SENSITIVITY);
+				double value = actuatorSensorSignal[i];
+				//actuatorCommandSignal.push_back(value*ACTUATOR_SENSITIVITY);
 				actuatorPositionChart->Series["Actuator"]->Points->AddXY(i * DELTA_T, value);
 			}
 			for (int i = 0; i < sizeCantilever; i++) {
 				double value = cantileverSignal[i];
 				cantileverSignalChart->Series["Cantilever"]->Points->AddXY(i * DELTA_T, value);
 			}
-			for (int i = 0; i<sizeCantilever; i++){
+			
+			/*for (int i = 0; i<sizeCantilever; i++){
 				if (cantileverSignal[i] > 0.5 )
-					sensitivity.push_back((actuatorPositions[i])/(cantileverSignal[i]));
+					sensitivity.push_back((actuatorSensorSignal[i]*ACTUATOR_SENSITIVITY)/(cantileverSignal[i]));
 				else 
 					sensitivity.push_back(0);
 
 				sensitivityChart->Series["Sensitivity"]->Points->AddXY(i * DELTA_T, sensitivity[i]);
-			}
+			}*/
 			if (recordDataCheckBox->Checked){
 				marshal_context^ context = gcnew marshal_context();
 				string cantileverID = context->marshal_as<string>(cantileverIDTextBox->Text);
 				string commentsForData = context->marshal_as<string>(dataCommentsTextBox->Text);
 			
-				writeCalibrationDataToDisk( actuatorPositions,  cantileverSignal, cantileverID, commentsForData);
+				writeCalibrationDataToDisk( actuatorSensorSignal,  cantileverSignal, cantileverID, commentsForData);
 			}
 
 		 

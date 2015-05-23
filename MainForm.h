@@ -1262,7 +1262,7 @@ private:
 				else{
 					// need to append fpga data to .yaml file, only if not in behavior mode:
 					int size = comm->piezoSignalData.size();
-					Threading::Thread::Sleep(500);
+					Threading::Thread::Sleep(800);
 					comm->getfpgaData( experiment->stimulusNumber, comm->piezoSignalData,  comm->actuatorPositionData, comm->actuatorCommandData, comm->desiredSignalData);
 					comm->messageReceivedCount = 0;
 				}

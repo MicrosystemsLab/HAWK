@@ -11,7 +11,7 @@
 using namespace std;
 
 #define DELTA_T 0.001 //one millisecond
-#define ACTUATOR_SENSITIVITY 20.00  // um/V
+#define ACTUATOR_SENSITIVITY 26.04  // um/V
 
 class Stimulus {
 //properties
