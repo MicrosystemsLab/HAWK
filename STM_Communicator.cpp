@@ -10,6 +10,7 @@ using namespace System::Runtime::InteropServices;
 bool STM_Communicator::triggerStimulus(void)
 {
 	if ((connected) && (waveTablePresentParameter == 1)) {
+		dataRead = true;
 		messageReceivedCount = 0;
 		piezoSignalData.clear();
 		actuatorPositionData.clear();
@@ -142,12 +143,13 @@ void STM_Communicator::OnNewData(CString MetaName, CByteArray *MsgData)
 		int arrSize;
 		channelData = dblArrUnflatten((char*)(MsgData->GetData()), &arrSize);
 		messageReceivedCount++;
-
-		for (int i = 0; i < arrSize; i += 4) {
-			desiredSignalData.push_back(channelData[i + 0]); // channel 1
-			actuatorCommandData.push_back(channelData[i + 1]); // channel 2 
-			actuatorPositionData.push_back(channelData[i + 2]); // channel 3
-			piezoSignalData.push_back(channelData[i + 3]); // channel 4
+		if (dataRead == true){
+			for (int i = 0; i < arrSize; i += 4) {
+				desiredSignalData.push_back(channelData[i + 0]); // channel 1
+				actuatorCommandData.push_back(channelData[i + 1]); // channel 2 
+				actuatorPositionData.push_back(channelData[i + 2]); // channel 3
+				piezoSignalData.push_back(channelData[i + 3]); // channel 4
+			}
 		}
 	} else if(MetaName == "read_FPGAParameters"){
 		double* parameterData;

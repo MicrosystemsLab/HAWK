@@ -1367,6 +1367,7 @@ private: System::Windows::Forms::CheckBox^  addOverlaysCheckBox;
 			// 
 			this->iParameterNumericUpDown->DecimalPlaces = 5;
 			this->iParameterNumericUpDown->Location = System::Drawing::Point(230, 149);
+			this->iParameterNumericUpDown->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) {10000, 0, 0, 0});
 			this->iParameterNumericUpDown->Name = L"iParameterNumericUpDown";
 			this->iParameterNumericUpDown->Size = System::Drawing::Size(73, 20);
 			this->iParameterNumericUpDown->TabIndex = 24;
@@ -1375,6 +1376,7 @@ private: System::Windows::Forms::CheckBox^  addOverlaysCheckBox;
 			// 
 			this->pParameterNumericUpDown->DecimalPlaces = 5;
 			this->pParameterNumericUpDown->Location = System::Drawing::Point(230, 123);
+			this->pParameterNumericUpDown->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) {10000, 0, 0, 0});
 			this->pParameterNumericUpDown->Name = L"pParameterNumericUpDown";
 			this->pParameterNumericUpDown->Size = System::Drawing::Size(73, 20);
 			this->pParameterNumericUpDown->TabIndex = 23;

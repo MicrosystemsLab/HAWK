@@ -1,4 +1,4 @@
-﻿Build started 5/22/2015 6:56:33 PM.
+﻿Build started 8/6/2015 6:08:37 PM.
      1>Project "C:\Users\HAWK\Documents\Visual Studio 2010\Projects\BehaviorRig2.0\BehaviorRig2.0\BehaviorRig2.0.vcxproj" on node 2 (build target(s)).
      1>InitializeBuildStatus:
          Creating "Debug\BehaviorRig2.0.unsuccessfulbuild" because "AlwaysCreate" was specified.
@@ -26,4 +26,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:00.54
+Time Elapsed 00:00:00.26

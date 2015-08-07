@@ -32,6 +32,8 @@ public:
 	//indicates the curent status of the actuator
 	int moving;
 
+	bool dataRead;
+
 	vector<double> piezoSignalData;
 	vector<double> actuatorPositionData;
 	vector<double> actuatorCommandData;

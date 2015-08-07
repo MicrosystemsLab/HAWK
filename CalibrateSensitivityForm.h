@@ -180,6 +180,7 @@ namespace BehaviorRig20 {
 			// maxProfileNumericUpDown
 			// 
 			this->maxProfileNumericUpDown->Location = System::Drawing::Point(853, 158);
+			this->maxProfileNumericUpDown->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) {250, 0, 0, 0});
 			this->maxProfileNumericUpDown->Name = L"maxProfileNumericUpDown";
 			this->maxProfileNumericUpDown->Size = System::Drawing::Size(129, 20);
 			this->maxProfileNumericUpDown->TabIndex = 4;

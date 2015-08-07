@@ -1064,9 +1064,9 @@ private:
 			if (experiment->stimulusActive == false){
 				if(previousFrameStimulusActive == true){
 					//move zaber up then down
-					zaber->moveActuator(-200);
+					zaber->moveActuator(-1500);
 					//zaber->waitForStaticActuator();
-					zaber->moveActuator(200);
+					zaber->moveActuator(1500);
 					//zaber->waitForStaticActuator();
 				}
 				//determine stage movement
@@ -1263,8 +1263,10 @@ private:
 					// need to append fpga data to .yaml file, only if not in behavior mode:
 					int size = comm->piezoSignalData.size();
 					Threading::Thread::Sleep(800);
+					comm->dataRead = false;
 					comm->getfpgaData( experiment->stimulusNumber, comm->piezoSignalData,  comm->actuatorPositionData, comm->actuatorCommandData, comm->desiredSignalData);
 					comm->messageReceivedCount = 0;
+					
 				}
 				
 			} 
