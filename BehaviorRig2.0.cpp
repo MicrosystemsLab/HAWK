@@ -1,5 +1,7 @@
 // BehaviorRig2.0.cpp : main project file.
-
+/*
+ *  Copyright 2015 Eileen Mazzochette, et al <emazz86@stanford.edu>
+ */
 #include "stdafx.h"
 //#include <vld.h>
 #include "MainForm.h"

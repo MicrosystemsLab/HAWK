@@ -4,6 +4,7 @@
  * and writing to disk functionality of the HAWK.
  *
  * Created by John Whitworth on 8/26/14.
+  *  Copyright 2015 Eileen Mazzochette, et al <emazz86@stanford.edu>
  */
 
 #pragma once
